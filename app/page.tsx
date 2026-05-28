@@ -1,0 +1,957 @@
+"use client";
+
+import React, { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
+import { League_Spartan, Cinzel } from "next/font/google";
+import {
+  Ticket,
+  MapPin,
+  Star,
+  Gift,
+  User,
+  QrCode,
+  Sparkles,
+  ShieldCheck,
+} from "lucide-react";
+import { supabase } from "@/lib/supabase";
+
+const league = League_Spartan({
+  subsets: ["latin"],
+  variable: "--font-league",
+});
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  variable: "--font-cinzel",
+});
+
+export default function PassaporteDaSorteSite() {
+  const searchParams = useSearchParams();
+  const [nome, setNome] = useState("");
+  const [contato, setContato] = useState("");
+  const [quantidade, setQuantidade] = useState(1);
+  const [passIds, setPassIds] = useState<string[]>([]);
+  const [campanha, setCampanha] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
+  const [meusPassaportes, setMeusPassaportes] = useState<any[]>([]);
+  const [saldoMilhas, setSaldoMilhas] = useState(0);
+  const [loadingPix, setLoadingPix] = useState(false);
+  const [pixData, setPixData] = useState<any>(null);
+  const [campanhas, setCampanhas] = useState<any[]>([]);
+  const [campanhaBanner, setCampanhaBanner] = useState<any>(null);
+  const [campanhaSelecionada, setCampanhaSelecionada] = useState<any>(null);
+  const [menuAberto, setMenuAberto] = useState(false);
+  const [cpf, setCpf] = useState("");
+
+
+  useEffect(() => {
+  async function buscarCampanhas() {
+    const { data, error } = await supabase
+      .from("campaigns")
+      .select("*")
+      .order("id", { ascending: false });
+
+    if (error) {
+      console.error("Erro ao buscar campanhas:", error);
+      return;
+    }
+
+    setCampanhas(data ?? []);
+    setCampanhaBanner(data?.[0] ?? null);
+    setCampanhaSelecionada(data?.[0] ?? null);
+    const campanhaUrl = searchParams.get("campanha");
+
+if (campanhaUrl) {
+  const encontrada = data?.find(
+    (c) => String(c.id) === campanhaUrl
+  );
+
+  setCampanhaSelecionada(
+    encontrada ?? data?.[0] ?? null
+  );
+} else {
+  const campanhaUrl = searchParams.get("campanha");
+
+if (campanhaUrl) {
+  const encontrada = data?.find(
+    (c) => String(c.id) === campanhaUrl
+  );
+
+  setCampanhaSelecionada(
+    encontrada ?? data?.[0] ?? null
+  );
+} else {
+  setCampanhaSelecionada(data?.[0] ?? null);
+}
+}
+  }
+
+  buscarCampanhas();
+}, []);
+  useEffect(() => {
+  async function buscarMilhas() {
+    if (!user?.id) return;
+
+    const { data, error } = await supabase
+      .from("user_miles")
+      .select("total_milhas")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar milhas:", error);
+      return;
+    }
+
+    setSaldoMilhas(data?.total_milhas ?? 0);
+  }
+
+  buscarMilhas();
+}, [user]);
+
+useEffect(() => {
+  if (campanhas.length <= 1) return;
+
+  const timer = setInterval(() => {
+    setCampanhaBanner((prev: any) => {
+      const indexAtual = campanhas.findIndex((c) => c.id === prev?.id);
+      const proximo =
+        indexAtual >= campanhas.length - 1 ? 0 : indexAtual + 1;
+
+      return campanhas[proximo];
+    });
+  }, 4000);
+
+  return () => clearInterval(timer);
+}, [campanhas]);
+
+  useEffect(() => {
+  async function buscarMeusPassaportes() {
+    if (!user?.id) return;
+
+    const { data, error } = await supabase
+      .from("pass_ids")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Erro ao buscar meus passaportes:", error);
+      return;
+    }
+
+    setMeusPassaportes(data ?? []);
+  }
+
+  buscarMeusPassaportes();
+}, [user]);
+  useEffect(() => {
+  async function getUser() {
+    const { data } = await supabase.auth.getUser();
+    setUser(data.user);
+    
+  }
+  
+
+  getUser();
+
+  const { data: listener } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      setUser(session?.user ?? null);
+    }
+  );
+
+  return () => {
+    listener.subscription.unsubscribe();
+  };
+}, []);
+
+  const valorUnitario = campanhaSelecionada?.preco ?? 3.99;
+  const milhasCampanha = campanhaSelecionada?.milhas ?? 10;
+
+  const total = useMemo(
+    () => (quantidade * valorUnitario).toFixed(2).replace(".", ","),
+    [quantidade, valorUnitario]
+  );
+async function loginGoogle() {
+  await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "http://localhost:3000",
+    },
+  });
+}
+
+async function logout() {
+  await supabase.auth.signOut();
+  setUser(null);
+}
+async function gerarPix() {
+  if (!user) {
+    alert("Faça login com Google antes de finalizar a compra.");
+    return;
+  }
+
+  if (!nome.trim()) {
+    alert("Preencha seu nome completo.");
+    return;
+  }
+
+  if (!contato.trim()) {
+    alert("Preencha seu e-mail.");
+    return;
+  }
+
+  if (!cpf.trim()) {
+    alert("Preencha seu CPF.");
+    return;
+  }
+
+  if (!quantidade || quantidade < 1) {
+    alert("Selecione pelo menos 1 passaporte.");
+    return;
+  }
+
+  try {
+    setLoadingPix(true);
+
+    const response = await fetch("/api/asaas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        valor: valorUnitario * quantidade,
+        nome,
+        email: contato,
+        cpf,
+      }),
+    });
+
+    const data = await response.json();
+
+    console.log("RESPOSTA ASAAS:", data);
+
+    if (!response.ok) {
+      alert(
+        data?.details ||
+          data?.errors?.[0]?.description ||
+          data?.error ||
+          "Erro ao gerar pagamento"
+      );
+      return;
+    }
+
+    if (data.invoiceUrl) {
+  window.location.href = data.invoiceUrl;
+  return;
+}
+
+if (data.bankSlipUrl) {
+  window.location.href = data.bankSlipUrl;
+  return;
+}
+
+alert("Cobrança criada, mas não veio link de pagamento.");
+
+    alert("Cobrança criada, mas não veio QR Code Pix.");
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao gerar pagamento");
+  } finally {
+    setLoadingPix(false);
+  }
+}
+  async function gerarPassIds() {
+    if (!user) {
+  alert("Faça login com Google antes de finalizar sua compra.");
+  return;
+}
+    if (!nome.trim()) {
+      return alert("Digite seu nome.");
+    }
+
+    const ids = Array.from({ length: quantidade }, () => {
+      const n = Math.floor(Math.random() * 9999999)
+        .toString()
+        .padStart(7, "0");
+
+      return `PSD-${n}`;
+    });
+
+    setPassIds(ids);
+
+  const dados = ids.map((id) => ({
+  nome,
+  contato,
+  pass_id: id,
+  milhas: milhasCampanha,
+  user_id: user?.id,
+  campaign_id: campanhaSelecionada?.id,
+}));
+
+    const { data, error } = await supabase.from("pass_ids").insert(dados);
+
+    if (error) {
+      console.error("Erro Supabase:", error);
+      alert(JSON.stringify(error, null, 2));
+    } else {
+      console.log(data);
+      alert("PASS-ID salvo com sucesso!");
+    }
+    const { data: milhasAtuais } = await supabase
+  .from("user_miles")
+  .select("*")
+  .eq("user_id", user?.id)
+  .single();
+
+if (milhasAtuais) {
+  await supabase
+    .from("user_miles")
+    .update({
+      total_milhas: milhasAtuais.total_milhas + quantidade * milhasCampanha,
+    })
+    .eq("user_id", user?.id);
+} else {
+  await supabase.from("user_miles").insert({
+    user_id: user?.id,
+    total_milhas: quantidade * milhasCampanha,
+  });
+}
+  }
+  return (
+    <main
+      className={`${league.variable} ${cinzel.variable} min-h-screen bg-[#061832] text-white overflow-hidden font-[family-name:var(--font-league)]`}
+    >
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(35,201,151,.28),transparent_28%),radial-gradient(circle_at_85%_10%,rgba(30,136,229,.30),transparent_30%),linear-gradient(180deg,#061832_0%,#081f42_55%,#041021_100%)]" />
+      <div className="fixed inset-0 opacity-[0.06] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:54px_54px]" />
+
+      <div className="relative z-10">
+        <header className="max-w-7xl mx-auto px-5 md:px-8 py-6 flex items-center justify-between">
+
+  <div className="flex items-center gap-4">
+    <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center shadow-lg overflow-hidden">
+      <img
+        src="/logo.png"
+        alt="Passaporte da Sorte"
+        className="w-9 h-9 object-contain"
+      />
+    </div>
+
+    <div>
+      <h1 className="text-lg md:text-2xl font-black tracking-tight">
+        Passaporte da Sorte
+      </h1>
+
+      <p className="text-white/50 text-sm">
+        Clube de viagens e experiências
+      </p>
+    </div>
+
+  </div>
+
+  <div className="flex items-center gap-3">
+
+    {user && (
+      <div
+  onClick={() => {
+    window.location.href = "/painel";
+  }}
+  className="rounded-2xl bg-white/10 border border-white/15 p-4 cursor-pointer hover:scale-105 transition"
+>
+  <p className="text-xs font-black text-white/50">
+    Milhas
+  </p>
+
+  <h3 className="text-xl font-black">
+    {saldoMilhas} 🍀
+  </h3>
+</div>
+    )}
+
+    {user ? (
+  <div className="flex items-center gap-3">
+
+    <button
+      onClick={() => {
+        window.location.href = "/painel";
+      }}
+      className="rounded-full bg-[#23C997] px-5 py-3 font-black text-[#061832] hover:scale-105 transition"
+    >
+      Meu Painel
+    </button>
+
+    <div className="relative">
+
+      <button
+        onClick={() => setMenuAberto(!menuAberto)}
+        className="hidden md:flex items-center gap-3 rounded-full bg-white/10 border border-white/15 px-4 py-2 hover:bg-white/15 transition"
+      >
+
+        <img
+          src={user.user_metadata?.avatar_url}
+          alt="Usuário"
+          className="w-8 h-8 rounded-full"
+        />
+
+        <span className="text-sm font-bold text-white">
+          {user.user_metadata?.full_name}
+        </span>
+
+      </button>
+
+      {menuAberto && (
+        <div className="absolute right-0 mt-3 w-44 rounded-2xl bg-white text-[#061832] shadow-2xl p-2 z-50">
+
+          <button
+            onClick={logout}
+            className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
+          >
+            Sair
+          </button>
+
+        </div>
+      )}
+
+    </div>
+
+  </div>
+) : (
+  <button
+    onClick={loginGoogle}
+    className="rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
+  >
+    Entrar com Google
+  </button>
+)}</div>
+</header>
+
+        <section className="max-w-7xl mx-auto px-5 md:px-8 pt-10 pb-16 grid lg:grid-cols-2 gap-10 items-center">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <button
+  onClick={() => {
+    document
+      .getElementById("como-funciona")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }}
+  className="mb-5 rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition"
+>
+  Como funciona
+</button>
+
+            <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
+              Seu próximo destino pode começar aqui.
+            </h2>
+
+            <p className="mt-6 text-lg md:text-xl text-white/70 max-w-xl leading-relaxed">
+              Participe de campanhas exclusivas, receba seu <b>PASS-ID</b> digital
+              e viva a experiência de transformar sorte em viagem.
+            </p>
+
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <button
+  onClick={() => {
+    document
+      .getElementById("comprar")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }}
+  className="rounded-full bg-[#23C997] px-8 py-4 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
+>
+  Comprar meu passaporte
+</button>
+
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+          >
+            <div className="rounded-[2.2rem] bg-white/10 border border-white/15 overflow-hidden shadow-2xl backdrop-blur-xl">
+              
+                <div
+  
+  className="relative overflow-hidden rounded-[2.2rem] border border-white/15 shadow-2xl cursor-pointer hover:scale-[1.01] transition"
+>
+
+  <img
+    src={campanhaBanner?.imagem ?? "/maceio.jpg"}
+    alt={campanhaBanner?.destino ?? "Destino"}
+    className="h-96 w-full object-cover"
+  />
+
+  <div className="absolute inset-0 bg-gradient-to-t from-[#061832] via-[#061832]/40 to-transparent" />
+
+  <div className="absolute bottom-0 left-0 right-0 p-8">
+
+
+    <p className="text-white/60 text-sm font-black">
+      {campanhaBanner?.titulo ?? "Destino"}
+    </p>
+
+    <h3 className="text-5xl font-black text-white">
+      {campanhaBanner?.destino ?? "Destino"}
+    </h3>
+
+    <div className="mt-4 flex flex-wrap gap-2">
+
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+
+  <span className="rounded-full bg-[#23C997] px-4 py-2 text-sm font-black text-[#061832]">
+    R$ {campanhaBanner?.preco}
+  </span>
+
+  <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black text-white">
+    +{campanhaBanner?.milhas} milhas
+  </span>
+
+  <button
+    onClick={() => {
+      window.location.href = `/campanha/${campanhaBanner?.id}`;
+    }}
+    className="rounded-full bg-white text-[#061832] px-5 py-2 font-black hover:scale-105 transition"
+  >
+    Ver detalhes
+  </button>
+
+</div>
+
+    </div>
+  </div>
+
+<button
+  onClick={(e) => {
+    e.stopPropagation();
+
+    const indexAtual = campanhas.findIndex(
+      (c) => c.id === campanhaBanner?.id
+    );
+
+    const anterior =
+      indexAtual <= 0
+        ? campanhas.length - 1
+        : indexAtual - 1;
+
+    setCampanhaBanner(campanhas[anterior]);
+  }}
+  className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/30 px-4 py-3 text-white backdrop-blur-xl hover:bg-black/50 transition"
+>
+  ‹
+</button>
+
+  <button
+  onClick={(e) => {
+    e.stopPropagation();
+
+    const indexAtual = campanhas.findIndex(
+      (c) => c.id === campanhaBanner?.id
+    );
+
+    const proximo =
+      indexAtual >= campanhas.length - 1
+        ? 0
+        : indexAtual + 1;
+
+    setCampanhaBanner(campanhas[proximo]);
+  }}
+  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/30 px-4 py-3 text-white backdrop-blur-xl hover:bg-black/50 transition"
+>
+  ›
+</button>
+
+</div>
+
+<div className="flex items-center justify-center gap-2 mt-4">
+  {campanhas.map((campanha) => (
+    <button
+      key={campanha.id}
+      onClick={() => setCampanhaBanner(campanha)}
+      className={`h-3 w-3 rounded-full transition ${
+  campanhaBanner?.id === campanha.id
+    ? "bg-[#23C997] w-8"
+    : "bg-white/30"
+}`}
+    />
+  ))}
+</div>
+              <div className="p-6 md:p-8">
+                <h3 className="text-2xl md:text-3xl font-black">
+                  Viagem para casal + experiência exclusiva
+                </h3>
+
+                <p className="text-white/60 mt-2">
+                  Um destino de inverno para transformar sorte em memória.
+                </p>
+
+                <div className="grid grid-cols-3 gap-3 mt-6">
+                  <Mini
+  icon={<Ticket />}
+  label="Passaporte"
+  value={`R$ ${campanhaSelecionada?.preco ?? 3.99}`}
+/>
+                  <Mini
+  icon={<Star />}
+  label="Milhas"
+  value={`+${campanhaSelecionada?.milhas ?? 10}`}
+/>
+                  <Mini
+  icon={<MapPin />}
+  label="Sorteio"
+  value={campanhaSelecionada?.data_sorteio ?? "21/06"}
+/>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+     <section
+  id="como-funciona"
+  className="max-w-7xl mx-auto px-5 md:px-8 py-10 grid md:grid-cols-3 gap-5"
+>   
+          <Step
+            n="01"
+            title="Escolha a campanha"
+            text="Veja o destino disponível e escolha quantos passaportes deseja."
+          />
+          <Step
+            n="02"
+            title="Receba seu PASS-ID"
+            text="Cada participação gera um código exclusivo, como PSD-0004821."
+          />
+          <Step
+            n="03"
+            title="Acumule milhas"
+            text="Suas participações geram pontos para futuras vantagens."
+          />
+        </section>
+
+        <section
+  id="comprar"
+  className="max-w-7xl mx-auto px-5 md:px-8 py-14"
+>
+          <div className="rounded-[2.2rem] bg-white text-[#061832] shadow-2xl p-6 md:p-8 border-4 border-[#23C997] relative overflow-hidden max-w-3xl mx-auto">
+  <div className="absolute top-0 left-0 right-0 bg-[#23C997] text-[#061832] text-center py-2 font-black text-sm">
+    🔥 CAMPANHA ATIVA
+  </div>
+
+  <div className="pt-8">
+            <h3 className="text-3xl font-black">Garanta seu Passaporte</h3>
+            <p className="text-slate-500 mt-2 mb-6">
+              Simulação do fluxo. Depois conectamos pagamento real.
+            </p>
+
+            <div className="space-y-4">
+              <Input
+                label="Nome completo"
+                value={nome}
+                onChange={setNome}
+                placeholder="Seu nome"
+              />
+
+              <Input
+                label="E-mail"
+                value={contato}
+                onChange={setContato}
+                placeholder="Digite seu e-mail"
+              />
+              <Input
+  label="CPF"
+  value={cpf}
+  onChange={setCpf}
+  placeholder="Digite seu CPF"
+/>
+
+         <div>
+  <label className="text-sm font-black">
+    Escolha a campanha
+  </label>
+
+  <select
+    value={campanhaSelecionada?.id ?? ""}
+    onChange={(e) => {
+      const selecionada = campanhas.find(
+        (c) => String(c.id) === e.target.value
+      );
+
+      setCampanhaSelecionada(selecionada);
+    }}
+    className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+  >
+    {campanhas.map((c) => (
+      <option key={c.id} value={c.id}>
+        {c.titulo} — {c.destino} — R$ {c.preco}
+      </option>
+    ))}
+  </select>
+</div>
+              <div>
+  <label className="text-sm font-black">Quantidade</label>
+
+  <div className="grid grid-cols-4 gap-2 mt-2 mb-3">
+    {[5, 10, 25, 50].map((q) => (
+      <button
+        key={q}
+        type="button"
+        onClick={() => setQuantidade(q)}
+        className={`rounded-xl px-3 py-2 font-black border transition ${
+          quantidade === q
+            ? "bg-[#23C997] text-[#061832] border-[#23C997]"
+            : "bg-white border-slate-200 text-[#061832]"
+        }`}
+      >
+        {q}
+      </button>
+    ))}
+  </div>
+
+  <input
+    type="number"
+    min="1"
+    value={quantidade}
+    onChange={(e) => setQuantidade(Number(e.target.value))}
+    placeholder="Digite a quantidade"
+    className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+  />
+
+  <p className="text-xs text-slate-400 mt-2">
+    Escolha uma sugestão ou digite a quantidade desejada.
+  </p>
+</div>
+
+              <div className="rounded-2xl bg-slate-100 p-4 flex justify-between font-black text-lg">
+                <span>Total</span>
+                <span>R$ {total}</span>
+              </div>
+
+              <button
+                onClick={gerarPix}
+                disabled={loadingPix}
+
+                className="w-full rounded-2xl py-4 bg-[#061832] text-white font-black hover:bg-[#0b244a] transition disabled:opacity-50"
+              >
+                {loadingPix ? "Gerando PIX..." : "Finalizar compra"}
+              </button>
+
+              {pixData?.qrCode && (
+  <div className="mt-6 rounded-2xl bg-white p-5 text-center">
+    <img
+      src={`data:image/png;base64,${pixData.qrCode}`}
+      alt="QR Code Pix"
+      className="w-64 mx-auto"
+    />
+
+    <p className="text-black text-sm mt-4 font-bold">
+      Escaneie o QR Code para pagar via PIX
+    </p>
+
+    <textarea
+      readOnly
+      value={pixData.payload}
+      className="mt-4 w-full rounded-xl border p-3 text-xs text-black"
+    />
+  </div>
+)}
+                {pixData?.qr_code_base64 && (
+  <div className="mt-6 rounded-2xl bg-white p-5">
+    <img
+      src={`data:image/png;base64,${pixData.qr_code_base64}`}
+      alt="PIX"
+      className="w-64 mx-auto"
+    />
+
+    <p className="text-center text-black text-sm mt-4 font-bold">
+      Escaneie o QR Code para pagar via PIX
+    </p>
+  </div>
+)}
+
+<p className="text-xs text-black/40 text-center mt-3">
+  🔒 Compra protegida • PASS-ID gerado automaticamente
+</p>
+              
+            </div>
+          </div>
+        </div>
+        </section>
+
+        <section className="max-w-7xl mx-auto px-5 md:px-8 py-14">
+          <div className="rounded-[2rem] bg-white/10 border border-white/15 p-7 md:p-10 grid md:grid-cols-3 gap-7 backdrop-blur-xl">
+            <div
+  onClick={() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }}
+  className="cursor-pointer hover:scale-105 transition"
+>
+  <Feature
+    icon={<Gift />}
+    title="Campanhas"
+    text="Destinos, experiências e vantagens exclusivas."
+  />
+</div>
+
+            <div
+  onClick={() => {
+    window.location.href = "/painel";
+  }}
+  className="cursor-pointer hover:scale-105 transition"
+>
+  <Feature
+    icon={<User />}
+    title="Meu Painel"
+    text="Histórico de PASS-IDs, milhas e campanhas."
+  />
+</div>
+            <div
+  onClick={() => {
+    window.location.href = "/regulamento";
+  }}
+  className="cursor-pointer hover:scale-105 transition"
+>
+  <Feature
+    icon={<ShieldCheck />}
+    title="Transparência"
+    text="Regulamento, datas e informações em um só lugar."
+  />
+</div>
+          </div>
+        </section>
+
+        <footer className="max-w-7xl mx-auto px-5 md:px-8 py-12 text-center text-white/45 text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-6 mb-4">
+            <a
+  href="https://instagram.com/passaporte.dasorte"
+  target="_blank"
+  className="hover:text-white transition"
+>
+  Instagram
+</a>
+
+<a
+  href="https://facebook.com"
+  target="_blank"
+  className="hover:text-white transition"
+>
+  Facebook
+</a>
+
+<a
+  href="https://wa.me/5554999304474?text=Olá,%20vim%20pelo%20Passaporte%20da%20Sorte!"
+  target="_blank"
+  className="hover:text-white transition"
+>
+  WhatsApp
+</a>
+          </div>
+<div className="flex flex-wrap items-center justify-center gap-3 mb-5">
+
+
+  <a
+    href="/termos"
+    className="rounded-full bg-white/10 border border-white/15 px-5 py-3 text-sm font-black text-white hover:bg-white/15 transition"
+  >
+    Termos de Uso
+  </a>
+
+  <a
+    href="/regulamento"
+    className="rounded-full bg-[#23C997] px-5 py-3 text-sm font-black text-[#061832] hover:scale-105 transition"
+  >
+    Política de Privacidade e Regulamento
+  </a>
+
+</div>
+          <p>© Passaporte da Sorte — Todos os direitos reservados.</p>
+        </footer>
+      </div>
+    </main>
+  );
+}
+
+function Mini({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-2xl bg-white/10 border border-white/10 p-3 text-center text-white">
+      <div className="mx-auto w-5 h-5 mb-1 opacity-80">{icon}</div>
+      <p className="text-xs text-white/55">{label}</p>
+      <p className="font-black">{value}</p>
+    </div>
+  );
+}
+
+function Step({ n, title, text }: { n: string; title: string; text: string }) {
+  return (
+    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-7 backdrop-blur-xl">
+      <p className="text-[#23C997] font-black text-sm font-[family-name:var(--font-cinzel)]">
+        {n}
+      </p>
+      <h3 className="text-2xl font-black mt-2">{title}</h3>
+      <p className="text-white/65 mt-3">{text}</p>
+    </div>
+  );
+}
+
+function Feature({
+  icon,
+  title,
+  text,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="flex gap-4">
+      <div className="w-12 h-12 rounded-2xl bg-[#23C997] text-[#061832] flex items-center justify-center shrink-0">
+        {icon}
+      </div>
+      <div>
+        <h4 className="text-xl font-black">{title}</h4>
+        <p className="text-white/65 mt-1">{text}</p>
+      </div>
+    </div>
+  );
+}
+
+function Input({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <div>
+      <label className="text-sm font-black">{label}</label>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+      />
+
+    
+    </div>
+    
+  );
+}
