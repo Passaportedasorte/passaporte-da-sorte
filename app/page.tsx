@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { useSearchParams } from "next/navigation";
 import { League_Spartan, Cinzel } from "next/font/google";
 import {
   Ticket,
@@ -27,7 +26,6 @@ const cinzel = Cinzel({
 });
 
 export default function PassaporteDaSorteSite() {
-  const searchParams = useSearchParams();
   const [nome, setNome] = useState("");
   const [contato, setContato] = useState("");
   const [quantidade, setQuantidade] = useState(1);
@@ -45,7 +43,7 @@ export default function PassaporteDaSorteSite() {
   const [cpf, setCpf] = useState("");
 
 
-  useEffect(() => {
+ useEffect(() => {
   async function buscarCampanhas() {
     const { data, error } = await supabase
       .from("campaigns")
@@ -60,31 +58,6 @@ export default function PassaporteDaSorteSite() {
     setCampanhas(data ?? []);
     setCampanhaBanner(data?.[0] ?? null);
     setCampanhaSelecionada(data?.[0] ?? null);
-    const campanhaUrl = searchParams.get("campanha");
-
-if (campanhaUrl) {
-  const encontrada = data?.find(
-    (c) => String(c.id) === campanhaUrl
-  );
-
-  setCampanhaSelecionada(
-    encontrada ?? data?.[0] ?? null
-  );
-} else {
-  const campanhaUrl = searchParams.get("campanha");
-
-if (campanhaUrl) {
-  const encontrada = data?.find(
-    (c) => String(c.id) === campanhaUrl
-  );
-
-  setCampanhaSelecionada(
-    encontrada ?? data?.[0] ?? null
-  );
-} else {
-  setCampanhaSelecionada(data?.[0] ?? null);
-}
-}
   }
 
   buscarCampanhas();
@@ -178,7 +151,10 @@ async function loginGoogle() {
   await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "http://localhost:3000",
+      redirectTo:
+        typeof window !== "undefined"
+          ? window.location.origin
+          : undefined,
     },
   });
 }
@@ -222,11 +198,13 @@ async function gerarPix() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        valor: valorUnitario * quantidade,
-        nome,
-        email: contato,
-        cpf,
-      }),
+  valor: valorUnitario * quantidade,
+  nome,
+  email: contato,
+  cpf,
+  campanhaId: campanhaSelecionada?.id,
+  quantidade,
+}),
     });
 
     const data = await response.json();
