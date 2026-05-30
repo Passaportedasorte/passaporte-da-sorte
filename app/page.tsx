@@ -748,7 +748,15 @@ async function salvarMeusDados() {
     />
     <input
   value={celular}
-  onChange={(e) => setCelular(e.target.value)}
+  onChange={(e) => {
+  const value = e.target.value
+    .replace(/\D/g, "")
+    .replace(/^(\d{2})(\d)/g, "($1) $2")
+    .replace(/(\d{5})(\d)/, "$1-$2")
+    .slice(0, 15);
+
+  setCelular(value);
+}}
   placeholder="Celular"
   className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
 />

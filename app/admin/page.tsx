@@ -9,15 +9,24 @@ export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
   const [campanhas, setCampanhas] = useState<any[]>([]);
   const [editandoId, setEditandoId] = useState<number | null>(null);
-const [editForm, setEditForm] = useState({
-  titulo: "",
-  destino: "",
-  preco: "",
-  milhas: "",
-  data_sorteio: "",
-  imagem: "",
-});
+
+  const [resumo, setResumo] = useState({
+    campanhas: 0,
+    compras: 0,
+    passIds: 0,
+    arrecadado: 0,
+  });
+
   const [form, setForm] = useState({
+    titulo: "",
+    destino: "",
+    preco: "",
+    milhas: "",
+    data_sorteio: "",
+    imagem: "",
+  });
+
+  const [editForm, setEditForm] = useState({
     titulo: "",
     destino: "",
     preco: "",
@@ -33,6 +42,7 @@ const [editForm, setEditForm] = useState({
 
       if (data.user?.email === ADMIN_EMAIL) {
         buscarCampanhas();
+        buscarResumo();
       }
     }
 
@@ -43,7 +53,10 @@ const [editForm, setEditForm] = useState({
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://localhost:3000/admin",
+        redirectTo:
+          typeof window !== "undefined"
+            ? `${window.location.origin}/admin`
+            : undefined,
       },
     });
   }
@@ -51,6 +64,36 @@ const [editForm, setEditForm] = useState({
   async function logout() {
     await supabase.auth.signOut();
     setUser(null);
+  }
+
+  async function buscarResumo() {
+    const { count: campanhasCount } = await supabase
+      .from("campaigns")
+      .select("*", { count: "exact", head: true });
+
+    const { count: comprasCount, data: compras } = await supabase
+      .from("compras")
+      .select("valor,status", { count: "exact" });
+
+    const { count: passIdsCount } = await supabase
+      .from("pass_ids")
+      .select("*", { count: "exact", head: true });
+
+    const arrecadado =
+      compras
+        ?.filter(
+          (c) =>
+            c.status === "PAYMENT_RECEIVED" ||
+            c.status === "PAYMENT_CONFIRMED"
+        )
+        .reduce((total, item) => total + Number(item.valor || 0), 0) ?? 0;
+
+    setResumo({
+      campanhas: campanhasCount ?? 0,
+      compras: comprasCount ?? 0,
+      passIds: passIdsCount ?? 0,
+      arrecadado,
+    });
   }
 
   async function buscarCampanhas() {
@@ -83,12 +126,9 @@ const [editForm, setEditForm] = useState({
     });
 
     if (error) {
-      console.error(error);
       alert("Erro ao criar campanha.");
       return;
     }
-
-    alert("Campanha criada com sucesso!");
 
     setForm({
       titulo: "",
@@ -99,75 +139,77 @@ const [editForm, setEditForm] = useState({
       imagem: "",
     });
 
-    buscarCampanhas();
+    await buscarCampanhas();
+    await buscarResumo();
+
+    alert("Campanha criada com sucesso!");
+  }
+
+  function iniciarEdicao(campanha: any) {
+    setEditandoId(campanha.id);
+    setEditForm({
+      titulo: campanha.titulo || "",
+      destino: campanha.destino || "",
+      preco: String(campanha.preco || ""),
+      milhas: String(campanha.milhas || ""),
+      data_sorteio: campanha.data_sorteio || "",
+      imagem: campanha.imagem || "",
+    });
+  }
+
+  function cancelarEdicao() {
+    setEditandoId(null);
+    setEditForm({
+      titulo: "",
+      destino: "",
+      preco: "",
+      milhas: "",
+      data_sorteio: "",
+      imagem: "",
+    });
+  }
+
+  async function salvarEdicao(id: number) {
+    const { error } = await supabase
+      .from("campaigns")
+      .update({
+        titulo: editForm.titulo,
+        destino: editForm.destino,
+        preco: Number(editForm.preco),
+        milhas: Number(editForm.milhas || 0),
+        data_sorteio: editForm.data_sorteio,
+        imagem: editForm.imagem,
+      })
+      .eq("id", id);
+
+    if (error) {
+      alert("Erro ao salvar alterações.");
+      return;
+    }
+
+    cancelarEdicao();
+    await buscarCampanhas();
+    await buscarResumo();
+
+    alert("Campanha atualizada!");
   }
 
   async function excluirCampanha(id: number) {
     const confirmar = confirm("Deseja realmente excluir esta campanha?");
-
     if (!confirmar) return;
 
-    const { error } = await supabase
-      .from("campaigns")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("campaigns").delete().eq("id", id);
 
     if (error) {
-      console.error(error);
       alert("Erro ao excluir campanha.");
       return;
     }
 
+    await buscarCampanhas();
+    await buscarResumo();
+
     alert("Campanha excluída!");
-    buscarCampanhas();
   }
-  function iniciarEdicao(campanha: any) {
-  setEditandoId(campanha.id);
-  setEditForm({
-    titulo: campanha.titulo || "",
-    destino: campanha.destino || "",
-    preco: String(campanha.preco || ""),
-    milhas: String(campanha.milhas || ""),
-    data_sorteio: campanha.data_sorteio || "",
-    imagem: campanha.imagem || "",
-  });
-}
-
-function cancelarEdicao() {
-  setEditandoId(null);
-  setEditForm({
-    titulo: "",
-    destino: "",
-    preco: "",
-    milhas: "",
-    data_sorteio: "",
-    imagem: "",
-  });
-}
-
-async function salvarEdicao(id: number) {
-  const { error } = await supabase
-    .from("campaigns")
-    .update({
-      titulo: editForm.titulo,
-      destino: editForm.destino,
-      preco: Number(editForm.preco),
-      milhas: Number(editForm.milhas || 0),
-      data_sorteio: editForm.data_sorteio,
-      imagem: editForm.imagem,
-    })
-    .eq("id", id);
-
-  if (error) {
-    console.error(error);
-    alert("Erro ao salvar alterações.");
-    return;
-  }
-
-  alert("Campanha atualizada!");
-  cancelarEdicao();
-  buscarCampanhas();
-}
 
   if (!user) {
     return (
@@ -223,7 +265,7 @@ async function salvarEdicao(id: number) {
             <h1 className="text-5xl font-black mt-6">Admin</h1>
 
             <p className="text-white/60 mt-2">
-              Gerencie campanhas do Passaporte da Sorte.
+              Gerencie o Passaporte da Sorte.
             </p>
           </div>
 
@@ -235,50 +277,60 @@ async function salvarEdicao(id: number) {
           </button>
         </div>
 
+        <section className="grid md:grid-cols-4 gap-4 mt-10">
+          <ResumoCard titulo="Campanhas" valor={resumo.campanhas} />
+          <ResumoCard titulo="Compras" valor={resumo.compras} />
+          <ResumoCard titulo="PASS-IDs" valor={resumo.passIds} />
+          <ResumoCard
+            titulo="Arrecadado"
+            valor={`R$ ${resumo.arrecadado.toFixed(2).replace(".", ",")}`}
+          />
+        </section>
+
         <section className="grid lg:grid-cols-3 gap-8 mt-10">
           <div className="lg:col-span-1 rounded-[2rem] bg-white text-[#061832] p-6 shadow-2xl h-fit">
             <h2 className="text-2xl font-black">Nova campanha</h2>
 
-            <div className="mt-6 space-y-4">
-              <Input
-                label="Título"
+            <div className="grid gap-3 mt-5">
+              <AdminInput
+                placeholder="Título"
                 value={form.titulo}
                 onChange={(v) => setForm({ ...form, titulo: v })}
               />
 
-              <Input
-                label="Destino"
+              <AdminInput
+                placeholder="Destino"
                 value={form.destino}
                 onChange={(v) => setForm({ ...form, destino: v })}
               />
 
-              <Input
-                label="Preço"
+              <AdminInput
+                placeholder="Preço"
                 value={form.preco}
                 onChange={(v) => setForm({ ...form, preco: v })}
               />
 
-              <Input
-                label="Milhas"
+              <AdminInput
+                placeholder="Milhas"
                 value={form.milhas}
                 onChange={(v) => setForm({ ...form, milhas: v })}
               />
 
-              <Input
-                label="Data do sorteio"
+              <AdminInput
+                placeholder="Data do sorteio"
                 value={form.data_sorteio}
                 onChange={(v) => setForm({ ...form, data_sorteio: v })}
               />
 
-              <Input
-                label="Imagem"
+              <AdminInput
+                placeholder="URL da imagem"
                 value={form.imagem}
                 onChange={(v) => setForm({ ...form, imagem: v })}
               />
 
               <button
                 onClick={criarCampanha}
-                className="w-full rounded-2xl bg-[#23C997] py-4 font-black text-[#061832]"
+                className="rounded-2xl bg-[#23C997] text-[#061832] py-4 font-black"
               >
                 Criar campanha
               </button>
@@ -286,125 +338,136 @@ async function salvarEdicao(id: number) {
           </div>
 
           <div className="lg:col-span-2">
-            <h2 className="text-3xl font-black mb-5">
-              Campanhas cadastradas
-            </h2>
+            <h2 className="text-3xl font-black mb-5">Campanhas</h2>
 
-            {campanhas.length === 0 ? (
-              <div className="rounded-[2rem] bg-white/10 border border-white/15 p-8 text-center text-white/60">
-                Nenhuma campanha cadastrada ainda.
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-2 gap-5">
-                {campanhas.map((campanha) => (
-                  <div
-                    key={campanha.id}
-                    className="rounded-[2rem] bg-white/10 border border-white/15 overflow-hidden shadow-2xl"
-                  >
-                    <img
-                      src={campanha.imagem || "/logo.png"}
-                      alt={campanha.destino}
-                      className="h-44 w-full object-cover"
-                    />
+            <div className="grid gap-5">
+              {campanhas.map((campanha) => (
+                <div
+                  key={campanha.id}
+                  className="rounded-[2rem] bg-white/10 border border-white/15 p-5"
+                >
+                  {editandoId === campanha.id ? (
+                    <div className="grid gap-3">
+                      <AdminInput
+                        placeholder="Título"
+                        value={editForm.titulo}
+                        onChange={(v) =>
+                          setEditForm({ ...editForm, titulo: v })
+                        }
+                      />
 
-                    <div className="p-5">
-                      <p className="text-white/50 text-sm font-black">
-                        {campanha.titulo}
-                      </p>
+                      <AdminInput
+                        placeholder="Destino"
+                        value={editForm.destino}
+                        onChange={(v) =>
+                          setEditForm({ ...editForm, destino: v })
+                        }
+                      />
 
-                      <h3 className="text-2xl font-black">
-                        {campanha.destino}
-                      </h3>
+                      <AdminInput
+                        placeholder="Preço"
+                        value={editForm.preco}
+                        onChange={(v) =>
+                          setEditForm({ ...editForm, preco: v })
+                        }
+                      />
 
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <span className="rounded-full bg-[#23C997] px-3 py-1 text-xs font-black text-[#061832]">
-                          R$ {campanha.preco}
-                        </span>
+                      <AdminInput
+                        placeholder="Milhas"
+                        value={editForm.milhas}
+                        onChange={(v) =>
+                          setEditForm({ ...editForm, milhas: v })
+                        }
+                      />
 
-                        <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black">
-                          🍀 {campanha.milhas} milhas
-                        </span>
+                      <AdminInput
+                        placeholder="Data do sorteio"
+                        value={editForm.data_sorteio}
+                        onChange={(v) =>
+                          setEditForm({ ...editForm, data_sorteio: v })
+                        }
+                      />
 
-                        <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black">
-                          {campanha.data_sorteio}
-                        </span>
-                      </div>
+                      <AdminInput
+                        placeholder="URL da imagem"
+                        value={editForm.imagem}
+                        onChange={(v) =>
+                          setEditForm({ ...editForm, imagem: v })
+                        }
+                      />
 
-                      <div className="mt-5 flex gap-3">
-                        {editandoId === campanha.id && (
-  <div className="mt-5 space-y-3 rounded-2xl bg-white p-4 text-[#061832]">
-    <Input
-      label="Título"
-      value={editForm.titulo}
-      onChange={(v) => setEditForm({ ...editForm, titulo: v })}
-    />
-
-    <Input
-      label="Destino"
-      value={editForm.destino}
-      onChange={(v) => setEditForm({ ...editForm, destino: v })}
-    />
-
-    <Input
-      label="Preço"
-      value={editForm.preco}
-      onChange={(v) => setEditForm({ ...editForm, preco: v })}
-    />
-
-    <Input
-      label="Milhas"
-      value={editForm.milhas}
-      onChange={(v) => setEditForm({ ...editForm, milhas: v })}
-    />
-
-    <Input
-      label="Data do sorteio"
-      value={editForm.data_sorteio}
-      onChange={(v) => setEditForm({ ...editForm, data_sorteio: v })}
-    />
-
-    <Input
-      label="Imagem"
-      value={editForm.imagem}
-      onChange={(v) => setEditForm({ ...editForm, imagem: v })}
-    />
-
-    <div className="flex gap-3">
-      <button
-        onClick={() => salvarEdicao(campanha.id)}
-        className="flex-1 rounded-xl bg-[#23C997] py-3 font-black text-[#061832]"
-      >
-        Salvar
-      </button>
-
-      <button
-        onClick={cancelarEdicao}
-        className="flex-1 rounded-xl bg-slate-200 py-3 font-black text-[#061832]"
-      >
-        Cancelar
-      </button>
-    </div>
-  </div>
-)}
-                       <button
-  onClick={() => iniciarEdicao(campanha)}
-  className="flex-1 rounded-xl bg-white/10 border border-white/15 py-3 font-black text-white"
->
-  Editar
-</button>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => salvarEdicao(campanha.id)}
+                          className="rounded-xl bg-[#23C997] text-[#061832] px-4 py-3 font-black"
+                        >
+                          Salvar
+                        </button>
 
                         <button
-                          onClick={() => excluirCampanha(campanha.id)}
-                          className="flex-1 rounded-xl bg-red-500 py-3 font-black text-white"
+                          onClick={cancelarEdicao}
+                          className="rounded-xl bg-white/10 border border-white/15 px-4 py-3 font-black"
                         >
-                          Excluir
+                          Cancelar
                         </button>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ) : (
+                    <div className="flex flex-col md:flex-row gap-5">
+                      <img
+                        src={campanha.imagem || "/logo.png"}
+                        alt={campanha.destino}
+                        className="w-full md:w-48 h-36 object-cover rounded-2xl"
+                      />
+
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-black">
+                          {campanha.titulo}
+                        </h3>
+
+                        <p className="text-white/60 mt-1">
+                          {campanha.destino}
+                        </p>
+
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          <span className="rounded-full bg-[#23C997] text-[#061832] px-4 py-2 text-sm font-black">
+                            R$ {campanha.preco}
+                          </span>
+
+                          <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black">
+                            {campanha.milhas} milhas
+                          </span>
+
+                          <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black">
+                            Sorteio: {campanha.data_sorteio || "—"}
+                          </span>
+                        </div>
+
+                        <div className="flex gap-3 mt-5">
+                          <button
+                            onClick={() => iniciarEdicao(campanha)}
+                            className="rounded-xl bg-white text-[#061832] px-4 py-3 font-black"
+                          >
+                            Editar
+                          </button>
+
+                          <button
+                            onClick={() => excluirCampanha(campanha.id)}
+                            className="rounded-xl bg-red-500 text-white px-4 py-3 font-black"
+                          >
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {campanhas.length === 0 && (
+                <p className="text-white/50">Nenhuma campanha cadastrada.</p>
+              )}
+            </div>
           </div>
         </section>
       </div>
@@ -412,24 +475,30 @@ async function salvarEdicao(id: number) {
   );
 }
 
-function Input({
-  label,
+function ResumoCard({ titulo, valor }: { titulo: string; valor: any }) {
+  return (
+    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-5">
+      <p className="text-white/50 text-sm font-black">{titulo}</p>
+      <h2 className="text-3xl font-black mt-2">{valor}</h2>
+    </div>
+  );
+}
+
+function AdminInput({
+  placeholder,
   value,
   onChange,
 }: {
-  label: string;
+  placeholder: string;
   value: string;
   onChange: (v: string) => void;
 }) {
   return (
-    <div>
-      <label className="text-sm font-black">{label}</label>
-
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
-      />
-    </div>
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+    />
   );
 }
