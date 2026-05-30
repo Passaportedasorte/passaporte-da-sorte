@@ -47,6 +47,10 @@ export default function PassaporteDaSorteSite() {
   const [erroCadastro, setErroCadastro] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [modoLogin, setModoLogin] = useState<"entrar" | "criar">("entrar");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [completarCadastroAberto, setCompletarCadastroAberto] = useState(false);  
+  const [cpfComplemento, setCpfComplemento] = useState("");
+  const [nascimentoComplemento, setNascimentoComplemento] = useState("");
 
   useEffect(() => {
     async function buscarCampanhas() {
@@ -68,13 +72,24 @@ export default function PassaporteDaSorteSite() {
     buscarCampanhas();
   }, []);
 
-  function preencherDadosUsuario(usuario: any) {
-    if (!usuario) return;
+ function preencherDadosUsuario(usuario: any) {
+  if (!usuario) return;
 
-    setNome(usuario.user_metadata?.full_name || "");
-    setContato(usuario.email || "");
-    setCpf(usuario.user_metadata?.cpf || "");
+  const cpfUsuario = usuario.user_metadata?.cpf || "";
+  const nascimentoUsuario =
+    usuario.user_metadata?.data_nascimento || "";
+
+  setNome(usuario.user_metadata?.full_name || "");
+  setContato(usuario.email || "");
+  setCpf(cpfUsuario);
+  setDataNascimento(nascimentoUsuario);
+
+  if (!cpfUsuario || !nascimentoUsuario) {
+    setCpfComplemento(cpfUsuario);
+    setNascimentoComplemento(nascimentoUsuario);
+    setCompletarCadastroAberto(true);
   }
+}
 
   useEffect(() => {
     async function getUser() {
@@ -190,9 +205,10 @@ const { data, error } = await supabase.auth.signUp({
   password: senhaLogin,
   options: {
     data: {
-      full_name: nomeCadastro,
-      cpf: cpfCadastro,
-    },
+  full_name: nomeCadastro,
+  cpf: cpfCadastro,
+  data_nascimento: dataNascimento,
+},
   },
 });
 
@@ -200,6 +216,12 @@ console.log("SIGNUP DATA:", data);
 console.log("SIGNUP ERROR:", error);
 
 if (error) {
+  if (error.message.includes("User already registered")) {
+    alert("Este e-mail já possui cadastro. Clique em Entrar.");
+    setModoLogin("entrar");
+    return;
+  }
+
   alert(error.message);
   return;
 }
@@ -649,6 +671,14 @@ async function loginEmail() {
       onChange={setCpf}
       placeholder="Digite seu CPF"
     />
+
+    <input
+  value={dataNascimento}
+  onChange={(e) => setDataNascimento(e.target.value)}
+  placeholder="Data de nascimento"
+  type="date"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
   </>
 )}
 
