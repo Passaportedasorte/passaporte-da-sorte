@@ -41,6 +41,7 @@ export default function PassaporteDaSorteSite() {
   const [campanhaSelecionada, setCampanhaSelecionada] = useState<any>(null);
   const [menuAberto, setMenuAberto] = useState(false);
   const [cpf, setCpf] = useState("");
+  const [loginAberto, setLoginAberto] = useState(false);
 
 
  useEffect(() => {
@@ -155,9 +156,50 @@ async function loginGoogle() {
         typeof window !== "undefined"
           ? window.location.origin
           : undefined,
+
+  
     },
   });
 }
+
+const [emailLogin, setEmailLogin] = useState("");
+const [senhaLogin, setSenhaLogin] = useState("");
+const [nomeCadastro, setNomeCadastro] = useState("");
+
+async function criarConta() {
+  const { error } = await supabase.auth.signUp({
+    email: emailLogin,
+    password: senhaLogin,
+    options: {
+      data: {
+        full_name: nomeCadastro,
+      },
+    },
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Conta criada com sucesso!");
+}
+
+async function loginEmail() {
+  const { error } = await supabase.auth.signInWithPassword({
+    email: emailLogin,
+    password: senhaLogin,
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Login realizado!");
+}
+
+
 
 async function logout() {
   await supabase.auth.signOut();
@@ -165,7 +207,7 @@ async function logout() {
 }
 async function gerarPix() {
   if (!user) {
-    alert("Faça login com Google antes de finalizar a compra.");
+    alert("Faça login ou crie sua conta antes de finalizar a compra.");
     return;
   }
 
@@ -398,12 +440,14 @@ if (milhasAtuais) {
 
   </div>
 ) : (
-  <button
-    onClick={loginGoogle}
-    className="rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
-  >
-    Entrar com Google
-  </button>
+  <div className="flex flex-col md:flex-row gap-3">
+    <button
+      onClick={() => setLoginAberto(true)}
+      className="rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
+    >
+      Entrar / Criar conta
+    </button>
+  </div>
 )}</div>
 </header>
 
@@ -853,6 +897,86 @@ if (milhasAtuais) {
           <p>© Passaporte da Sorte — Todos os direitos reservados.</p>
         </footer>
       </div>
+
+      {loginAberto && (
+  <div className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+    <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
+
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-black text-white">
+          Entrar na conta
+        </h3>
+
+        <button
+          onClick={() => setLoginAberto(false)}
+          className="text-white/60 hover:text-white text-2xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <p className="text-white/60 text-sm mt-2">
+        Acesse sua carteira, PASS-IDs e milhas.
+      </p>
+
+      <div className="grid gap-3 mt-5">
+
+        <input
+          value={nomeCadastro}
+          onChange={(e) => setNomeCadastro(e.target.value)}
+          placeholder="Nome completo"
+          className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+        />
+
+        <input
+          value={emailLogin}
+          onChange={(e) => setEmailLogin(e.target.value)}
+          placeholder="Seu e-mail"
+          type="email"
+          className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+        />
+
+        <input
+          value={senhaLogin}
+          onChange={(e) => setSenhaLogin(e.target.value)}
+          placeholder="Sua senha"
+          type="password"
+          className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+        />
+
+        <button
+          onClick={criarConta}
+          className="rounded-2xl bg-[#23C997] text-[#061832] font-black py-3"
+        >
+          Criar conta
+        </button>
+
+        <button
+          onClick={loginEmail}
+          className="rounded-2xl bg-white text-[#061832] font-black py-3"
+        >
+          Entrar com e-mail
+        </button>
+
+        <div className="flex items-center gap-3 my-2">
+          <div className="h-px bg-white/20 flex-1" />
+          <span className="text-white/40 text-xs font-bold">
+            OU
+          </span>
+          <div className="h-px bg-white/20 flex-1" />
+        </div>
+
+        <button
+          onClick={loginGoogle}
+          className="rounded-2xl bg-white/10 border border-white/20 text-white font-black py-3"
+        >
+          Entrar com Google
+        </button>
+
+      </div>
+    </div>
+  </div>
+)}
     </main>
   );
 }
