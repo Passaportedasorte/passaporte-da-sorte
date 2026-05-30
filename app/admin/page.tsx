@@ -109,6 +109,31 @@ export default function AdminPage() {
 
     setCampanhas(data ?? []);
   }
+async function uploadImagem(
+  file: File,
+  tipo: "nova" | "editar"
+) {
+  const fileName = `${Date.now()}-${file.name}`;
+
+  const { error } = await supabase.storage
+    .from("campanhas")
+    .upload(fileName, file);
+
+  if (error) {
+    alert("Erro ao enviar imagem.");
+    return;
+  }
+
+  const { data } = supabase.storage
+    .from("campanhas")
+    .getPublicUrl(fileName);
+
+  if (tipo === "nova") {
+    setForm({ ...form, imagem: data.publicUrl });
+  } else {
+    setEditForm({ ...editForm, imagem: data.publicUrl });
+  }
+}
 
   async function criarCampanha() {
     if (!form.titulo || !form.destino || !form.preco) {
@@ -322,11 +347,23 @@ export default function AdminPage() {
                 onChange={(v) => setForm({ ...form, data_sorteio: v })}
               />
 
-              <AdminInput
-                placeholder="URL da imagem"
-                value={form.imagem}
-                onChange={(v) => setForm({ ...form, imagem: v })}
-              />
+              <input
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) uploadImagem(file, "nova");
+  }}
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+/>
+
+{form.imagem && (
+  <img
+    src={form.imagem}
+    alt="Prévia"
+    className="w-full h-40 object-cover rounded-2xl"
+  />
+)}
 
               <button
                 onClick={criarCampanha}
@@ -388,13 +425,23 @@ export default function AdminPage() {
                         }
                       />
 
-                      <AdminInput
-                        placeholder="URL da imagem"
-                        value={editForm.imagem}
-                        onChange={(v) =>
-                          setEditForm({ ...editForm, imagem: v })
-                        }
-                      />
+                      <input
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) uploadImagem(file, "editar");
+  }}
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+/>
+
+{editForm.imagem && (
+  <img
+    src={editForm.imagem}
+    alt="Prévia"
+    className="w-full h-40 object-cover rounded-2xl"
+  />
+)}
 
                       <div className="flex gap-3">
                         <button
