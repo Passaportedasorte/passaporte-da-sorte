@@ -182,7 +182,42 @@ export default function PassaporteDaSorteSite() {
   return;
 }
 
+
 setErroCadastro("");
+
+const { data, error } = await supabase.auth.signUp({
+  email: emailLogin,
+  password: senhaLogin,
+  options: {
+    data: {
+      full_name: nomeCadastro,
+      cpf: cpfCadastro,
+    },
+  },
+});
+
+console.log("SIGNUP DATA:", data);
+console.log("SIGNUP ERROR:", error);
+
+if (error) {
+  alert(error.message);
+  return;
+}
+
+const { error: loginAutomaticoError } = await supabase.auth.signInWithPassword({
+  email: emailLogin,
+  password: senhaLogin,
+});
+
+console.log("LOGIN APÓS CADASTRO ERROR:", loginAutomaticoError);
+
+if (loginAutomaticoError) {
+  alert("Conta criada! Agora confirme seu e-mail e faça login.");
+  return;
+}
+
+alert("Conta criada e login realizado!");
+setLoginAberto(false);
 
    await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -200,21 +235,22 @@ alert("Conta criada e login realizado!");
 setLoginAberto(false);
   }
 
-  async function loginEmail() {
-    const { error } = await supabase.auth.signInWithPassword({
-      email: emailLogin,
-      password: senhaLogin,
-    });
+async function loginEmail() {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: emailLogin,
+    password: senhaLogin,
+  });
 
-    if (error) {
-  console.log("ERRO AO CRIAR CONTA:", error);
-  alert(error.message);
-  return;
-}
+  console.log("LOGIN DATA:", data);
+  console.log("LOGIN ERROR:", error);
 
-    setLoginAberto(false);
+  if (error) {
+    alert(error.message);
+    return;
   }
 
+  setLoginAberto(false);
+}
   async function logout() {
     await supabase.auth.signOut();
     setUser(null);
