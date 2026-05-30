@@ -44,6 +44,9 @@ export default function PassaporteDaSorteSite() {
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [nomeCadastro, setNomeCadastro] = useState("");
   const [cpfCadastro, setCpfCadastro] = useState("");
+  const [erroCadastro, setErroCadastro] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [modoLogin, setModoLogin] = useState<"entrar" | "criar">("entrar");
 
   useEffect(() => {
     async function buscarCampanhas() {
@@ -174,7 +177,12 @@ export default function PassaporteDaSorteSite() {
     if (!emailLogin.trim()) return alert("Preencha seu e-mail.");
     if (!cpfCadastro.trim()) return alert("Preencha seu CPF.");
     if (!senhaLogin.trim()) return alert("Crie uma senha.");
-    if (senhaLogin !== confirmarSenha) return alert("As senhas não conferem.");
+    if (senhaLogin !== confirmarSenha) {
+  setErroCadastro("As senhas não conferem.");
+  return;
+}
+
+setErroCadastro("");
 
     const { error } = await supabase.auth.signUp({
       email: emailLogin,
@@ -568,26 +576,29 @@ export default function PassaporteDaSorteSite() {
               </p>
 
               <div className="space-y-4">
-                <Input
-                  label="Nome completo"
-                  value={nome}
-                  onChange={setNome}
-                  placeholder="Seu nome"
-                />
+               <Input
+  label="Nome completo"
+  value={nome}
+  onChange={setNome}
+  placeholder="Seu nome"
+  disabled={!!user}
+/>
 
-                <Input
-                  label="E-mail"
-                  value={contato}
-                  onChange={setContato}
-                  placeholder="Digite seu e-mail"
-                />
+<Input
+  label="E-mail"
+  value={contato}
+  onChange={setContato}
+  placeholder="Digite seu e-mail"
+  disabled={!!user}
+/>
 
-                <Input
-                  label="CPF"
-                  value={cpf}
-                  onChange={setCpf}
-                  placeholder="Digite seu CPF"
-                />
+<Input
+  label="CPF"
+  value={cpf}
+  onChange={setCpf}
+  placeholder="Digite seu CPF"
+  disabled={!!user}
+/>
 
                 <div>
                   <label className="text-sm font-black">
@@ -778,72 +789,188 @@ export default function PassaporteDaSorteSite() {
               Acesse sua carteira, PASS-IDs e milhas.
             </p>
 
-            <div className="grid gap-3 mt-5">
-              <input
-                value={nomeCadastro}
-                onChange={(e) => setNomeCadastro(e.target.value)}
-                placeholder="Nome completo"
-                className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
-              />
+            <div className="flex rounded-2xl bg-white/10 p-1 mt-5">
+  <button
+    onClick={() => setModoLogin("entrar")}
+    className={`flex-1 rounded-xl py-3 font-black ${
+      modoLogin === "entrar"
+        ? "bg-[#23C997] text-[#061832]"
+        : "text-white/60"
+    }`}
+  >
+    Entrar
+  </button>
 
-              <input
-                value={cpfCadastro}
-                onChange={(e) => setCpfCadastro(e.target.value)}
-                placeholder="CPF"
-                className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
-              />
+  <button
+    onClick={() => setModoLogin("criar")}
+    className={`flex-1 rounded-xl py-3 font-black ${
+      modoLogin === "criar"
+        ? "bg-[#23C997] text-[#061832]"
+        : "text-white/60"
+    }`}
+  >
+    Criar conta
+  </button>
+</div>
 
-              <input
-                value={emailLogin}
-                onChange={(e) => setEmailLogin(e.target.value)}
-                placeholder="Seu e-mail"
-                type="email"
-                className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
-              />
+<div className="flex rounded-2xl bg-white/10 p-1 mt-5">
+  <button
+    type="button"
+    onClick={() => setModoLogin("entrar")}
+    className={`flex-1 rounded-xl py-3 font-black ${
+      modoLogin === "entrar"
+        ? "bg-[#23C997] text-[#061832]"
+        : "text-white/60"
+    }`}
+  >
+    Entrar
+  </button>
 
-              <input
-                value={senhaLogin}
-                onChange={(e) => setSenhaLogin(e.target.value)}
-                placeholder="Sua senha"
-                type="password"
-                className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
-              />
+  <button
+    type="button"
+    onClick={() => setModoLogin("criar")}
+    className={`flex-1 rounded-xl py-3 font-black ${
+      modoLogin === "criar"
+        ? "bg-[#23C997] text-[#061832]"
+        : "text-white/60"
+    }`}
+  >
+    Criar conta
+  </button>
+</div>
 
-              <input
-                value={confirmarSenha}
-                onChange={(e) => setConfirmarSenha(e.target.value)}
-                placeholder="Confirmar senha"
-                type="password"
-                className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
-              />
+<div className="grid gap-3 mt-5">
+  {modoLogin === "criar" && (
+    <>
+      <input
+        value={nomeCadastro}
+        onChange={(e) => setNomeCadastro(e.target.value)}
+        placeholder="Nome completo"
+        className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+      />
 
-              <button
-                onClick={criarConta}
-                className="rounded-2xl bg-[#23C997] text-[#061832] font-black py-3"
-              >
-                Criar conta
-              </button>
+      <input
+        value={cpfCadastro}
+        onChange={(e) => {
+          const value = e.target.value
+            .replace(/\D/g, "")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+            .slice(0, 14);
 
-              <button
-                onClick={loginEmail}
-                className="rounded-2xl bg-white text-[#061832] font-black py-3"
-              >
-                Entrar com e-mail
-              </button>
+          setCpfCadastro(value);
+        }}
+        placeholder="CPF"
+        className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+      />
+    </>
+  )}
 
-              <div className="flex items-center gap-3 my-2">
-                <div className="h-px bg-white/20 flex-1" />
-                <span className="text-white/40 text-xs font-bold">OU</span>
-                <div className="h-px bg-white/20 flex-1" />
-              </div>
+  <input
+    value={emailLogin}
+    onChange={(e) => setEmailLogin(e.target.value)}
+    placeholder="Seu e-mail"
+    type="email"
+    className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+  />
 
-              <button
-                onClick={loginGoogle}
-                className="rounded-2xl bg-white/10 border border-white/20 text-white font-black py-3"
-              >
-                Entrar com Google
-              </button>
-            </div>
+  <div className="relative">
+    <input
+      value={senhaLogin}
+      onChange={(e) => setSenhaLogin(e.target.value)}
+      placeholder="Sua senha"
+      type={mostrarSenha ? "text" : "password"}
+      className="w-full rounded-2xl px-4 py-3 pr-16 bg-white text-[#061832]"
+    />
+
+    <button
+      type="button"
+      onClick={() => setMostrarSenha(!mostrarSenha)}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#061832]/60"
+    >
+      {mostrarSenha ? "Ocultar" : "Ver"}
+    </button>
+  </div>
+
+  {modoLogin === "criar" && (
+    <>
+      <div className="relative">
+        <input
+          value={confirmarSenha}
+          onChange={(e) => setConfirmarSenha(e.target.value)}
+          placeholder="Confirmar senha"
+          type={mostrarSenha ? "text" : "password"}
+          className={`w-full rounded-2xl px-4 py-3 pr-16 bg-white text-[#061832] border-2 ${
+            confirmarSenha && senhaLogin === confirmarSenha
+              ? "border-[#23C997]"
+              : confirmarSenha && senhaLogin !== confirmarSenha
+              ? "border-red-500"
+              : "border-transparent"
+          }`}
+        />
+
+        <button
+          type="button"
+          onClick={() => setMostrarSenha(!mostrarSenha)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-[#061832]/60"
+        >
+          {mostrarSenha ? "Ocultar" : "Ver"}
+        </button>
+      </div>
+
+      {confirmarSenha && senhaLogin !== confirmarSenha && (
+        <p className="text-red-400 text-sm font-semibold">
+          As senhas não conferem.
+        </p>
+      )}
+
+      {confirmarSenha && senhaLogin === confirmarSenha && (
+        <p className="text-[#23C997] text-sm font-semibold">
+          ✓ Senhas conferem
+        </p>
+      )}
+    </>
+  )}
+
+  {erroCadastro && (
+    <p className="text-red-400 text-sm font-semibold">
+      {erroCadastro}
+    </p>
+  )}
+
+  {modoLogin === "criar" ? (
+    <button
+      type="button"
+      onClick={criarConta}
+      className="rounded-2xl bg-[#23C997] text-[#061832] font-black py-3"
+    >
+      Criar conta
+    </button>
+  ) : (
+    <button
+      type="button"
+      onClick={loginEmail}
+      className="rounded-2xl bg-white text-[#061832] font-black py-3"
+    >
+      Entrar com e-mail
+    </button>
+  )}
+
+  <div className="flex items-center gap-3 my-2">
+    <div className="h-px bg-white/20 flex-1" />
+    <span className="text-white/40 text-xs font-bold">OU</span>
+    <div className="h-px bg-white/20 flex-1" />
+  </div>
+
+  <button
+    type="button"
+    onClick={loginGoogle}
+    className="rounded-2xl bg-white/10 border border-white/20 text-white font-black py-3"
+  >
+    Entrar com Google
+  </button>
+</div>
           </div>
         </div>
       )}
@@ -908,21 +1035,26 @@ function Input({
   value,
   onChange,
   placeholder,
+  disabled = false,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder: string;
+  disabled?: boolean;
 }) {
   return (
     <div>
       <label className="text-sm font-black">{label}</label>
       <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
-      />
+  value={value}
+  onChange={(e) => onChange(e.target.value)}
+  placeholder={placeholder}
+  disabled={disabled}
+  className={`mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none ${
+    disabled ? "bg-slate-100 text-slate-500 cursor-not-allowed" : ""
+  }`}
+/>
     </div>
   );
 }
