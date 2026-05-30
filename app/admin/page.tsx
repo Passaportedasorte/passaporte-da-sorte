@@ -36,14 +36,17 @@ export default function AdminPage() {
     imagem: "",
   });
 
-  useEffect(() => {
-    async function carregar() {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user);
+useEffect(() => {
+  async function carregar() {
+    const { data } = await supabase.auth.getUser();
+    setUser(data.user);
 
-      if (data.user?.email === ADMIN_EMAIL) {
-       buscarCampanhas();
-async function buscarCompras() {
+    if (data.user?.email === ADMIN_EMAIL) {
+      buscarCampanhas();
+      buscarResumo();
+      buscarCompras();
+
+      async function buscarCompras() {
   const { data, error } = await supabase
     .from("compras")
     .select(`
@@ -57,19 +60,20 @@ async function buscarCompras() {
 
   if (error) {
     console.error("Erro ao buscar compras:", error);
+    alert(error.message);
     return;
   }
 
   setCompras(data ?? []);
 }
-
-buscarResumo();
-buscarCompras();
-      }
     }
+  }
 
-    carregar();
-  }, []);
+  carregar();
+}, []);
+
+
+
 
   async function loginGoogle() {
     await supabase.auth.signInWithOAuth({
