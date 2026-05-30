@@ -76,8 +76,7 @@ export default function PassaporteDaSorteSite() {
   if (!usuario) return;
 
   const cpfUsuario = usuario.user_metadata?.cpf || "";
-  const nascimentoUsuario =
-    usuario.user_metadata?.data_nascimento || "";
+  const nascimentoUsuario = usuario.user_metadata?.data_nascimento || "";
 
   setNome(usuario.user_metadata?.full_name || "");
   setContato(usuario.email || "");
@@ -280,6 +279,36 @@ async function loginEmail() {
     setContato("");
     setCpf("");
   }
+
+  async function salvarCadastroComplementar() {
+  if (!cpfComplemento.trim()) {
+    alert("Informe seu CPF.");
+    return;
+  }
+
+  if (!nascimentoComplemento.trim()) {
+    alert("Informe sua data de nascimento.");
+    return;
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      cpf: cpfComplemento,
+      data_nascimento: nascimentoComplemento,
+    },
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  setCpf(cpfComplemento);
+  setDataNascimento(nascimentoComplemento);
+  setCompletarCadastroAberto(false);
+
+  alert("Cadastro atualizado com sucesso!");
+}
 
   async function gerarPix() {
     if (!user) {
@@ -1034,6 +1063,53 @@ async function loginEmail() {
           </div>
         </div>
       )}
+
+      {completarCadastroAberto && (
+  <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+    <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
+      <h3 className="text-2xl font-black text-white">
+        Complete seu cadastro
+      </h3>
+
+      <p className="text-white/60 text-sm mt-2">
+        Para comprar seus PASS-IDs, precisamos do seu CPF e data de nascimento.
+      </p>
+
+      <div className="grid gap-3 mt-5">
+        <input
+          value={cpfComplemento}
+          onChange={(e) => {
+            const value = e.target.value
+              .replace(/\D/g, "")
+              .replace(/(\d{3})(\d)/, "$1.$2")
+              .replace(/(\d{3})(\d)/, "$1.$2")
+              .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+              .slice(0, 14);
+
+            setCpfComplemento(value);
+          }}
+          placeholder="CPF"
+          className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+        />
+
+        <input
+          value={nascimentoComplemento}
+          onChange={(e) => setNascimentoComplemento(e.target.value)}
+          type="date"
+          className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+        />
+
+        <button
+          type="button"
+          onClick={salvarCadastroComplementar}
+          className="rounded-2xl bg-[#23C997] text-[#061832] font-black py-3"
+        >
+          Salvar cadastro
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </main>
   );
 }
