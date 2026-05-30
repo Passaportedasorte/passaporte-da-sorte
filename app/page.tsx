@@ -52,6 +52,9 @@ export default function PassaporteDaSorteSite() {
   const [cpfComplemento, setCpfComplemento] = useState("");
   const [nascimentoComplemento, setNascimentoComplemento] = useState("");
   const [celular, setCelular] = useState("");
+  const [meusDadosAberto, setMeusDadosAberto] = useState(false);
+  const [emailEdicao, setEmailEdicao] = useState("");
+  const [celularEdicao, setCelularEdicao] = useState("");
 
   useEffect(() => {
     async function buscarCampanhas() {
@@ -210,6 +213,7 @@ const { data, error } = await supabase.auth.signUp({
     data: {
   full_name: nomeCadastro,
   cpf: cpfCadastro,
+  celular,
   data_nascimento: dataNascimento,
 },
   },
@@ -218,6 +222,7 @@ const { data, error } = await supabase.auth.signUp({
 console.log("SIGNUP DATA:", data);
 console.log("SIGNUP ERROR:", error);
 
+if (!celular.trim()) return alert("Preencha seu celular.");
 if (error) {
   if (error.message.includes("User already registered")) {
     alert("Este e-mail já possui cadastro. Clique em Entrar.");
@@ -313,6 +318,27 @@ async function loginEmail() {
   setCompletarCadastroAberto(false);
 
   alert("Cadastro atualizado com sucesso!");
+}
+
+async function salvarMeusDados() {
+  const { error } = await supabase.auth.updateUser({
+    email: emailEdicao,
+    data: {
+      celular: celularEdicao,
+    },
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  setContato(emailEdicao);
+  setCelular(celularEdicao);
+
+  setMeusDadosAberto(false);
+
+  alert("Dados atualizados com sucesso!");
 }
 
   async function gerarPix() {
@@ -450,9 +476,13 @@ async function loginEmail() {
                       <button
   type="button"
   onClick={() => {
-    setMenuAberto(false);
-    setCompletarCadastroAberto(true);
-  }}
+  setMenuAberto(false);
+
+  setEmailEdicao(contato);
+  setCelularEdicao(celular);
+
+  setMeusDadosAberto(true);
+}}
   className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
 >
   Meus dados
@@ -716,6 +746,12 @@ async function loginEmail() {
       onChange={setCpf}
       placeholder="Digite seu CPF"
     />
+    <input
+  value={celular}
+  onChange={(e) => setCelular(e.target.value)}
+  placeholder="Celular"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
 
     <input
   value={dataNascimento}
@@ -969,6 +1005,13 @@ async function loginEmail() {
         placeholder="CPF"
         className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
       />
+
+      <input
+  value={celular}
+  onChange={(e) => setCelular(e.target.value)}
+  placeholder="Celular"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
     </>
   )}
 
@@ -1122,6 +1165,62 @@ async function loginEmail() {
         >
           Salvar cadastro
         </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{meusDadosAberto && (
+  <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+    <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-black text-white">
+          Meus Dados
+        </h3>
+
+        <button
+          onClick={() => setMeusDadosAberto(false)}
+          className="text-white/60 hover:text-white text-2xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="grid gap-3 mt-5">
+
+        <input
+          value={emailEdicao}
+          onChange={(e) => setEmailEdicao(e.target.value)}
+          placeholder="E-mail"
+          className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+        />
+
+        <input
+          value={celularEdicao}
+          onChange={(e) => setCelularEdicao(e.target.value)}
+          placeholder="Celular"
+          className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+        />
+
+        <input
+          value={cpf}
+          disabled
+          className="rounded-2xl px-4 py-3 bg-slate-200 text-slate-500 cursor-not-allowed"
+        />
+
+        <input
+          value={dataNascimento}
+          disabled
+          className="rounded-2xl px-4 py-3 bg-slate-200 text-slate-500 cursor-not-allowed"
+        />
+
+        <button
+          onClick={salvarMeusDados}
+          className="rounded-2xl bg-[#23C997] text-[#061832] font-black py-3"
+        >
+          Salvar alterações
+        </button>
+
       </div>
     </div>
   </div>
