@@ -281,6 +281,27 @@ async function loginEmail() {
 
   setLoginAberto(false);
 }
+async function recuperarSenha() {
+  if (!emailLogin.trim()) {
+    alert("Digite seu e-mail para recuperar a senha.");
+    return;
+  }
+
+  const { error } = await supabase.auth.resetPasswordForEmail(emailLogin, {
+    redirectTo:
+      typeof window !== "undefined"
+        ? `${window.location.origin}/redefinir-senha`
+        : undefined,
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Enviamos um link de recuperação para seu e-mail.");
+}
+
   async function logout() {
     await supabase.auth.signOut();
     setUser(null);
@@ -1111,7 +1132,18 @@ async function salvarMeusDados() {
     >
       Entrar com e-mail
     </button>
+    
   )}
+
+{modoLogin === "entrar" && (
+  <button
+    type="button"
+    onClick={recuperarSenha}
+    className="text-white/60 hover:text-white text-sm font-bold"
+  >
+    Esqueci minha senha
+  </button>
+)}
 
   <div className="flex items-center gap-3 my-2">
     <div className="h-px bg-white/20 flex-1" />
