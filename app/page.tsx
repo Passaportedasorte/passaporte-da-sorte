@@ -184,24 +184,18 @@ export default function PassaporteDaSorteSite() {
 
 setErroCadastro("");
 
-    const { error } = await supabase.auth.signUp({
-      email: emailLogin,
-      password: senhaLogin,
-      options: {
-        data: {
-          full_name: nomeCadastro,
-          cpf: cpfCadastro,
-        },
-      },
-    });
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+  email: emailLogin,
+  password: senhaLogin,
+});
 
-    if (error) {
-      alert(error.message);
-      return;
-    }
+if (loginError) {
+  alert("Conta criada! Agora confirme seu e-mail e faça login.");
+  return;
+}
 
-    alert("Conta criada com sucesso!");
-    setLoginAberto(false);
+alert("Conta criada e login realizado!");
+setLoginAberto(false);
   }
 
   async function loginEmail() {
