@@ -204,8 +204,10 @@ async function gerarPix() {
   cpf,
   campanhaId: campanhaSelecionada?.id,
   quantidade,
+  userId: user?.id,
 }),
     });
+      
 
     const data = await response.json();
 

@@ -14,13 +14,14 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const {
-  valor,
-  nome,
-  email,
-  cpf,
-  campanhaId,
-  quantidade,
-} = body;
+      valor,
+      nome,
+      email,
+      cpf,
+      campanhaId,
+      quantidade,
+      userId,
+    } = body;
 
     if (!valor || !nome || !email || !cpf) {
       return NextResponse.json(
@@ -48,35 +49,49 @@ export async function POST(req: Request) {
 
     const paymentData = await paymentResponse.json();
 
-    await fetch(
-  `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/compras`,
-  {
-    method: "POST",
-    headers: {
-      apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    },
-    body: JSON.stringify({
-      campaign_id: campanhaId,
-      payment_id: paymentData.id,
-      nome,
-      email,
-      cpf,
-      quantidade,
-      valor,
-      status: paymentData.status,
-    }),
-  }
-);
-
     if (!paymentResponse.ok) {
       console.error("ERRO PAGAMENTO ASAAS:", paymentData);
 
       return NextResponse.json(paymentData, {
         status: paymentResponse.status,
       });
+    }
+
+    const compraResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/compras`,
+      {
+        method: "POST",
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({
+          user_id: userId || null,
+          campaign_id: campanhaId,
+          payment_id: paymentData.id,
+          nome,
+          email,
+          cpf,
+          quantidade,
+          valor,
+          status: paymentData.status,
+        }),
+      }
+    );
+
+    if (!compraResponse.ok) {
+      const compraError = await compraResponse.text();
+      console.error("ERRO AO SALVAR COMPRA:", compraError);
+
+      return NextResponse.json(
+        {
+          error: "Pagamento criado, mas erro ao salvar compra.",
+          details: compraError,
+        },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({

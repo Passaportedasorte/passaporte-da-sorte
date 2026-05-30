@@ -112,11 +112,69 @@ export async function POST(req: Request) {
         .insert(ids)
         .select();
 
+    const totalMilhasGeradas = ids.reduce(
+  (total, item) => total + Number(item.milhas || 0),
+  0
+);
+
+if (compra.user_id && totalMilhasGeradas > 0) {
+  const { data: milhasAtuais } = await supabase
+    .from("user_miles")
+    .select("total_milhas")
+    .eq("user_id", compra.user_id)
+    .single();
+
+  if (milhasAtuais) {
+    await supabase
+      .from("user_miles")
+      .update({
+        total_milhas:
+          Number(milhasAtuais.total_milhas || 0) + totalMilhasGeradas,
+      })
+      .eq("user_id", compra.user_id);
+  } else {
+    await supabase.from("user_miles").insert({
+      user_id: compra.user_id,
+      total_milhas: totalMilhasGeradas,
+    });
+  }
+}    
+
     if (passError) {
       console.error(
         "Erro ao gerar PASS IDs:",
         passError
       );
+if (!passError) {
+  const totalMilhasGeradas = ids.reduce(
+    (total, item) => total + Number(item.milhas || 0),
+    0
+  );
+
+  if (compra.user_id && totalMilhasGeradas > 0) {
+    const { data: milhasAtuais } = await supabase
+      .from("user_miles")
+      .select("total_milhas")
+      .eq("user_id", compra.user_id)
+      .single();
+
+    if (milhasAtuais) {
+      await supabase
+        .from("user_miles")
+        .update({
+          total_milhas:
+            Number(milhasAtuais.total_milhas || 0) + totalMilhasGeradas,
+        })
+        .eq("user_id", compra.user_id);
+    } else {
+      await supabase.from("user_miles").insert({
+        user_id: compra.user_id,
+        total_milhas: totalMilhasGeradas,
+      });
+    }
+  }
+}
+
 
       return NextResponse.json(
         {
