@@ -184,7 +184,9 @@ export default function PassaporteDaSorteSite() {
 
 setErroCadastro("");
 
-    const { error: loginError } = await supabase.auth.signInWithPassword({
+   await new Promise((resolve) => setTimeout(resolve, 2000));
+
+const { error: loginError } = await supabase.auth.signInWithPassword({
   email: emailLogin,
   password: senhaLogin,
 });
@@ -205,9 +207,10 @@ setLoginAberto(false);
     });
 
     if (error) {
-      alert(error.message);
-      return;
-    }
+  console.log("ERRO AO CRIAR CONTA:", error);
+  alert(error.message);
+  return;
+}
 
     setLoginAberto(false);
   }
