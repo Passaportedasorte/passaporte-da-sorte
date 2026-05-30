@@ -8,6 +8,7 @@ const ADMIN_EMAIL = "petrikovskibruno@gmail.com";
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
   const [campanhas, setCampanhas] = useState<any[]>([]);
+  const [compras, setCompras] = useState<any[]>([]);
   const [editandoId, setEditandoId] = useState<number | null>(null);
 
   const [resumo, setResumo] = useState({
@@ -41,8 +42,29 @@ export default function AdminPage() {
       setUser(data.user);
 
       if (data.user?.email === ADMIN_EMAIL) {
-        buscarCampanhas();
-        buscarResumo();
+       buscarCampanhas();
+async function buscarCompras() {
+  const { data, error } = await supabase
+    .from("compras")
+    .select(`
+      *,
+      campaigns (
+        titulo,
+        destino
+      )
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erro ao buscar compras:", error);
+    return;
+  }
+
+  setCompras(data ?? []);
+}
+
+buscarResumo();
+buscarCompras();
       }
     }
 
@@ -311,6 +333,83 @@ async function uploadImagem(
             valor={`R$ ${resumo.arrecadado.toFixed(2).replace(".", ",")}`}
           />
         </section>
+
+
+        <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
+  <div className="flex items-center justify-between gap-4 mb-5">
+    <div>
+      <h2 className="text-3xl font-black">Compras</h2>
+      <p className="text-white/50 text-sm">
+        Acompanhe as compras realizadas no Passaporte da Sorte.
+      </p>
+    </div>
+  </div>
+
+  <div className="overflow-x-auto">
+    <table className="w-full text-left min-w-[900px]">
+      <thead>
+        <tr className="text-white/50 text-sm border-b border-white/10">
+          <th className="py-3">Cliente</th>
+          <th className="py-3">Campanha</th>
+          <th className="py-3">Qtd</th>
+          <th className="py-3">Valor</th>
+          <th className="py-3">Status</th>
+          <th className="py-3">Data</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {compras.map((compra) => (
+          <tr
+            key={compra.id}
+            className="border-b border-white/10 text-sm"
+          >
+            <td className="py-4">
+              <p className="font-black">{compra.nome}</p>
+              <p className="text-white/50">{compra.email}</p>
+              <p className="text-white/40">{compra.cpf}</p>
+            </td>
+
+            <td className="py-4">
+              <p className="font-black">
+                {compra.campaigns?.titulo || "—"}
+              </p>
+              <p className="text-white/50">
+                {compra.campaigns?.destino || "—"}
+              </p>
+            </td>
+
+            <td className="py-4 font-black">
+              {compra.quantidade}
+            </td>
+
+            <td className="py-4 font-black">
+              R$ {Number(compra.valor || 0).toFixed(2).replace(".", ",")}
+            </td>
+
+            <td className="py-4">
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black">
+                {compra.status}
+              </span>
+            </td>
+
+            <td className="py-4 text-white/50">
+              {compra.created_at
+                ? new Date(compra.created_at).toLocaleString("pt-BR")
+                : "—"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    {compras.length === 0 && (
+      <p className="text-white/50 py-6">
+        Nenhuma compra encontrada.
+      </p>
+    )}
+  </div>
+</section>
 
         <section className="grid lg:grid-cols-3 gap-8 mt-10">
           <div className="lg:col-span-1 rounded-[2rem] bg-white text-[#061832] p-6 shadow-2xl h-fit">
