@@ -32,7 +32,7 @@ setCampanhasAtivas(count ?? 0);
     destino
   )
 `)
-  .eq("user_id", data.user.id)
+  .or(`user_id.eq.${data.user.id},contato.eq.${data.user.email}`)
   .order("created_at", { ascending: false });
 
 setMeusPassaportes(passaportes ?? []);
@@ -55,7 +55,7 @@ const nivel =
     ? "Viajante"
     : saldoMilhas >= 100
     ? "Aventureiro"
-    : "{nivel}";
+    : "Iniciante";
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-10 py-10">
       <div className="max-w-7xl mx-auto">
