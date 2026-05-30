@@ -13,21 +13,14 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    console.log("WEBHOOK RECEBIDO:", body);
-
     const evento = body.event;
     const pagamento = body.payment;
 
     if (!pagamento?.id) {
-      console.log("Pagamento sem ID");
       return NextResponse.json({ ok: true });
     }
 
-    if (
-      evento !== "PAYMENT_CONFIRMED" &&
-      evento !== "PAYMENT_RECEIVED"
-    ) {
-      console.log("Evento ignorado:", evento);
+    if (evento !== "PAYMENT_CONFIRMED" && evento !== "PAYMENT_RECEIVED") {
       return NextResponse.json({ ok: true });
     }
 
@@ -39,57 +32,34 @@ export async function POST(req: Request) {
 
     if (compraError || !compra) {
       console.error("Compra não encontrada:", compraError);
-
-      return NextResponse.json({
-        ok: false,
-        error: "Compra não encontrada",
-      });
+      return NextResponse.json({ ok: false, error: "Compra não encontrada" });
     }
-
-    console.log("Compra encontrada:", compra.id);
 
     await supabase
       .from("compras")
-      .update({
-        status: evento,
-      })
+      .update({ status: evento })
       .eq("payment_id", pagamento.id);
 
-    // Evita gerar PASS IDs duplicados
-    const { data: passExistentes, error: passExistentesError } =
-      await supabase
-        .from("pass_ids")
-        .select("id")
-        .eq("payment_id", pagamento.id);
-
-    if (passExistentesError) {
-      console.error(
-        "Erro ao consultar PASS IDs:",
-        passExistentesError
-      );
-    }
+    const { data: passExistentes } = await supabase
+      .from("pass_ids")
+      .select("id")
+      .eq("payment_id", pagamento.id);
 
     if (passExistentes && passExistentes.length > 0) {
-      console.log("PASS IDs já gerados");
-
       return NextResponse.json({
         ok: true,
         message: "PASS IDs já gerados",
       });
     }
 
-    const { data: campanha, error: campanhaError } =
-      await supabase
-        .from("campaigns")
-        .select("*")
-        .eq("id", compra.campaign_id)
-        .single();
+    const { data: campanha, error: campanhaError } = await supabase
+      .from("campaigns")
+      .select("*")
+      .eq("id", compra.campaign_id)
+      .single();
 
     if (campanhaError) {
-      console.error(
-        "Erro ao buscar campanha:",
-        campanhaError
-      );
+      console.error("Erro ao buscar campanha:", campanhaError);
     }
 
     const ids = Array.from(
@@ -106,92 +76,70 @@ export async function POST(req: Request) {
       })
     );
 
-    const { data: passCriados, error: passError } =
-      await supabase
-        .from("pass_ids")
-        .insert(ids)
-        .select();
-
-    const totalMilhasGeradas = ids.reduce(
-  (total, item) => total + Number(item.milhas || 0),
-  0
-);
-
-if (compra.user_id && totalMilhasGeradas > 0) {
-  const { data: milhasAtuais } = await supabase
-    .from("user_miles")
-    .select("total_milhas")
-    .eq("user_id", compra.user_id)
-    .single();
-
-  if (milhasAtuais) {
-    await supabase
-      .from("user_miles")
-      .update({
-        total_milhas:
-          Number(milhasAtuais.total_milhas || 0) + totalMilhasGeradas,
-      })
-      .eq("user_id", compra.user_id);
-  } else {
-    await supabase.from("user_miles").insert({
-      user_id: compra.user_id,
-      total_milhas: totalMilhasGeradas,
-    });
-  }
-}    
+    const { data: passCriados, error: passError } = await supabase
+      .from("pass_ids")
+      .insert(ids)
+      .select();
 
     if (passError) {
-      console.error(
-        "Erro ao gerar PASS IDs:",
-        passError
-      );
-if (!passError) {
-  const totalMilhasGeradas = ids.reduce(
-    (total, item) => total + Number(item.milhas || 0),
-    0
-  );
-
-  if (compra.user_id && totalMilhasGeradas > 0) {
-    const { data: milhasAtuais } = await supabase
-      .from("user_miles")
-      .select("total_milhas")
-      .eq("user_id", compra.user_id)
-      .single();
-
-    if (milhasAtuais) {
-      await supabase
-        .from("user_miles")
-        .update({
-          total_milhas:
-            Number(milhasAtuais.total_milhas || 0) + totalMilhasGeradas,
-        })
-        .eq("user_id", compra.user_id);
-    } else {
-      await supabase.from("user_miles").insert({
-        user_id: compra.user_id,
-        total_milhas: totalMilhasGeradas,
-      });
-    }
-  }
-}
-
-
+      console.error("Erro ao gerar PASS IDs:", passError);
       return NextResponse.json(
-        {
-          ok: false,
-          error: passError.message,
-        },
+        { ok: false, error: passError.message },
         { status: 500 }
       );
     }
 
-    console.log(
-      `${passCriados?.length || 0} PASS IDs gerados`
+    const totalMilhasGeradas = ids.reduce(
+      (total, item) => total + Number(item.milhas || 0),
+      0
     );
+
+    if (compra.user_id && totalMilhasGeradas > 0) {
+      const { data: milhasAtuais, error: milhasSelectError } = await supabase
+        .from("user_miles")
+        .select("total_milhas")
+        .eq("user_id", compra.user_id)
+        .single();
+
+      if (milhasSelectError && milhasSelectError.code !== "PGRST116") {
+        console.error("Erro ao buscar milhas:", milhasSelectError);
+      }
+
+      if (milhasAtuais) {
+        const { error: milhasUpdateError } = await supabase
+          .from("user_miles")
+          .update({
+            total_milhas:
+              Number(milhasAtuais.total_milhas || 0) + totalMilhasGeradas,
+          })
+          .eq("user_id", compra.user_id);
+
+        if (milhasUpdateError) {
+          console.error("Erro ao atualizar milhas:", milhasUpdateError);
+        }
+      } else {
+        const { error: milhasInsertError } = await supabase
+          .from("user_miles")
+          .insert({
+            user_id: compra.user_id,
+            total_milhas: totalMilhasGeradas,
+          });
+
+        if (milhasInsertError) {
+          console.error("Erro ao inserir milhas:", milhasInsertError);
+        }
+      }
+    } else {
+      console.log("Milhas não geradas: compra sem user_id ou total zerado", {
+        user_id: compra.user_id,
+        totalMilhasGeradas,
+      });
+    }
 
     return NextResponse.json({
       ok: true,
       pass_ids: passCriados,
+      milhas: totalMilhasGeradas,
     });
   } catch (error: any) {
     console.error("ERRO WEBHOOK ASAAS:", error);
