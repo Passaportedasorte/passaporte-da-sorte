@@ -576,29 +576,48 @@ setErroCadastro("");
               </p>
 
               <div className="space-y-4">
-               <Input
-  label="Nome completo"
-  value={nome}
-  onChange={setNome}
-  placeholder="Seu nome"
-  disabled={!!user}
-/>
+               {user ? (
+  <div className="rounded-2xl bg-[#061832] text-white p-5 border border-[#23C997]/40">
+    <p className="text-[#23C997] text-sm font-black">
+      ✓ Você está comprando com sua conta
+    </p>
 
-<Input
-  label="E-mail"
-  value={contato}
-  onChange={setContato}
-  placeholder="Digite seu e-mail"
-  disabled={!!user}
-/>
+    <h4 className="text-2xl font-black mt-2">
+      {nome}
+    </h4>
 
-<Input
-  label="CPF"
-  value={cpf}
-  onChange={setCpf}
-  placeholder="Digite seu CPF"
-  disabled={!!user}
-/>
+    <p className="text-white/60 mt-1">
+      {contato}
+    </p>
+
+    <p className="text-white/60 mt-1">
+      CPF: {cpf}
+    </p>
+  </div>
+) : (
+  <>
+    <Input
+      label="Nome completo"
+      value={nome}
+      onChange={setNome}
+      placeholder="Seu nome"
+    />
+
+    <Input
+      label="E-mail"
+      value={contato}
+      onChange={setContato}
+      placeholder="Digite seu e-mail"
+    />
+
+    <Input
+      label="CPF"
+      value={cpf}
+      onChange={setCpf}
+      placeholder="Digite seu CPF"
+    />
+  </>
+)}
 
                 <div>
                   <label className="text-sm font-black">
@@ -789,29 +808,7 @@ setErroCadastro("");
               Acesse sua carteira, PASS-IDs e milhas.
             </p>
 
-            <div className="flex rounded-2xl bg-white/10 p-1 mt-5">
-  <button
-    onClick={() => setModoLogin("entrar")}
-    className={`flex-1 rounded-xl py-3 font-black ${
-      modoLogin === "entrar"
-        ? "bg-[#23C997] text-[#061832]"
-        : "text-white/60"
-    }`}
-  >
-    Entrar
-  </button>
-
-  <button
-    onClick={() => setModoLogin("criar")}
-    className={`flex-1 rounded-xl py-3 font-black ${
-      modoLogin === "criar"
-        ? "bg-[#23C997] text-[#061832]"
-        : "text-white/60"
-    }`}
-  >
-    Criar conta
-  </button>
-</div>
+            
 
 <div className="flex rounded-2xl bg-white/10 p-1 mt-5">
   <button
