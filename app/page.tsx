@@ -51,6 +51,7 @@ export default function PassaporteDaSorteSite() {
   const [completarCadastroAberto, setCompletarCadastroAberto] = useState(false);  
   const [cpfComplemento, setCpfComplemento] = useState("");
   const [nascimentoComplemento, setNascimentoComplemento] = useState("");
+  const [celular, setCelular] = useState("");
 
   useEffect(() => {
     async function buscarCampanhas() {
@@ -77,11 +78,14 @@ export default function PassaporteDaSorteSite() {
 
   const cpfUsuario = usuario.user_metadata?.cpf || "";
   const nascimentoUsuario = usuario.user_metadata?.data_nascimento || "";
+  const celularUsuario =
+  usuario.user_metadata?.celular || "";
 
   setNome(usuario.user_metadata?.full_name || "");
   setContato(usuario.email || "");
   setCpf(cpfUsuario);
   setDataNascimento(nascimentoUsuario);
+  setCelular(celularUsuario);
 
   if (!cpfUsuario || !nascimentoUsuario) {
     setCpfComplemento(cpfUsuario);
@@ -293,9 +297,10 @@ async function loginEmail() {
 
   const { error } = await supabase.auth.updateUser({
     data: {
-      cpf: cpfComplemento,
-      data_nascimento: nascimentoComplemento,
-    },
+  cpf: cpfComplemento,
+  data_nascimento: nascimentoComplemento,
+  celular,
+},
   });
 
   if (error) {
@@ -443,11 +448,22 @@ async function loginEmail() {
                   {menuAberto && (
                     <div className="absolute right-0 mt-3 w-44 rounded-2xl bg-white text-[#061832] shadow-2xl p-2 z-50">
                       <button
-                        onClick={logout}
-                        className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
-                      >
-                        Sair
-                      </button>
+  type="button"
+  onClick={() => {
+    setMenuAberto(false);
+    setCompletarCadastroAberto(true);
+  }}
+  className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
+>
+  Meus dados
+</button>
+
+<button
+  onClick={logout}
+  className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
+>
+  Sair
+</button>
                     </div>
                   )}
                 </div>
