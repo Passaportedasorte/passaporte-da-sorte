@@ -60,6 +60,7 @@ export default function PassaporteDaSorteSite() {
   const [meusDadosAberto, setMeusDadosAberto] = useState(false);
   const [emailEdicao, setEmailEdicao] = useState("");
   const [celularEdicao, setCelularEdicao] = useState("");
+  const [ultimosResultados, setUltimosResultados] = useState<any[]>([]);
 
   useEffect(() => {
     async function buscarCampanhas() {
@@ -128,6 +129,32 @@ export default function PassaporteDaSorteSite() {
       listener.subscription.unsubscribe();
     };
   }, []);
+
+
+  useEffect(() => {
+  async function carregarUltimosResultados() {
+    const { data, error } = await supabase
+      .from("resultados_federal")
+      .select(`
+        *,
+        campaigns (
+          titulo,
+          destino
+        )
+      `)
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    if (error) {
+      console.error("Erro ao buscar últimos resultados:", error);
+      return;
+    }
+
+    setUltimosResultados(data ?? []);
+  }
+
+  carregarUltimosResultados();
+}, []);
 
   useEffect(() => {
     async function buscarMilhas() {
@@ -479,7 +506,7 @@ async function salvarMeusDados() {
   <Briefcase className="w-5 h-5 text-[#23C997]" />
   Campanhas
 </button>
-git add .
+
       {user && (
         <button
           onClick={() => (window.location.href = "/painel")}
@@ -730,7 +757,7 @@ git add .
           <Step
             n="02"
             title="Receba seu PASS-ID"
-            text="Cada participação gera um código exclusivo, como PSD-0004821."
+            text="Cada participação gera um código exclusivo, como PSD-04821."
           />
           <Step
             n="03"
@@ -738,6 +765,138 @@ git add .
             text="Suas participações geram pontos para futuras vantagens."
           />
         </section>
+
+        <section id="como-funciona" className="max-w-7xl mx-auto px-5 md:px-8 py-16">
+  <div className="text-center">
+    <p className="text-[#23C997] font-black">
+      COMO FUNCIONA
+    </p>
+
+    <h2 className="text-4xl md:text-5xl font-black mt-2">
+      Simples, transparente e emocionante.
+    </h2>
+
+    <p className="text-white/60 max-w-2xl mx-auto mt-4 text-lg">
+      Você escolhe uma campanha, compra seus PASS-IDs, acumula milhas e acompanha o resultado oficial pela Loteria Federal.
+    </p>
+  </div>
+
+  <div className="grid md:grid-cols-5 gap-4 mt-10">
+    {[
+      ["1", "Escolha uma campanha", "Veja os destinos disponíveis e escolha sua experiência."],
+      ["2", "Compre PASS-IDs", "Cada PASS-ID aumenta sua participação na campanha."],
+      ["3", "Acumule milhas", "A cada compra você soma milhas na sua carteira."],
+      ["4", "Aguarde a Federal", "O resultado é vinculado aos últimos 5 números da Loteria Federal."],
+      ["5", "Confira o resultado", "Veja o PASS-ID vencedor e acompanhe tudo com transparência."],
+    ].map((item) => (
+      <div
+        key={item[0]}
+        className="rounded-[2rem] bg-white/10 border border-white/15 p-5 text-center backdrop-blur-xl"
+      >
+        <div className="mx-auto w-12 h-12 rounded-2xl bg-[#23C997] text-[#061832] flex items-center justify-center font-black text-xl">
+          {item[0]}
+        </div>
+
+        <h3 className="text-xl font-black mt-4">
+          {item[1]}
+        </h3>
+
+        <p className="text-white/60 text-sm mt-2">
+          {item[2]}
+        </p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<section className="max-w-7xl mx-auto px-5 md:px-8 py-16">
+  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <p className="text-[#23C997] font-black">
+        RESULTADOS OFICIAIS
+      </p>
+
+      <h2 className="text-4xl md:text-5xl font-black mt-2">
+        Últimos resultados
+      </h2>
+
+      <p className="text-white/60 mt-3">
+        Transparência total nos resultados apurados pela Loteria Federal.
+      </p>
+    </div>
+
+    <button
+      onClick={() => (window.location.href = "/resultados")}
+      className="rounded-2xl bg-white/10 border border-white/15 px-6 py-4 font-black hover:bg-white/15 transition"
+    >
+      Ver todos
+    </button>
+  </div>
+
+  <div className="grid md:grid-cols-3 gap-5 mt-8">
+    {ultimosResultados.map((resultado) => (
+      <div
+        key={resultado.id}
+        className="rounded-[2rem] bg-white/10 border border-white/15 p-6 backdrop-blur-xl"
+      >
+        <p className="text-[#23C997] font-black text-sm">
+          🏆 Resultado oficial
+        </p>
+
+        <h3 className="text-2xl font-black mt-2">
+          {resultado.campaigns?.titulo || "Campanha"}
+        </h3>
+
+        <p className="text-white/60 mt-1">
+          {resultado.campaigns?.destino || "Destino"}
+        </p>
+
+        <div className="grid gap-3 mt-5">
+          <div className="rounded-2xl bg-white/10 p-4">
+            <p className="text-white/50 text-sm">
+              Número Federal
+            </p>
+            <p className="font-black">
+              {resultado.numero_sorteado}
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white/10 p-4">
+            <p className="text-white/50 text-sm">
+              PASS-ID vencedor
+            </p>
+            <p className="font-black text-[#23C997]">
+              {resultado.pass_id_vencedor}
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white/10 p-4">
+            <p className="text-white/50 text-sm">
+              Tipo
+            </p>
+            <p className="font-black">
+              {resultado.tipo_resultado === "EXATO"
+                ? "🎯 Exato"
+                : "📍 Mais próximo"}
+            </p>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {ultimosResultados.length === 0 && (
+    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-8 mt-8 text-center">
+      <h3 className="text-2xl font-black">
+        Nenhum resultado publicado ainda.
+      </h3>
+
+      <p className="text-white/60 mt-2">
+        Assim que uma campanha for apurada, o resultado aparecerá aqui.
+      </p>
+    </div>
+  )}
+</section>
 
       <section className="max-w-7xl mx-auto px-5 md:px-8 py-20">
   <div className="rounded-[2.5rem] bg-white/10 border border-white/15 p-10 text-center backdrop-blur-xl">
