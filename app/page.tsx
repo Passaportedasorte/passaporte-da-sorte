@@ -437,7 +437,7 @@ async function salvarMeusDados() {
       <div className="fixed inset-0 opacity-[0.06] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:54px_54px]" />
 
       <div className="relative z-10">
-       <header className="max-w-7xl mx-auto px-5 md:px-8 pt-6">
+       <header className="max-w-[1700px] mx-auto px-5 md:px-8 pt-6 relative z-[9999]">
   <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-6 shadow-2xl backdrop-blur-xl relative">
 
    <div
