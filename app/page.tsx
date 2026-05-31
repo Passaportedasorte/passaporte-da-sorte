@@ -431,14 +431,14 @@ async function salvarMeusDados() {
 
   return (
     <main
-      className={`${league.variable} ${cinzel.variable} min-h-screen bg-[#061832] text-white overflow-hidden font-[family-name:var(--font-league)]`}
+      className={`${league.variable} ${cinzel.variable} min-h-screen bg-[#061832] text-white overflow-hidden pb-24 font-[family-name:var(--font-league)]`}
     >
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(35,201,151,.28),transparent_28%),radial-gradient(circle_at_85%_10%,rgba(30,136,229,.30),transparent_30%),linear-gradient(180deg,#061832_0%,#081f42_55%,#041021_100%)]" />
       <div className="fixed inset-0 opacity-[0.06] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:54px_54px]" />
 
       <div className="relative z-10">
-       <header className="max-w-[1700px] mx-auto px-5 md:px-8 pt-6 relative z-[9999]">
-  <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-6 shadow-2xl backdrop-blur-xl relative">
+       <header className="sticky top-4 z-[9999]">
+  <div className="rounded-[2rem] bg-white/10 border border-white/15 px-4 md:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 shadow-2xl backdrop-blur-xl relative">
 
    <div
   onClick={() => (window.location.href = "/")}
@@ -463,7 +463,7 @@ async function salvarMeusDados() {
   </div>
 </div>
 
-    <nav className="flex items-center gap-4 ml-auto min-w-0">
+    <nav className="w-full md:w-auto flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-4 md:ml-auto">
       <button
         onClick={() => (window.location.href = "/resultados")}
         className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
