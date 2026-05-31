@@ -10,6 +10,11 @@ import {
   Gift,
   User,
   ShieldCheck,
+  Trophy,
+  Briefcase,
+  Clover,
+  Gauge,
+  ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -432,103 +437,129 @@ async function salvarMeusDados() {
       <div className="fixed inset-0 opacity-[0.06] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:54px_54px]" />
 
       <div className="relative z-10">
-        <header className="max-w-7xl mx-auto px-5 md:px-8 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center shadow-lg overflow-hidden">
-              <img
-                src="/logo.png"
-                alt="Passaporte da Sorte"
-                className="w-9 h-9 object-contain"
-              />
-            </div>
+       <header className="max-w-7xl mx-auto px-5 md:px-8 pt-6">
+  <div className="rounded-[2rem] bg-white/10 border border-white/15 px-5 md:px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-5 shadow-2xl backdrop-blur-xl">
 
-            <div>
-              <h1 className="text-lg md:text-2xl font-black tracking-tight">
-                Passaporte da Sorte
-              </h1>
-              <p className="text-white/50 text-sm">
-                Clube de viagens e experiências
-              </p>
-            </div>
-          </div>
+    <div
+      onClick={() => (window.location.href = "/")}
+      className="flex items-center gap-4 cursor-pointer"
+    >
+      <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden">
+        <img
+          src="/logo.png"
+          alt="Passaporte da Sorte"
+          className="w-10 h-10 object-contain"
+        />
+      </div>
 
-          <div className="flex items-center gap-3">
-            {user && (
-              <div
-                onClick={() => {
-                  window.location.href = "/painel";
-                }}
-                className="rounded-2xl bg-white/10 border border-white/15 p-4 cursor-pointer hover:scale-105 transition"
-              >
-                <p className="text-xs font-black text-white/50">Milhas</p>
-                <h3 className="text-xl font-black">{saldoMilhas} 🍀</h3>
-              </div>
-            )}
+      <div>
+        <h1 className="text-xl md:text-2xl font-black tracking-tight">
+          Passaporte da Sorte
+        </h1>
+        <p className="text-white/50 text-sm">
+          Clube de viagens e experiências
+        </p>
+      </div>
+    </div>
 
-            {user ? (
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    window.location.href = "/painel";
-                  }}
-                  className="rounded-full bg-[#23C997] px-5 py-3 font-black text-[#061832] hover:scale-105 transition"
-                >
-                  Meu Painel
-                </button>
+    <nav className="flex flex-wrap items-center gap-3 lg:gap-5">
+      <button
+        onClick={() => (window.location.href = "/resultados")}
+        className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+      >
+        <Trophy className="w-5 h-5 text-[#23C997]" />
+        Resultados
+      </button>
 
-                <div className="relative">
-                  <button
-                    onClick={() => setMenuAberto(!menuAberto)}
-                    className="hidden md:flex items-center gap-3 rounded-full bg-white/10 border border-white/15 px-4 py-2 hover:bg-white/15 transition"
-                  >
-                    <img
-                      src={user.user_metadata?.avatar_url || "/logo.png"}
-                      alt="Usuário"
-                      className="w-8 h-8 rounded-full"
-                    />
+      <button
+        onClick={() => {
+          document
+            .getElementById("comprar")
+            ?.scrollIntoView({ behavior: "smooth" });
+        }}
+        className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+      >
+        <Briefcase className="w-5 h-5 text-[#23C997]" />
+        Campanhas
+      </button>
 
-                    <span className="text-sm font-bold text-white">
-                      {user.user_metadata?.full_name || user.email}
-                    </span>
-                  </button>
+      {user && (
+        <button
+          onClick={() => (window.location.href = "/painel")}
+          className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+        >
+          <Clover className="w-5 h-5 text-[#23C997]" />
+          Milhas
+          <span className="rounded-full bg-white/10 px-3 py-1">
+            {saldoMilhas}
+          </span>
+        </button>
+      )}
 
-                  {menuAberto && (
-                    <div className="absolute right-0 mt-3 w-44 rounded-2xl bg-white text-[#061832] shadow-2xl p-2 z-50">
-                      <button
-  type="button"
-  onClick={() => {
-  setMenuAberto(false);
+      {user && (
+        <button
+          onClick={() => (window.location.href = "/painel")}
+          className="flex items-center gap-2 rounded-full bg-[#23C997] px-5 py-3 font-black text-[#061832] hover:scale-105 transition"
+        >
+          <Gauge className="w-5 h-5" />
+          Meu Painel
+        </button>
+      )}
 
-  setEmailEdicao(contato);
-  setCelularEdicao(celular);
+      {user ? (
+        <div className="relative">
+          <button
+            onClick={() => setMenuAberto(!menuAberto)}
+            className="flex items-center gap-3 rounded-full bg-white/10 border border-white/15 px-4 py-2 hover:bg-white/15 transition"
+          >
+            <img
+              src={user.user_metadata?.avatar_url || "/logo.png"}
+              alt="Usuário"
+              className="w-9 h-9 rounded-full object-cover"
+            />
 
-  setMeusDadosAberto(true);
-}}
-  className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
->
-  Meus dados
-</button>
+            <span className="text-sm font-black text-white max-w-[140px] truncate">
+              {user.user_metadata?.full_name || user.email}
+            </span>
 
-<button
-  onClick={logout}
-  className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
->
-  Sair
-</button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
+            <ChevronDown className="w-4 h-4 text-white/60" />
+          </button>
+
+          {menuAberto && (
+            <div className="absolute right-0 mt-3 w-48 rounded-2xl bg-white text-[#061832] shadow-2xl p-2 z-50">
               <button
-                onClick={() => setLoginAberto(true)}
-                className="rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
+                type="button"
+                onClick={() => {
+                  setMenuAberto(false);
+                  setEmailEdicao(contato);
+                  setCelularEdicao(celular);
+                  setMeusDadosAberto(true);
+                }}
+                className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
               >
-                Entrar / Criar conta
+                Meus dados
               </button>
-            )}
-          </div>
-        </header>
+
+              <button
+                onClick={logout}
+                className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
+              >
+                Sair
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <button
+          onClick={() => setLoginAberto(true)}
+          className="rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
+        >
+          Entrar / Criar conta
+        </button>
+      )}
+    </nav>
+  </div>
+</header>
 
         <section className="max-w-7xl mx-auto px-5 md:px-8 pt-10 pb-16 grid lg:grid-cols-2 gap-10 items-center">
           <motion.div
