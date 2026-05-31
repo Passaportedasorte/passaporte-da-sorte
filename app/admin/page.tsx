@@ -10,6 +10,8 @@ export default function AdminPage() {
   const [campanhas, setCampanhas] = useState<any[]>([]);
   const [compras, setCompras] = useState<any[]>([]);
   const [editandoId, setEditandoId] = useState<number | null>(null);
+  const [buscaCompra, setBuscaCompra] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState("todos");
 
   const [resumo, setResumo] = useState({
     campanhas: 0,
@@ -61,6 +63,8 @@ useEffect(() => {
   if (error) {
     console.error("Erro ao buscar compras:", error);
     alert(error.message);
+
+
     return;
   }
 
@@ -303,7 +307,21 @@ async function uploadImagem(
       </main>
     );
   }
+const comprasFiltradas = compras.filter((compra) => {
+  const busca = buscaCompra.toLowerCase();
 
+  const passouBusca =
+    compra.nome?.toLowerCase().includes(busca) ||
+    compra.email?.toLowerCase().includes(busca) ||
+    compra.cpf?.includes(busca);
+
+  const passouStatus =
+    filtroStatus === "todos"
+      ? true
+      : compra.status === filtroStatus;
+
+  return passouBusca && passouStatus;
+});
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-10">
       <div className="max-w-7xl mx-auto">
@@ -341,6 +359,27 @@ async function uploadImagem(
 
         <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
   <div className="flex items-center justify-between gap-4 mb-5">
+
+<div className="flex flex-col md:flex-row gap-3 mb-5">
+  <input
+    value={buscaCompra}
+    onChange={(e) => setBuscaCompra(e.target.value)}
+    placeholder="Buscar por nome, e-mail ou CPF"
+    className="flex-1 rounded-2xl px-4 py-3 bg-white text-[#061832]"
+  />
+
+  <select
+    value={filtroStatus}
+    onChange={(e) => setFiltroStatus(e.target.value)}
+    className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+  >
+    <option value="todos">Todos</option>
+    <option value="PAYMENT_RECEIVED">Pago</option>
+    <option value="PAYMENT_CONFIRMED">Confirmado</option>
+    <option value="PENDING">Pendente</option>
+  </select>
+</div>
+
     <div>
       <h2 className="text-3xl font-black">Compras</h2>
       <p className="text-white/50 text-sm">
@@ -363,7 +402,7 @@ async function uploadImagem(
       </thead>
 
       <tbody>
-        {compras.map((compra) => (
+        {comprasFiltradas.map((compra) => (
           <tr
             key={compra.id}
             className="border-b border-white/10 text-sm"
@@ -393,7 +432,14 @@ async function uploadImagem(
 
             <td className="py-4">
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black">
-                {compra.status}
+               {
+  compra.status === "PAYMENT_RECEIVED" ||
+  compra.status === "PAYMENT_CONFIRMED"
+    ? "✅ Pago"
+    : compra.status === "PENDING"
+    ? "⏳ Pendente"
+    : "❌ Cancelado"
+}
               </span>
             </td>
 
