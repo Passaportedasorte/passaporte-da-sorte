@@ -15,6 +15,7 @@ export default function AdminPage() {
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [compraSelecionada, setCompraSelecionada] = useState<any>(null);
   const [passIdsCompra, setPassIdsCompra] = useState<any[]>([]);  
+  const [usuarios, setUsuarios] = useState<any[]>([]);
 
   const [resumo, setResumo] = useState({
     campanhas: 0,
@@ -50,6 +51,8 @@ useEffect(() => {
       buscarCampanhas();
       buscarResumo();
       buscarCompras();
+      buscarUsuarios();
+      
 
       async function buscarCompras() {
   const { data, error } = await supabase
@@ -78,7 +81,59 @@ useEffect(() => {
 
   carregar();
 }, []);
+async function buscarUsuarios() {
+  const { data: comprasData, error } = await supabase
+    .from("compras")
+    .select("*")
+    .not("user_id", "is", null);
 
+  if (error) {
+    console.error("Erro ao buscar usuários:", error);
+    return;
+  }
+
+  const usuariosUnicos = Array.from(
+    new Map(
+      (comprasData || []).map((compra) => [
+        compra.user_id,
+        compra,
+      ])
+    ).values()
+  );
+
+  const usuariosComDados = await Promise.all(
+    usuariosUnicos.map(async (usuario) => {
+      const { count: totalCompras } = await supabase
+        .from("compras")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", usuario.user_id);
+
+      const { count: totalPassIds } = await supabase
+        .from("pass_ids")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", usuario.user_id);
+
+      const { data: milhas } = await supabase
+        .from("user_miles")
+        .select("total_milhas")
+        .eq("user_id", usuario.user_id)
+        .single();
+
+      return {
+        user_id: usuario.user_id,
+        nome: usuario.nome,
+        email: usuario.email,
+        cpf: usuario.cpf,
+        celular: usuario.celular || "—",
+        compras: totalCompras || 0,
+        passIds: totalPassIds || 0,
+        milhas: milhas?.total_milhas || 0,
+      };
+    })
+  );
+
+  setUsuarios(usuariosComDados);
+}
 
 async function abrirDetalhesCompra(compra: any) {
   setCompraSelecionada(compra);
@@ -521,6 +576,71 @@ const comprasFiltradas = compras.filter((compra) => {
     {compras.length === 0 && (
       <p className="text-white/50 py-6">
         Nenhuma compra encontrada.
+      </p>
+    )}
+  </div>
+</section>
+
+<section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
+  <h2 className="text-3xl font-black mb-5">
+    Usuários
+  </h2>
+
+  <div className="overflow-x-auto">
+    <table className="w-full text-left min-w-[1000px]">
+      <thead>
+        <tr className="border-b border-white/10 text-white/50 text-sm">
+          <th className="py-3">Nome</th>
+          <th className="py-3">Email</th>
+          <th className="py-3">CPF</th>
+          <th className="py-3">Celular</th>
+          <th className="py-3">Milhas</th>
+          <th className="py-3">Compras</th>
+          <th className="py-3">PASS IDs</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {usuarios.map((usuario) => (
+          <tr
+            key={usuario.user_id}
+            className="border-b border-white/10"
+          >
+            <td className="py-4 font-black">
+              {usuario.nome || "—"}
+            </td>
+
+            <td className="py-4">
+              {usuario.email || "—"}
+            </td>
+
+            <td className="py-4">
+              {usuario.cpf || "—"}
+            </td>
+
+            <td className="py-4">
+              {usuario.celular || "—"}
+            </td>
+
+            <td className="py-4 font-black text-[#23C997]">
+              {usuario.milhas}
+            </td>
+
+            <td className="py-4">
+              {usuario.compras}
+            </td>
+
+            <td className="py-4">
+              {usuario.passIds}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    {usuarios.length === 0 && (
+      <p className="text-white/50 py-5">
+        Nenhum usuário encontrado.
       </p>
     )}
   </div>
