@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
 function gerarPassId() {
-  const n = Math.floor(Math.random() * 9999999)
+  const n = Math.floor(Math.random() * 100000)
     .toString()
-    .padStart(7, "0");
+    .padStart(5, "0");
 
   return `PSD-${n}`;
 }
