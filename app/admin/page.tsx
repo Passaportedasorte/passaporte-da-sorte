@@ -181,23 +181,36 @@ async function encontrarVencedorFederal() {
     return;
   }
 
-  const passId = `PSD-${numeroFederal.padStart(5, "0")}`;
+  const numeroAlvo = Number(numeroFederal.padStart(5, "0"));
+  const passIdExato = `PSD-${numeroFederal.padStart(5, "0")}`;
 
-  const { data: vencedor, error } = await supabase
+  const { data: todosPassIds, error } = await supabase
     .from("pass_ids")
     .select("*")
-    .eq("campaign_id", campanhaResultado)
-    .eq("pass_id", passId)
-    .single();
+    .eq("campaign_id", campanhaResultado);
 
-  if (error || !vencedor) {
-    alert("Nenhum PASS-ID encontrado.");
+  if (error || !todosPassIds || todosPassIds.length === 0) {
+    alert("Nenhum PASS-ID encontrado nesta campanha.");
     return;
   }
 
+  const vencedor =
+    todosPassIds.find((item) => item.pass_id === passIdExato) ||
+    todosPassIds.reduce((maisProximo, atual) => {
+      const numeroAtual = Number(String(atual.pass_id).replace("PSD-", ""));
+      const numeroMaisProximo = Number(
+        String(maisProximo.pass_id).replace("PSD-", "")
+      );
+
+      const distanciaAtual = Math.abs(numeroAtual - numeroAlvo);
+      const distanciaMaisProximo = Math.abs(numeroMaisProximo - numeroAlvo);
+
+      return distanciaAtual < distanciaMaisProximo ? atual : maisProximo;
+    });
+
   await supabase.from("resultados_federal").insert({
     campaign_id: campanhaResultado,
-    numero_sorteado: numeroFederal,
+    numero_sorteado: numeroFederal.padStart(5, "0"),
     pass_id_vencedor: vencedor.pass_id,
     user_id_vencedor: vencedor.user_id,
     compra_id_vencedora: vencedor.compra_id,
@@ -205,7 +218,11 @@ async function encontrarVencedorFederal() {
 
   setResultadoEncontrado(vencedor);
 
-  alert("Vencedor encontrado!");
+  alert(
+    vencedor.pass_id === passIdExato
+      ? "Vencedor exato encontrado!"
+      : "Vencedor mais próximo encontrado!"
+  );
 }
 
 async function abrirDetalhesCompra(compra: any) {
