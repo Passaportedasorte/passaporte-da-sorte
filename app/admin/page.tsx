@@ -514,7 +514,7 @@ const comprasFiltradas = compras.filter((compra) => {
           </button>
         </div>
 
-        <section className="grid md:grid-cols-4 gap-4 mt-10">
+        <section className="grid md:grid-cols-4 lg:grid-cols-8 gap-4 mt-10">
           <ResumoCard titulo="Campanhas" valor={resumo.campanhas} />
           <ResumoCard titulo="Compras" valor={resumo.compras} />
           <ResumoCard titulo="PASS-IDs" valor={resumo.passIds} />
