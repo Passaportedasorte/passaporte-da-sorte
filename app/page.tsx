@@ -479,7 +479,7 @@ async function salvarMeusDados() {
   <Briefcase className="w-5 h-5 text-[#23C997]" />
   Campanhas
 </button>
-
+git add .
       {user && (
         <button
           onClick={() => (window.location.href = "/painel")}
@@ -739,165 +739,37 @@ async function salvarMeusDados() {
           />
         </section>
 
-        <section id="comprar" className="max-w-7xl mx-auto px-5 md:px-8 py-14">
-          <div className="rounded-[2.2rem] bg-white text-[#061832] shadow-2xl p-6 md:p-8 border-4 border-[#23C997] relative overflow-hidden max-w-3xl mx-auto">
-            <div className="absolute top-0 left-0 right-0 bg-[#23C997] text-[#061832] text-center py-2 font-black text-sm">
-              🔥 CAMPANHA ATIVA
-            </div>
+      <section className="max-w-7xl mx-auto px-5 md:px-8 py-20">
+  <div className="rounded-[2.5rem] bg-white/10 border border-white/15 p-10 text-center backdrop-blur-xl">
 
-            <div className="pt-8">
-              <h3 className="text-3xl font-black">Garanta seu Passaporte</h3>
+    <h2 className="text-4xl md:text-5xl font-black">
+      Pronto para viajar?
+    </h2>
 
-              <p className="text-slate-500 mt-2 mb-6">
-                {user
-                  ? "Seus dados foram preenchidos automaticamente pela sua conta."
-                  : "Entre ou crie sua conta para finalizar a compra."}
-              </p>
-
-              <div className="space-y-4">
-               {user ? (
-  <div className="rounded-2xl bg-[#061832] text-white p-5 border border-[#23C997]/40">
-    <p className="text-[#23C997] text-sm font-black">
-      ✓ Você está comprando com sua conta
+    <p className="text-white/60 max-w-2xl mx-auto mt-4 text-lg">
+      Escolha uma campanha, acumule milhas e participe dos sorteios
+      oficiais vinculados à Loteria Federal.
     </p>
 
-    <h4 className="text-2xl font-black mt-2">
-      {nome}
-    </h4>
+    <div className="flex flex-col md:flex-row justify-center gap-4 mt-8">
 
-    <p className="text-white/60 mt-1">
-      {contato}
-    </p>
+      <button
+        onClick={() => (window.location.href = "/campanhas")}
+        className="rounded-2xl bg-[#23C997] text-[#061832] px-8 py-4 font-black hover:scale-105 transition"
+      >
+        Ver Campanhas
+      </button>
 
-    <p className="text-white/60 mt-1">
-      CPF: {cpf}
-    </p>
+      <button
+        onClick={() => (window.location.href = "/resultados")}
+        className="rounded-2xl bg-white/10 border border-white/15 px-8 py-4 font-black hover:bg-white/15 transition"
+      >
+        Ver Resultados
+      </button>
+
+    </div>
   </div>
-) : (
-  <>
-    <Input
-      label="Nome completo"
-      value={nome}
-      onChange={setNome}
-      placeholder="Seu nome"
-    />
-
-    <Input
-      label="E-mail"
-      value={contato}
-      onChange={setContato}
-      placeholder="Digite seu e-mail"
-    />
-
-    <Input
-      label="CPF"
-      value={cpf}
-      onChange={setCpf}
-      placeholder="Digite seu CPF"
-    />
-    <input
-  value={celular}
-  onChange={(e) => {
-  const value = e.target.value
-    .replace(/\D/g, "")
-    .replace(/^(\d{2})(\d)/g, "($1) $2")
-    .replace(/(\d{5})(\d)/, "$1-$2")
-    .slice(0, 15);
-
-  setCelular(value);
-}}
-  placeholder="Celular"
-  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
-/>
-
-    <input
-  value={dataNascimento}
-  onChange={(e) => setDataNascimento(e.target.value)}
-  placeholder="Data de nascimento"
-  type="date"
-  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
-/>
-  </>
-)}
-
-                <div>
-                  <label className="text-sm font-black">
-                    Escolha a campanha
-                  </label>
-
-                  <select
-                    value={campanhaSelecionada?.id ?? ""}
-                    onChange={(e) => {
-                      const selecionada = campanhas.find(
-                        (c) => String(c.id) === e.target.value
-                      );
-
-                      setCampanhaSelecionada(selecionada);
-                    }}
-                    className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
-                  >
-                    {campanhas.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.titulo} — {c.destino} — R$ {c.preco}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-sm font-black">Quantidade</label>
-
-                  <div className="grid grid-cols-4 gap-2 mt-2 mb-3">
-                    {[5, 10, 25, 50].map((q) => (
-                      <button
-                        key={q}
-                        type="button"
-                        onClick={() => setQuantidade(q)}
-                        className={`rounded-xl px-3 py-2 font-black border transition ${
-                          quantidade === q
-                            ? "bg-[#23C997] text-[#061832] border-[#23C997]"
-                            : "bg-white border-slate-200 text-[#061832]"
-                        }`}
-                      >
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-
-                  <input
-                    type="number"
-                    min="1"
-                    value={quantidade}
-                    onChange={(e) => setQuantidade(Number(e.target.value))}
-                    placeholder="Digite a quantidade"
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
-                  />
-
-                  <p className="text-xs text-slate-400 mt-2">
-                    Escolha uma sugestão ou digite a quantidade desejada.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl bg-slate-100 p-4 flex justify-between font-black text-lg">
-                  <span>Total</span>
-                  <span>R$ {total}</span>
-                </div>
-
-                <button
-                  onClick={gerarPix}
-                  disabled={loadingPix}
-                  className="w-full rounded-2xl py-4 bg-[#061832] text-white font-black hover:bg-[#0b244a] transition disabled:opacity-50"
-                >
-                  {loadingPix ? "Gerando PIX..." : "Finalizar compra"}
-                </button>
-
-                <p className="text-xs text-black/40 text-center mt-3">
-                  🔒 Compra protegida • PASS-ID gerado automaticamente
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+</section>
 
         <section className="max-w-7xl mx-auto px-5 md:px-8 py-14">
           <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-8">
