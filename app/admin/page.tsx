@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import * as XLSX from "xlsx";
 
 const ADMIN_EMAIL = "petrikovskibruno@gmail.com";
 
@@ -89,6 +90,37 @@ async function abrirDetalhesCompra(compra: any) {
     .order("id");
 
   setPassIdsCompra(data ?? []);
+}
+
+function exportarComprasExcel() {
+  const dados = comprasFiltradas.map((compra) => ({
+    Nome: compra.nome,
+    Email: compra.email,
+    CPF: compra.cpf,
+    Quantidade: compra.quantidade,
+    Valor: compra.valor,
+    Status: compra.status,
+    Campanha: compra.campaigns?.titulo || "",
+    Destino: compra.campaigns?.destino || "",
+    Data: compra.created_at
+      ? new Date(compra.created_at).toLocaleString("pt-BR")
+      : "",
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(dados);
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "Compras"
+  );
+
+  XLSX.writeFile(
+    workbook,
+    `compras-${new Date().toISOString().slice(0, 10)}.xlsx`
+  );
 }
 
   async function loginGoogle() {
@@ -393,7 +425,18 @@ const comprasFiltradas = compras.filter((compra) => {
 </div>
 
     <div>
-      <h2 className="text-3xl font-black">Compras</h2>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+  <h2 className="text-3xl font-black">
+    Compras
+  </h2>
+
+  <button
+    onClick={exportarComprasExcel}
+    className="rounded-xl bg-[#23C997] text-[#061832] px-4 py-3 font-black"
+  >
+    📤 Exportar Excel
+  </button>
+</div>
       <p className="text-white/50 text-sm">
         Acompanhe as compras realizadas no Passaporte da Sorte.
       </p>
