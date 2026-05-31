@@ -20,12 +20,16 @@ export default function AdminPage() {
   const [comprasUsuario, setComprasUsuario] = useState<any[]>([]);
   const [passIdsUsuario, setPassIdsUsuario] = useState<any[]>([]);
 
-  const [resumo, setResumo] = useState({
-    campanhas: 0,
-    compras: 0,
-    passIds: 0,
-    arrecadado: 0,
-  });
+ const [resumo, setResumo] = useState({
+  campanhas: 0,
+  compras: 0,
+  passIds: 0,
+  arrecadado: 0,
+  usuarios: 0,
+  milhas: 0,
+  comprasPagas: 0,
+  comprasPendentes: 0,
+});
 
   const [form, setForm] = useState({
     titulo: "",
@@ -224,35 +228,71 @@ function exportarComprasExcel() {
     setUser(null);
   }
 
-  async function buscarResumo() {
-    const { count: campanhasCount } = await supabase
-      .from("campaigns")
-      .select("*", { count: "exact", head: true });
+ async function buscarResumo() {
+  const { count: campanhasCount } = await supabase
+    .from("campaigns")
+    .select("*", { count: "exact", head: true });
 
-    const { count: comprasCount, data: compras } = await supabase
-      .from("compras")
-      .select("valor,status", { count: "exact" });
+  const { count: comprasCount, data: compras } = await supabase
+    .from("compras")
+    .select("valor,status,user_id", { count: "exact" });
 
-    const { count: passIdsCount } = await supabase
-      .from("pass_ids")
-      .select("*", { count: "exact", head: true });
+  const { count: passIdsCount } = await supabase
+    .from("pass_ids")
+    .select("*", { count: "exact", head: true });
 
-    const arrecadado =
-      compras
-        ?.filter(
-          (c) =>
-            c.status === "PAYMENT_RECEIVED" ||
-            c.status === "PAYMENT_CONFIRMED"
-        )
-        .reduce((total, item) => total + Number(item.valor || 0), 0) ?? 0;
+  const { count: usuariosCount } = await supabase
+    .from("user_miles")
+    .select("*", { count: "exact", head: true });
 
-    setResumo({
-      campanhas: campanhasCount ?? 0,
-      compras: comprasCount ?? 0,
-      passIds: passIdsCount ?? 0,
-      arrecadado,
-    });
-  }
+  const { data: milhasData } = await supabase
+    .from("user_miles")
+    .select("total_milhas");
+
+  const arrecadado =
+    compras
+      ?.filter(
+        (c) =>
+          c.status === "PAYMENT_RECEIVED" ||
+          c.status === "PAYMENT_CONFIRMED"
+      )
+      .reduce(
+        (total, item) => total + Number(item.valor || 0),
+        0
+      ) ?? 0;
+
+  const comprasPagas =
+    compras?.filter(
+      (c) =>
+        c.status === "PAYMENT_RECEIVED" ||
+        c.status === "PAYMENT_CONFIRMED"
+    ).length ?? 0;
+
+  const comprasPendentes =
+    compras?.filter(
+      (c) =>
+        c.status === "PENDING" ||
+        c.status === "AWAITING_PAYMENT"
+    ).length ?? 0;
+
+  const milhas =
+    milhasData?.reduce(
+      (total, item) =>
+        total + Number(item.total_milhas || 0),
+      0
+    ) ?? 0;
+
+  setResumo({
+    campanhas: campanhasCount ?? 0,
+    compras: comprasCount ?? 0,
+    passIds: passIdsCount ?? 0,
+    arrecadado,
+    usuarios: usuariosCount ?? 0,
+    milhas,
+    comprasPagas,
+    comprasPendentes,
+  });
+}
 
   async function buscarCampanhas() {
     const { data, error } = await supabase
@@ -482,6 +522,25 @@ const comprasFiltradas = compras.filter((compra) => {
             titulo="Arrecadado"
             valor={`R$ ${resumo.arrecadado.toFixed(2).replace(".", ",")}`}
           />
+          <ResumoCard
+  titulo="Usuários"
+  valor={resumo.usuarios}
+/>
+
+<ResumoCard
+  titulo="Milhas Distribuídas"
+  valor={resumo.milhas}
+/>
+
+<ResumoCard
+  titulo="Compras Pagas"
+  valor={resumo.comprasPagas}
+/>
+
+<ResumoCard
+  titulo="Pendentes"
+  valor={resumo.comprasPendentes}
+/>
         </section>
 
 
