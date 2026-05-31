@@ -438,31 +438,32 @@ async function salvarMeusDados() {
 
       <div className="relative z-10">
        <header className="max-w-7xl mx-auto px-5 md:px-8 pt-6">
-  <div className="rounded-[2rem] bg-white/10 border border-white/15 px-5 md:px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-5 shadow-2xl backdrop-blur-xl">
+  <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-8 shadow-2xl backdrop-blur-xl overflow-x-auto">
 
-    <div
-      onClick={() => (window.location.href = "/")}
-      className="flex items-center gap-4 cursor-pointer"
-    >
-      <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden">
-        <img
-          src="/logo.png"
-          alt="Passaporte da Sorte"
-          className="w-10 h-10 object-contain"
-        />
-      </div>
+   <div
+  onClick={() => (window.location.href = "/")}
+  className="flex items-center gap-4 cursor-pointer flex-shrink-0"
+>
+  <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden flex-shrink-0">
+    <img
+      src="/logo.png"
+      alt="Passaporte da Sorte"
+      className="w-10 h-10 object-contain"
+    />
+  </div>
 
-      <div>
-        <h1 className="text-xl md:text-2xl font-black tracking-tight">
-          Passaporte da Sorte
-        </h1>
-        <p className="text-white/50 text-sm">
-          Clube de viagens e experiências
-        </p>
-      </div>
-    </div>
+  <div className="flex flex-col whitespace-nowrap">
+    <h1 className="text-2xl font-black leading-none">
+      Passaporte da Sorte
+    </h1>
 
-    <nav className="flex flex-wrap items-center gap-3 lg:gap-5">
+    <p className="text-white/50 text-sm mt-1">
+      Clube de viagens e experiências
+    </p>
+  </div>
+</div>
+
+    <nav className="flex items-center gap-6 ml-auto flex-shrink-0">
       <button
         onClick={() => (window.location.href = "/resultados")}
         className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
@@ -903,7 +904,7 @@ async function salvarMeusDados() {
         </section>
 
         <section className="max-w-7xl mx-auto px-5 md:px-8 py-14">
-          <div className="rounded-[2rem] bg-white/10 border border-white/15 p-7 md:p-10 grid md:grid-cols-3 gap-7 backdrop-blur-xl">
+          <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-8">
             <div
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
