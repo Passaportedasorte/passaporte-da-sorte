@@ -12,6 +12,8 @@ export default function AdminPage() {
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [buscaCompra, setBuscaCompra] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
+  const [compraSelecionada, setCompraSelecionada] = useState<any>(null);
+  const [passIdsCompra, setPassIdsCompra] = useState<any[]>([]);  
 
   const [resumo, setResumo] = useState({
     campanhas: 0,
@@ -77,7 +79,17 @@ useEffect(() => {
 }, []);
 
 
+async function abrirDetalhesCompra(compra: any) {
+  setCompraSelecionada(compra);
 
+  const { data } = await supabase
+    .from("pass_ids")
+    .select("*")
+    .eq("compra_id", compra.id)
+    .order("id");
+
+  setPassIdsCompra(data ?? []);
+}
 
   async function loginGoogle() {
     await supabase.auth.signInWithOAuth({
@@ -398,6 +410,7 @@ const comprasFiltradas = compras.filter((compra) => {
           <th className="py-3">Valor</th>
           <th className="py-3">Status</th>
           <th className="py-3">Data</th>
+          <th className="py-3">Ações</th>
         </tr>
       </thead>
 
@@ -448,6 +461,15 @@ const comprasFiltradas = compras.filter((compra) => {
                 ? new Date(compra.created_at).toLocaleString("pt-BR")
                 : "—"}
             </td>
+
+            <td className="py-4">
+  <button
+    onClick={() => abrirDetalhesCompra(compra)}
+    className="rounded-xl bg-[#23C997] text-[#061832] px-3 py-2 text-xs font-black"
+  >
+    Ver detalhes
+  </button>
+</td>
           </tr>
         ))}
       </tbody>
@@ -667,6 +689,95 @@ const comprasFiltradas = compras.filter((compra) => {
           </div>
         </section>
       </div>
+
+      {compraSelecionada && (
+  <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+    <div className="w-full max-w-2xl rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
+
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-black text-white">
+          Detalhes da Compra
+        </h2>
+
+        <button
+          onClick={() => {
+            setCompraSelecionada(null);
+            setPassIdsCompra([]);
+          }}
+          className="text-white/60 hover:text-white text-2xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4 mt-6 text-white">
+
+        <div>
+          <p className="text-white/50 text-sm">Nome</p>
+          <p className="font-black">{compraSelecionada.nome}</p>
+        </div>
+
+        <div>
+          <p className="text-white/50 text-sm">Email</p>
+          <p className="font-black">{compraSelecionada.email}</p>
+        </div>
+
+        <div>
+          <p className="text-white/50 text-sm">CPF</p>
+          <p className="font-black">{compraSelecionada.cpf}</p>
+        </div>
+
+        <div>
+          <p className="text-white/50 text-sm">Valor</p>
+          <p className="font-black">
+            R$ {Number(compraSelecionada.valor || 0)
+              .toFixed(2)
+              .replace(".", ",")}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-white/50 text-sm">Quantidade</p>
+          <p className="font-black">
+            {compraSelecionada.quantidade}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-white/50 text-sm">Status</p>
+          <p className="font-black">
+            {compraSelecionada.status}
+          </p>
+        </div>
+
+      </div>
+
+      <div className="mt-8">
+        <h3 className="text-xl font-black text-white mb-4">
+          PASS IDs
+        </h3>
+
+        <div className="grid md:grid-cols-3 gap-3">
+          {passIdsCompra.map((item) => (
+            <div
+              key={item.id}
+              className="rounded-xl bg-white/10 border border-white/10 p-3 text-center"
+            >
+              <p className="font-black text-[#23C997]">
+                {item.pass_id}
+              </p>
+
+              <p className="text-xs text-white/50 mt-1">
+                {item.milhas} milhas
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </div>
+)}
     </main>
   );
 }
