@@ -22,6 +22,7 @@ export default function AdminPage() {
   const [campanhaResultado, setCampanhaResultado] = useState(""); 
   const [numeroFederal, setNumeroFederal] = useState("");
   const [resultadoEncontrado, setResultadoEncontrado] = useState<any>(null);
+  const [resultados, setResultados] = useState<any[]>([]);
 
  const [resumo, setResumo] = useState({
   campanhas: 0,
@@ -62,6 +63,7 @@ useEffect(() => {
       buscarResumo();
       buscarCompras();
       buscarUsuarios();
+      buscarResultados();
       
 
       async function buscarCompras() {
@@ -208,6 +210,8 @@ async function encontrarVencedorFederal() {
       return distanciaAtual < distanciaMaisProximo ? atual : maisProximo;
     });
 
+  await buscarResultados();
+
   await supabase.from("resultados_federal").insert({
     campaign_id: campanhaResultado,
     numero_sorteado: numeroFederal.padStart(5, "0"),
@@ -349,6 +353,26 @@ function exportarComprasExcel() {
     comprasPagas,
     comprasPendentes,
   });
+}
+
+async function buscarResultados() {
+  const { data, error } = await supabase
+    .from("resultados_federal")
+    .select(`
+      *,
+      campaigns (
+        titulo,
+        destino
+      )
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erro ao buscar resultados:", error);
+    return;
+  }
+
+  setResultados(data ?? []);
 }
 
   async function buscarCampanhas() {
@@ -575,6 +599,63 @@ const comprasFiltradas = compras.filter((compra) => {
   <h2 className="text-3xl font-black mb-5">
     Resultado Federal
   </h2>
+
+  <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
+  <h2 className="text-3xl font-black mb-5">
+    Resultados
+  </h2>
+
+  <div className="overflow-x-auto">
+    <table className="w-full text-left min-w-[800px]">
+      <thead>
+        <tr className="text-white/50 text-sm border-b border-white/10">
+          <th className="py-3">Campanha</th>
+          <th className="py-3">Número Federal</th>
+          <th className="py-3">PASS-ID Vencedor</th>
+          <th className="py-3">Data</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {resultados.map((resultado) => (
+          <tr
+            key={resultado.id}
+            className="border-b border-white/10"
+          >
+            <td className="py-4">
+              <p className="font-black">
+                {resultado.campaigns?.titulo || "—"}
+              </p>
+              <p className="text-white/50 text-sm">
+                {resultado.campaigns?.destino || "—"}
+              </p>
+            </td>
+
+            <td className="py-4 font-black">
+              {resultado.numero_sorteado}
+            </td>
+
+            <td className="py-4 text-[#23C997] font-black">
+              {resultado.pass_id_vencedor}
+            </td>
+
+            <td className="py-4 text-white/50">
+              {resultado.created_at
+                ? new Date(resultado.created_at).toLocaleString("pt-BR")
+                : "—"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    {resultados.length === 0 && (
+      <p className="text-white/50 py-5">
+        Nenhum resultado cadastrado.
+      </p>
+    )}
+  </div>
+</section>
 
   <div className="grid md:grid-cols-3 gap-3">
     <select
