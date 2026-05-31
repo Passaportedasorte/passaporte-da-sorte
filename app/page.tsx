@@ -592,37 +592,25 @@ async function salvarMeusDados() {
             transition={{ duration: 0.7 }}
           >
             <button
-              onClick={() => {
-                document
-                  .getElementById("como-funciona")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="mb-5 rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition"
-            >
-              Como funciona
-            </button>
+  onClick={() => {
+    document
+      .getElementById("como-funciona")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }}
+  className="mb-5 rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition"
+>
+  Como funciona
+</button>
 
             <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
-              Seu próximo destino pode começar aqui.
+              Participe. Acumule milhas. Viaje.
             </h2>
 
             <p className="mt-6 text-lg md:text-xl text-white/70 max-w-xl leading-relaxed">
-              Participe de campanhas exclusivas, receba seu <b>PASS-ID</b>{" "}
-              digital e viva a experiência de transformar sorte em viagem.
+              Participe das campanhas, receba seus PASS-IDs, acumule milhas e acompanhe os resultados oficiais pela Loteria Federal.
             </p>
 
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => {
-                  document
-                    .getElementById("comprar")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="rounded-full bg-[#23C997] px-8 py-4 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
-              >
-                Comprar meu passaporte
-              </button>
-            </div>
+            
           </motion.div>
 
           <motion.div
@@ -745,26 +733,7 @@ async function salvarMeusDados() {
           </motion.div>
         </section>
 
-        <section
-          id="como-funciona"
-          className="max-w-7xl mx-auto px-5 md:px-8 py-10 grid md:grid-cols-3 gap-5"
-        >
-          <Step
-            n="01"
-            title="Escolha a campanha"
-            text="Veja o destino disponível e escolha quantos passaportes deseja."
-          />
-          <Step
-            n="02"
-            title="Receba seu PASS-ID"
-            text="Cada participação gera um código exclusivo, como PSD-04821."
-          />
-          <Step
-            n="03"
-            title="Acumule milhas"
-            text="Suas participações geram pontos para futuras vantagens."
-          />
-        </section>
+        
 
         <section id="como-funciona" className="max-w-7xl mx-auto px-5 md:px-8 py-16">
   <div className="text-center">
