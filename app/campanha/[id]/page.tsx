@@ -11,6 +11,14 @@ export default function CampanhaPage({
   const { id } = use(params);
 
   const [campanha, setCampanha] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
+const [nome, setNome] = useState("");
+const [contato, setContato] = useState("");
+const [cpf, setCpf] = useState("");
+const [celular, setCelular] = useState("");
+const [dataNascimento, setDataNascimento] = useState("");
+const [quantidade, setQuantidade] = useState(5);
+const [loadingPix, setLoadingPix] = useState(false);
 
   useEffect(() => {
     async function carregarCampanha() {
@@ -25,6 +33,91 @@ export default function CampanhaPage({
 
     carregarCampanha();
   }, [id]);
+
+  useEffect(() => {
+  async function carregarUsuario() {
+    const { data } = await supabase.auth.getUser();
+
+    setUser(data.user);
+
+    if (data.user) {
+      setNome(data.user.user_metadata?.full_name || "");
+      setContato(data.user.email || "");
+      setCpf(data.user.user_metadata?.cpf || "");
+      setCelular(data.user.user_metadata?.celular || "");
+      setDataNascimento(data.user.user_metadata?.data_nascimento || "");
+    }
+  }
+
+  carregarUsuario();
+}, []);
+
+const total = (quantidade * Number(campanha?.preco || 0))
+  .toFixed(2)
+  .replace(".", ",");
+
+async function gerarPix() {
+  if (!user) {
+    alert("Faça login ou crie sua conta antes de finalizar a compra.");
+    return;
+  }
+
+  if (!nome.trim()) return alert("Preencha seu nome completo.");
+  if (!contato.trim()) return alert("Preencha seu e-mail.");
+  if (!cpf.trim()) return alert("Preencha seu CPF.");
+  if (!celular.trim()) return alert("Preencha seu celular.");
+  if (!dataNascimento.trim()) return alert("Preencha sua data de nascimento.");
+
+  try {
+    setLoadingPix(true);
+
+    const response = await fetch("/api/asaas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        valor: Number(campanha.preco) * quantidade,
+        nome,
+        email: contato,
+        cpf,
+        celular,
+        campanhaId: campanha.id,
+        quantidade,
+        userId: user?.id,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(
+        data?.details ||
+          data?.errors?.[0]?.description ||
+          data?.error ||
+          "Erro ao gerar pagamento"
+      );
+      return;
+    }
+
+    if (data.invoiceUrl) {
+      window.location.href = data.invoiceUrl;
+      return;
+    }
+
+    if (data.bankSlipUrl) {
+      window.location.href = data.bankSlipUrl;
+      return;
+    }
+
+    alert("Cobrança criada, mas não veio link de pagamento.");
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao gerar pagamento");
+  } finally {
+    setLoadingPix(false);
+  }
+}
 
   if (!campanha) {
     return (
@@ -91,25 +184,93 @@ export default function CampanhaPage({
 
         </div>
 
-        <div className="rounded-[2rem] bg-white text-[#061832] p-6 shadow-2xl h-fit sticky top-6">
+      <div className="rounded-[2rem] bg-white text-[#061832] p-6 shadow-2xl h-fit sticky top-6">
+  <h3 className="text-2xl font-black">
+    Comprar Passaporte
+  </h3>
 
-          <h3 className="text-2xl font-black">
-            Comprar Passaporte
-          </h3>
+  <p className="text-slate-500 mt-2 mb-6">
+    {user
+      ? "Seus dados foram preenchidos automaticamente pela sua conta."
+      : "Entre ou crie sua conta na página inicial antes de comprar."}
+  </p>
 
-          <p className="text-slate-500 mt-2">
-            Garanta sua participação nesta campanha.
-          </p>
+  <div className="space-y-4">
+    {user ? (
+      <div className="rounded-2xl bg-[#061832] text-white p-5 border border-[#23C997]/40">
+        <p className="text-[#23C997] text-sm font-black">
+          ✓ Você está comprando com sua conta
+        </p>
 
-          <a
-            href={`/?campanha=${campanha.id}#comprar`}
-            className="mt-6 block text-center rounded-2xl bg-[#23C997] px-6 py-4 font-black text-[#061832]"
+        <h4 className="text-2xl font-black mt-2">
+          {nome}
+        </h4>
+
+        <p className="text-white/60 mt-1">
+          {contato}
+        </p>
+
+        <p className="text-white/60 mt-1">
+          CPF: {cpf}
+        </p>
+      </div>
+    ) : (
+      <a
+        href="/"
+        className="block text-center rounded-2xl bg-[#23C997] px-6 py-4 font-black text-[#061832]"
+      >
+        Entrar ou criar conta
+      </a>
+    )}
+
+    <div>
+      <label className="text-sm font-black">Quantidade</label>
+
+      <div className="grid grid-cols-4 gap-2 mt-2 mb-3">
+        {[5, 10, 25, 50].map((q) => (
+          <button
+            key={q}
+            type="button"
+            onClick={() => setQuantidade(q)}
+            className={`rounded-xl px-3 py-2 font-black border transition ${
+              quantidade === q
+                ? "bg-[#23C997] text-[#061832] border-[#23C997]"
+                : "bg-white border-slate-200 text-[#061832]"
+            }`}
           >
-            Comprar agora
-          </a>
+            {q}
+          </button>
+        ))}
+      </div>
 
-        </div>
+      <input
+        type="number"
+        min="1"
+        value={quantidade}
+        onChange={(e) => setQuantidade(Number(e.target.value))}
+        placeholder="Digite a quantidade"
+        className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+      />
+    </div>
 
+    <div className="rounded-2xl bg-slate-100 p-4 flex justify-between font-black text-lg">
+      <span>Total</span>
+      <span>R$ {total}</span>
+    </div>
+
+    <button
+      onClick={gerarPix}
+      disabled={loadingPix || !user}
+      className="w-full rounded-2xl py-4 bg-[#061832] text-white font-black hover:bg-[#0b244a] transition disabled:opacity-50"
+    >
+      {loadingPix ? "Gerando PIX..." : "Finalizar compra"}
+    </button>
+
+    <p className="text-xs text-black/40 text-center mt-3">
+      🔒 Compra protegida • PASS-ID gerado automaticamente
+    </p>
+  </div>
+</div>
       </section>
     </main>
   );
