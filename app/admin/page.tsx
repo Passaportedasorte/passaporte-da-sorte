@@ -212,13 +212,23 @@ async function encontrarVencedorFederal() {
 
   await buscarResultados();
 
-  await supabase.from("resultados_federal").insert({
+const { error: resultadoError } = await supabase
+  .from("resultados_federal")
+  .insert({
     campaign_id: campanhaResultado,
     numero_sorteado: numeroFederal.padStart(5, "0"),
     pass_id_vencedor: vencedor.pass_id,
     user_id_vencedor: vencedor.user_id,
     compra_id_vencedora: vencedor.compra_id,
   });
+
+if (resultadoError) {
+  console.error("Erro ao salvar resultado:", resultadoError);
+  alert(resultadoError.message);
+  return;
+}
+
+await buscarResultados();
 
   setResultadoEncontrado(vencedor);
 
