@@ -19,6 +19,9 @@ export default function AdminPage() {
   const [usuarioSelecionado, setUsuarioSelecionado] = useState<any>(null);
   const [comprasUsuario, setComprasUsuario] = useState<any[]>([]);
   const [passIdsUsuario, setPassIdsUsuario] = useState<any[]>([]);
+  const [campanhaResultado, setCampanhaResultado] = useState(""); 
+  const [numeroFederal, setNumeroFederal] = useState("");
+  const [resultadoEncontrado, setResultadoEncontrado] = useState<any>(null);
 
  const [resumo, setResumo] = useState({
   campanhas: 0,
@@ -167,6 +170,43 @@ async function abrirDetalhesUsuario(usuario: any) {
   setPassIdsUsuario(passIdsData ?? []);
 }
 
+async function encontrarVencedorFederal() {
+  if (!campanhaResultado) {
+    alert("Selecione uma campanha.");
+    return;
+  }
+
+  if (!numeroFederal.trim()) {
+    alert("Informe o número sorteado.");
+    return;
+  }
+
+  const passId = `PSD-${numeroFederal.padStart(5, "0")}`;
+
+  const { data: vencedor, error } = await supabase
+    .from("pass_ids")
+    .select("*")
+    .eq("campaign_id", campanhaResultado)
+    .eq("pass_id", passId)
+    .single();
+
+  if (error || !vencedor) {
+    alert("Nenhum PASS-ID encontrado.");
+    return;
+  }
+
+  await supabase.from("resultados_federal").insert({
+    campaign_id: campanhaResultado,
+    numero_sorteado: numeroFederal,
+    pass_id_vencedor: vencedor.pass_id,
+    user_id_vencedor: vencedor.user_id,
+    compra_id_vencedora: vencedor.compra_id,
+  });
+
+  setResultadoEncontrado(vencedor);
+
+  alert("Vencedor encontrado!");
+}
 
 async function abrirDetalhesCompra(compra: any) {
   setCompraSelecionada(compra);
@@ -513,6 +553,97 @@ const comprasFiltradas = compras.filter((compra) => {
             Sair
           </button>
         </div>
+
+        <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
+  <h2 className="text-3xl font-black mb-5">
+    Resultado Federal
+  </h2>
+
+  <div className="grid md:grid-cols-3 gap-3">
+    <select
+      value={campanhaResultado}
+      onChange={(e) => setCampanhaResultado(e.target.value)}
+      className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+    >
+      <option value="">
+        Selecione uma campanha
+      </option>
+
+      {campanhas.map((campanha) => (
+        <option
+          key={campanha.id}
+          value={campanha.id}
+        >
+          {campanha.titulo}
+        </option>
+      ))}
+    </select>
+
+    <input
+      value={numeroFederal}
+      onChange={(e) =>
+        setNumeroFederal(
+          e.target.value.replace(/\D/g, "").slice(0, 5)
+        )
+      }
+      placeholder="Últimos 5 números"
+      className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+    />
+
+    <button
+      onClick={encontrarVencedorFederal}
+      className="rounded-2xl bg-[#23C997] text-[#061832] font-black"
+    >
+      Encontrar vencedor
+    </button>
+  </div>
+
+  {resultadoEncontrado && (
+    <div className="mt-6 rounded-2xl bg-[#23C997]/10 border border-[#23C997]/30 p-5">
+      <h3 className="text-xl font-black text-[#23C997]">
+        🎉 Vencedor encontrado
+      </h3>
+
+      <div className="grid md:grid-cols-2 gap-4 mt-4">
+        <div>
+          <p className="text-white/50 text-sm">
+            PASS-ID
+          </p>
+          <p className="font-black">
+            {resultadoEncontrado.pass_id}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-white/50 text-sm">
+            Compra
+          </p>
+          <p className="font-black">
+            #{resultadoEncontrado.compra_id}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-white/50 text-sm">
+            Milhas
+          </p>
+          <p className="font-black">
+            {resultadoEncontrado.milhas}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-white/50 text-sm">
+            User ID
+          </p>
+          <p className="font-black text-xs break-all">
+            {resultadoEncontrado.user_id}
+          </p>
+        </div>
+      </div>
+    </div>
+  )}
+</section>
 
         <section className="grid md:grid-cols-4 lg:grid-cols-8 gap-4 mt-10">
           <ResumoCard titulo="Campanhas" valor={resumo.campanhas} />
