@@ -438,7 +438,7 @@ async function salvarMeusDados() {
 
       <div className="relative z-10">
        <header className="max-w-7xl mx-auto px-5 md:px-8 pt-6">
-  <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-6 shadow-2xl backdrop-blur-xl overflow-hidden">
+  <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-6 shadow-2xl backdrop-blur-xl relative">
 
    <div
   onClick={() => (window.location.href = "/")}
@@ -519,7 +519,7 @@ async function salvarMeusDados() {
               className="w-9 h-9 rounded-full object-cover"
             />
 
-            <span className="text-sm font-black text-white max-w-[140px] truncate">
+            <span className="text-sm font-black text-white max-w-[110px] truncate">
               {user.user_metadata?.full_name || user.email}
             </span>
 
@@ -527,7 +527,7 @@ async function salvarMeusDados() {
           </button>
 
           {menuAberto && (
-            <div className="absolute right-0 mt-3 w-48 rounded-2xl bg-white text-[#061832] shadow-2xl p-2 z-50">
+            <div className="absolute right-0 top-full mt-3 w-48 rounded-2xl bg-white text-[#061832] shadow-2xl p-2 z-[9999]">
               <button
                 type="button"
                 onClick={() => {
