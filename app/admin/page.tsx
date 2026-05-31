@@ -212,6 +212,10 @@ async function encontrarVencedorFederal() {
 
   await buscarResultados();
 
+  const tipoResultado =
+  vencedor.pass_id === passIdExato ? "EXATO" : "MAIS_PROXIMO";
+  
+
 const { error: resultadoError } = await supabase
   .from("resultados_federal")
   .insert({
@@ -220,6 +224,7 @@ const { error: resultadoError } = await supabase
     pass_id_vencedor: vencedor.pass_id,
     user_id_vencedor: vencedor.user_id,
     compra_id_vencedora: vencedor.compra_id,
+    tipo_resultado: tipoResultado,
   });
 
 if (resultadoError) {
@@ -624,8 +629,14 @@ const comprasFiltradas = compras.filter((compra) => {
           <th className="py-3">Número Federal</th>
           <th className="py-3">PASS-ID Vencedor</th>
           <th className="py-3">Data</th>
+          <th className="py-3">Tipo</th>
+
         </tr>
+
+      
       </thead>
+
+
 
       <tbody>
         {resultados.map((resultado) => (
@@ -649,6 +660,18 @@ const comprasFiltradas = compras.filter((compra) => {
             <td className="py-4 text-[#23C997] font-black">
               {resultado.pass_id_vencedor}
             </td>
+            
+            <td className="py-4">
+  {resultado.tipo_resultado === "EXATO" ? (
+    <span className="text-green-400 font-black">
+      🎯 Exato
+    </span>
+  ) : (
+    <span className="text-yellow-400 font-black">
+      📍 Mais próximo
+    </span>
+  )}
+</td>
 
             <td className="py-4 text-white/50">
               {resultado.created_at
