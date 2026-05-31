@@ -16,6 +16,9 @@ export default function AdminPage() {
   const [compraSelecionada, setCompraSelecionada] = useState<any>(null);
   const [passIdsCompra, setPassIdsCompra] = useState<any[]>([]);  
   const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState<any>(null);
+  const [comprasUsuario, setComprasUsuario] = useState<any[]>([]);
+  const [passIdsUsuario, setPassIdsUsuario] = useState<any[]>([]);
 
   const [resumo, setResumo] = useState({
     campanhas: 0,
@@ -134,6 +137,32 @@ async function buscarUsuarios() {
 
   setUsuarios(usuariosComDados);
 }
+
+async function abrirDetalhesUsuario(usuario: any) {
+  setUsuarioSelecionado(usuario);
+
+  const { data: comprasData } = await supabase
+    .from("compras")
+    .select(`
+      *,
+      campaigns (
+        titulo,
+        destino
+      )
+    `)
+    .eq("user_id", usuario.user_id)
+    .order("created_at", { ascending: false });
+
+  const { data: passIdsData } = await supabase
+    .from("pass_ids")
+    .select("*")
+    .eq("user_id", usuario.user_id)
+    .order("created_at", { ascending: false });
+
+  setComprasUsuario(comprasData ?? []);
+  setPassIdsUsuario(passIdsData ?? []);
+}
+
 
 async function abrirDetalhesCompra(compra: any) {
   setCompraSelecionada(compra);
@@ -597,6 +626,7 @@ const comprasFiltradas = compras.filter((compra) => {
           <th className="py-3">Milhas</th>
           <th className="py-3">Compras</th>
           <th className="py-3">PASS IDs</th>
+          <th className="py-3">Ações</th>
         </tr>
       </thead>
 
@@ -633,6 +663,15 @@ const comprasFiltradas = compras.filter((compra) => {
             <td className="py-4">
               {usuario.passIds}
             </td>
+
+          <td className="py-4">
+  <button
+    onClick={() => abrirDetalhesUsuario(usuario)}
+    className="rounded-xl bg-[#23C997] text-[#061832] px-3 py-2 text-xs font-black"
+  >
+    Ver usuário
+  </button>
+</td>
           </tr>
         ))}
       </tbody>
@@ -941,6 +980,78 @@ const comprasFiltradas = compras.filter((compra) => {
     </div>
   </div>
 )}
+
+{usuarioSelecionado && (
+  <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+    <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-black text-white">
+          Detalhes do Usuário
+        </h2>
+
+        <button
+          onClick={() => {
+            setUsuarioSelecionado(null);
+            setComprasUsuario([]);
+            setPassIdsUsuario([]);
+          }}
+          className="text-white/60 hover:text-white text-2xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-4 mt-6">
+        <Info label="Nome" value={usuarioSelecionado.nome} />
+        <Info label="E-mail" value={usuarioSelecionado.email} />
+        <Info label="CPF" value={usuarioSelecionado.cpf} />
+        <Info label="Celular" value={usuarioSelecionado.celular} />
+        <Info label="Milhas" value={`${usuarioSelecionado.milhas} 🍀`} />
+        <Info label="PASS IDs" value={usuarioSelecionado.passIds} />
+        <Info label="Compras" value={usuarioSelecionado.compras} />
+      </div>
+
+      <div className="mt-8">
+        <h3 className="text-xl font-black mb-4">Compras do usuário</h3>
+
+        <div className="grid gap-3">
+          {comprasUsuario.map((compra) => (
+            <div
+              key={compra.id}
+              className="rounded-2xl bg-white/10 border border-white/10 p-4"
+            >
+              <p className="font-black">
+                {compra.campaigns?.titulo || "Campanha"}
+              </p>
+              <p className="text-white/50 text-sm">
+                {compra.campaigns?.destino || "Destino"} • R$ {Number(compra.valor || 0).toFixed(2).replace(".", ",")} • {compra.status}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <h3 className="text-xl font-black mb-4">PASS IDs do usuário</h3>
+
+        <div className="grid md:grid-cols-4 gap-3">
+          {passIdsUsuario.map((item) => (
+            <div
+              key={item.id}
+              className="rounded-xl bg-white/10 border border-white/10 p-3 text-center"
+            >
+              <p className="font-black text-[#23C997]">{item.pass_id}</p>
+              <p className="text-xs text-white/50 mt-1">
+                {item.milhas} milhas
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
     </main>
   );
 }
@@ -970,5 +1081,14 @@ function AdminInput({
       placeholder={placeholder}
       className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
     />
+  );
+}
+
+function Info({ label, value }: { label: string; value: any }) {
+  return (
+    <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
+      <p className="text-white/50 text-sm">{label}</p>
+      <p className="font-black mt-1">{value || "—"}</p>
+    </div>
   );
 }
