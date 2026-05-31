@@ -9,6 +9,28 @@ function gerarPassId() {
   return `PSD-${n}`;
 }
 
+async function gerarPassIdUnico() {
+  let passId = gerarPassId();
+  let tentativas = 0;
+
+  while (tentativas < 20) {
+    const { data } = await supabase
+      .from("pass_ids")
+      .select("id")
+      .eq("pass_id", passId)
+      .limit(1);
+
+    if (!data || data.length === 0) {
+      return passId;
+    }
+
+    passId = gerarPassId();
+    tentativas++;
+  }
+
+  throw new Error("Não foi possível gerar um PASS-ID único.");
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -62,19 +84,20 @@ export async function POST(req: Request) {
       console.error("Erro ao buscar campanha:", campanhaError);
     }
 
-    const ids = Array.from(
-      { length: Number(compra.quantidade || 0) },
-      () => ({
-        nome: compra.nome,
-        contato: compra.email,
-        pass_id: gerarPassId(),
-        milhas: campanha?.milhas ?? 0,
-        user_id: compra.user_id,
-        campaign_id: compra.campaign_id,
-        compra_id: compra.id,
-        payment_id: pagamento.id,
-      })
-    );
+   const ids = [];
+
+for (let i = 0; i < Number(compra.quantidade || 0); i++) {
+  ids.push({
+    nome: compra.nome,
+    contato: compra.email,
+    pass_id: await gerarPassIdUnico(),
+    milhas: campanha?.milhas ?? 0,
+    user_id: compra.user_id,
+    campaign_id: compra.campaign_id,
+    compra_id: compra.id,
+    payment_id: pagamento.id,
+  });
+}
 
     const { data: passCriados, error: passError } = await supabase
       .from("pass_ids")
