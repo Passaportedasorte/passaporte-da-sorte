@@ -438,7 +438,7 @@ async function salvarMeusDados() {
 
       <div className="relative z-10">
        <header className="max-w-7xl mx-auto px-5 md:px-8 pt-6">
-  <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-8 shadow-2xl backdrop-blur-xl overflow-x-auto">
+  <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-6 shadow-2xl backdrop-blur-xl overflow-hidden">
 
    <div
   onClick={() => (window.location.href = "/")}
@@ -463,7 +463,7 @@ async function salvarMeusDados() {
   </div>
 </div>
 
-    <nav className="flex items-center gap-6 ml-auto flex-shrink-0">
+    <nav className="flex items-center gap-4 ml-auto min-w-0">
       <button
         onClick={() => (window.location.href = "/resultados")}
         className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
