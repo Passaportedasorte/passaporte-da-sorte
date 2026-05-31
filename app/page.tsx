@@ -463,7 +463,7 @@ async function salvarMeusDados() {
   </div>
 </div>
 
-    <nav className="w-full md:w-auto flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-4 md:ml-auto">
+    <nav className="flex items-center gap-4 ml-auto min-w-0">
       <button
         onClick={() => (window.location.href = "/resultados")}
         className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
@@ -472,17 +472,13 @@ async function salvarMeusDados() {
         Resultados
       </button>
 
-      <button
-        onClick={() => {
-          document
-            .getElementById("comprar")
-            ?.scrollIntoView({ behavior: "smooth" });
-        }}
-        className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
-      >
-        <Briefcase className="w-5 h-5 text-[#23C997]" />
-        Campanhas
-      </button>
+   <button
+  onClick={() => (window.location.href = "/campanhas")}
+  className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+>
+  <Briefcase className="w-5 h-5 text-[#23C997]" />
+  Campanhas
+</button>
 
       {user && (
         <button
