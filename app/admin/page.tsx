@@ -368,17 +368,12 @@ function exportarComprasExcel() {
 async function buscarResultados() {
   const { data, error } = await supabase
     .from("resultados_federal")
-    .select(`
-      *,
-      campaigns (
-        titulo,
-        destino
-      )
-    `)
+    .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Erro ao buscar resultados:", error);
+    alert(error.message);
     return;
   }
 
