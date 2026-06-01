@@ -875,9 +875,39 @@ async function salvarMeusDados() {
   <div className="grid md:grid-cols-3 gap-5 mt-8">
     {ultimosResultados.map((resultado) => (
       <div
-        key={resultado.id}
-        className="rounded-[2rem] bg-white/10 border border-white/15 p-6 backdrop-blur-xl"
-      >
+  key={resultado.id}
+  onClick={() => (window.location.href = "/resultados")}
+  className="group rounded-[2rem] bg-white/10 border border-white/15 overflow-hidden cursor-pointer hover:-translate-y-1 transition duration-300 shadow-2xl"
+>
+  {resultado.campaigns?.imagem && (
+    <div className="relative h-56 overflow-hidden">
+      <img
+        src={resultado.campaigns.imagem}
+        alt={resultado.campaigns?.destino || "Resultado"}
+        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-t from-[#061832] via-[#061832]/40 to-transparent" />
+
+      <div className="absolute top-4 left-4 rounded-full bg-[#23C997] text-[#061832] px-4 py-2 text-xs font-black">
+        🏆 Resultado oficial
+      </div>
+
+      <div className="absolute bottom-0 left-0 right-0 p-5">
+        <p className="text-white/70 text-sm font-black">
+          {resultado.campaigns?.destino || "Destino"}
+        </p>
+
+        <h3 className="text-3xl font-black">
+          {resultado.campaigns?.titulo || "Campanha"}
+        </h3>
+      </div>
+    </div>
+  )}
+
+  <div className="p-6">
+    {!resultado.campaigns?.imagem && (
+      <>
         <p className="text-[#23C997] font-black text-sm">
           🏆 Resultado oficial
         </p>
@@ -889,38 +919,44 @@ async function salvarMeusDados() {
         <p className="text-white/60 mt-1">
           {resultado.campaigns?.destino || "Destino"}
         </p>
+      </>
+    )}
 
-        <div className="grid gap-3 mt-5">
-          <div className="rounded-2xl bg-white/10 p-4">
-            <p className="text-white/50 text-sm">
-              Número Federal
-            </p>
-            <p className="font-black">
-              {resultado.numero_sorteado}
-            </p>
-          </div>
+    <div className="rounded-2xl bg-[#23C997] text-[#061832] p-5 mt-2">
+      <p className="text-sm font-black opacity-70">
+        PASS-ID vencedor
+      </p>
 
-          <div className="rounded-2xl bg-white/10 p-4">
-            <p className="text-white/50 text-sm">
-              PASS-ID vencedor
-            </p>
-            <p className="font-black text-[#23C997]">
-              {resultado.pass_id_vencedor}
-            </p>
-          </div>
+      <p className="text-3xl font-black mt-1">
+        {resultado.pass_id_vencedor || "—"}
+      </p>
+    </div>
 
-          <div className="rounded-2xl bg-white/10 p-4">
-            <p className="text-white/50 text-sm">
-              Tipo
-            </p>
-            <p className="font-black">
-              {resultado.tipo_resultado === "EXATO"
-                ? "🎯 Exato"
-                : "📍 Mais próximo"}
-            </p>
-          </div>
-        </div>
+    <div className="grid grid-cols-2 gap-3 mt-3">
+      <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
+        <p className="text-white/50 text-sm">
+          Número Federal
+        </p>
+
+        <p className="font-black mt-1">
+          {resultado.numero_sorteado || "—"}
+        </p>
       </div>
+
+      <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
+        <p className="text-white/50 text-sm">
+          Apuração
+        </p>
+
+        <p className="font-black mt-1">
+          {resultado.tipo_resultado === "EXATO"
+            ? "🎯 Resultado exato"
+            : "📍 Ganhador mais próximo"}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
     ))}
   </div>
 
