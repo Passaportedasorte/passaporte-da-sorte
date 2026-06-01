@@ -630,6 +630,7 @@ imagens_roteiro: campanha.imagens_roteiro || [],
   milhas: Number(editForm.milhas || 0),
   data_sorteio: editForm.data_sorteio,
   imagem: editForm.imagem,
+  imagens_roteiro: editForm.imagens_roteiro || [],
 
   sobre_destino: editForm.sobre_destino,
   roteiro: editForm.roteiro,
@@ -1338,18 +1339,32 @@ const comprasFiltradas = compras.filter((compra) => {
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
 />
 
-{editForm.imagens_roteiro?.length > 0 && (
-  <div className="grid grid-cols-3 gap-3">
-    {editForm.imagens_roteiro.map((img: string, index: number) => (
-      <img
-        key={index}
-        src={img}
-        alt={`Roteiro ${index + 1}`}
-        className="w-full h-24 object-cover rounded-xl"
-      />
-    ))}
+{editForm.imagens_roteiro?.map((img: string, index: number) => (
+  <div key={index} className="relative">
+    <img
+      src={img}
+      alt={`Roteiro ${index + 1}`}
+      className="w-full h-24 object-cover rounded-xl"
+    />
+
+    <button
+      type="button"
+      onClick={() => {
+        const novasImagens = editForm.imagens_roteiro.filter(
+          (_: string, i: number) => i !== index
+        );
+
+        setEditForm({
+          ...editForm,
+          imagens_roteiro: novasImagens,
+        });
+      }}
+      className="absolute top-2 right-2 bg-red-500 text-white w-7 h-7 rounded-full font-black"
+    >
+      ×
+    </button>
   </div>
-)}
+))}
 
 <textarea
   placeholder="Roteiro da experiência"
