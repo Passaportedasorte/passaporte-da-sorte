@@ -45,6 +45,8 @@ export default function AdminPage() {
   incluso: "",
   imagens_roteiro: [],
   status: "ATIVA",
+  pass_id_vencedor: "",
+numero_federal: "",
 });
 
 const [editForm, setEditForm] = useState({
@@ -59,6 +61,8 @@ const [editForm, setEditForm] = useState({
   incluso: "",
   imagens_roteiro: [],
   status: "ATIVA",
+  pass_id_vencedor: "",
+numero_federal: "",
 });
 
 
@@ -597,6 +601,8 @@ status: form.status,
   incluso: "",
   imagens_roteiro: [],
   status: "ATIVA",
+pass_id_vencedor: editForm.pass_id_vencedor,
+numero_federal: editForm.numero_federal,
   
 });
     await buscarCampanhas();
@@ -619,6 +625,8 @@ roteiro: campanha.roteiro || "",
 incluso: campanha.incluso || "",
 imagens_roteiro: campanha.imagens_roteiro || [],
 status: "ATIVA",
+pass_id_vencedor: campanha.pass_id_vencedor || "",
+numero_federal: campanha.numero_federal || "",
     });
   }
 
@@ -629,13 +637,36 @@ status: "ATIVA",
       ...editForm,
       status: e.target.value,
     })
+    
   }
+
+  
   className="w-full rounded-2xl border border-slate-200 px-4 py-3"
 >
   <option value="ATIVA">Ativa</option>
   <option value="ENCERRADA">Encerrada</option>
   <option value="EM_BREVE">Em breve</option>
 </select>
+
+{editForm.status === "ENCERRADA" && (
+  <>
+    <AdminInput
+      placeholder="PASS-ID vencedor"
+      value={editForm.pass_id_vencedor || ""}
+      onChange={(v) =>
+        setEditForm({ ...editForm, pass_id_vencedor: v })
+      }
+    />
+
+    <AdminInput
+      placeholder="Número Federal"
+      value={editForm.numero_federal || ""}
+      onChange={(v) =>
+        setEditForm({ ...editForm, numero_federal: v })
+      }
+    />
+  </>
+)}
 
   function cancelarEdicao() {
     setEditandoId(null);
@@ -651,7 +682,8 @@ status: "ATIVA",
       incluso: "",
       imagens_roteiro: [],
       status: "ATIVA",
-      
+      pass_id_vencedor: editForm.pass_id_vencedor,
+numero_federal: editForm.numero_federal,
     });
   }
 
@@ -671,6 +703,7 @@ status: "ATIVA",
   roteiro: editForm.roteiro,
   incluso: editForm.incluso,
   status: editForm.status,
+  
 })
       .eq("id", id);
 
