@@ -198,7 +198,75 @@ export default function CampanhaPage({
         </div>
       </section>
 
+      {campanha.status === "ENCERRADA" && (
+  <div className="rounded-[2rem] bg-[#23C997] text-[#061832] p-6 md:p-8 mb-8">
+    <p className="font-black text-sm">
+      RESULTADO OFICIAL
+    </p>
+
+    <h2 className="text-4xl font-black mt-2">
+      🏆 Campanha Encerrada
+    </h2>
+
+    <div className="grid md:grid-cols-2 gap-6 mt-6">
+      <div>
+        <p className="font-bold opacity-70">
+          PASS-ID vencedor
+        </p>
+
+        <p className="text-3xl font-black">
+          {campanha.pass_id_vencedor || "---"}
+        </p>
+      </div>
+
+      <div>
+        <p className="font-bold opacity-70">
+          Número Federal
+        </p>
+
+        <p className="text-3xl font-black">
+          {campanha.numero_federal || "---"}
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+
       <section className="max-w-7xl mx-auto px-5 md:px-8 py-12 grid lg:grid-cols-3 gap-8">
+{campanha.status === "ENCERRADA" && (
+  <div className="lg:col-span-3 rounded-[2rem] bg-[#23C997] text-[#061832] p-6 md:p-8">
+    <p className="font-black text-sm">
+      RESULTADO OFICIAL
+    </p>
+
+    <h2 className="text-4xl font-black mt-2">
+      🏆 Campanha Encerrada
+    </h2>
+
+    <div className="grid md:grid-cols-2 gap-6 mt-6">
+      <div>
+        <p className="font-bold opacity-70">
+          PASS-ID vencedor
+        </p>
+
+        <p className="text-3xl font-black">
+          {campanha.pass_id_vencedor || "---"}
+        </p>
+      </div>
+
+      <div>
+        <p className="font-bold opacity-70">
+          Número Federal
+        </p>
+
+        <p className="text-3xl font-black">
+          {campanha.numero_federal || "---"}
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+
         <div className="lg:col-span-2 space-y-8">
           <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
   <h2 className="text-3xl font-black">Sobre o destino</h2>
@@ -350,11 +418,15 @@ export default function CampanhaPage({
             </div>
 
             <button
-              onClick={gerarPix}
-              disabled={loadingPix || !user}
+  onClick={gerarPix}
+  disabled={loadingPix || !user || campanha.status === "ENCERRADA"}
               className="w-full rounded-2xl py-4 bg-[#061832] text-white font-black hover:bg-[#0b244a] transition disabled:opacity-50"
             >
-              {loadingPix ? "Gerando pagamento..." : "Finalizar compra"}
+              {campanha.status === "ENCERRADA"
+  ? "Campanha encerrada"
+  : loadingPix
+  ? "Gerando pagamento..."
+  : "Finalizar compra"}
             </button>
 
             <p className="text-xs text-black/40 text-center mt-3">
