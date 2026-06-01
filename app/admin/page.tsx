@@ -656,10 +656,6 @@ numero_federal: editForm.numero_federal,
 
   async function salvarEdicao(id: number) {
 
-    alert(
-  `Status: ${editForm.status} | PASS-ID: ${editForm.pass_id_vencedor} | Federal: ${editForm.numero_federal}`
-);
-
 {editForm.status === "ENCERRADA" && (
   <>
     <AdminInput
