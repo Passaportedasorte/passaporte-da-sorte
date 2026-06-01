@@ -1215,41 +1215,9 @@ const comprasFiltradas = compras.filter((compra) => {
     })
   }
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none min-h-[120px]"
-/>
+  />
 
-<p className="font-black text-sm mt-4">
-  Imagem principal da campanha
-</p>
 
-<p className="font-black text-sm mt-4">
-  Imagem principal da campanha
-</p>
-
-<input
-  type="file"
-  accept="image/*"
-  onChange={(e) => {
-    const file = e.target.files?.[0];
-    if (file) uploadImagem(file, "editar");
-  }}
-  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
-/>
-
-<p className="font-black text-sm mt-4">
-  Imagens do roteiro
-</p>
-
-<input
-  type="file"
-  accept="image/*"
-  multiple
-  onChange={(e) => {
-    alert("INPUT ROTEIRO ACIONADO");
-    const files = Array.from(e.target.files || []);
-    files.forEach((file) => uploadImagemRoteiro(file, "editar"));
-  }}
-  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
-/>
 
 {editForm.imagem && (
   <img
@@ -1330,6 +1298,56 @@ const comprasFiltradas = compras.filter((compra) => {
   }
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none min-h-[120px]"
 />
+
+<p className="font-black text-sm mt-4">
+  Imagem principal da campanha
+</p>
+
+<input
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) uploadImagem(file, "editar");
+  }}
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+/>
+
+{editForm.imagem && (
+  <img
+    src={editForm.imagem}
+    alt="Prévia"
+    className="w-full h-40 object-cover rounded-2xl"
+  />
+)}
+
+<p className="font-black text-sm mt-4">
+  Imagens do roteiro
+</p>
+
+<input
+  type="file"
+  accept="image/*"
+  multiple
+  onChange={(e) => {
+    const files = Array.from(e.target.files || []);
+    files.forEach((file) => uploadImagemRoteiro(file, "editar"));
+  }}
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+/>
+
+{editForm.imagens_roteiro?.length > 0 && (
+  <div className="grid grid-cols-3 gap-3">
+    {editForm.imagens_roteiro.map((img: string, index: number) => (
+      <img
+        key={index}
+        src={img}
+        alt={`Roteiro ${index + 1}`}
+        className="w-full h-24 object-cover rounded-xl"
+      />
+    ))}
+  </div>
+)}
 
 <textarea
   placeholder="Roteiro da experiência"
