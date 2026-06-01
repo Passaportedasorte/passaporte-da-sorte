@@ -670,6 +670,7 @@ status: "ATIVA",
   sobre_destino: editForm.sobre_destino,
   roteiro: editForm.roteiro,
   incluso: editForm.incluso,
+  status: editForm.status,
 })
       .eq("id", id);
 
