@@ -490,31 +490,48 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
     return;
   }
 
-  const imagensAtuais = Array.isArray(editForm.imagens_roteiro)
-    ? editForm.imagens_roteiro
+  if (!editandoId) {
+    alert("Nenhuma campanha em edição.");
+    return;
+  }
+
+  const { data: campanhaAtual, error: buscaError } = await supabase
+    .from("campaigns")
+    .select("imagens_roteiro")
+    .eq("id", editandoId)
+    .single();
+
+  if (buscaError) {
+    console.error("ERRO AO BUSCAR IMAGENS ATUAIS:", buscaError);
+    alert(buscaError.message);
+    return;
+  }
+
+  const imagensAtuais = Array.isArray(campanhaAtual?.imagens_roteiro)
+    ? campanhaAtual.imagens_roteiro
     : [];
 
   const novasImagens = [...imagensAtuais, novaUrl];
+
+  const { error: updateError } = await supabase
+    .from("campaigns")
+    .update({
+      imagens_roteiro: novasImagens,
+    })
+    .eq("id", editandoId);
+
+  if (updateError) {
+    console.error("ERRO AO SALVAR IMAGENS ROTEIRO:", updateError);
+    alert(updateError.message);
+    return;
+  }
 
   setEditForm((prev: any) => ({
     ...prev,
     imagens_roteiro: novasImagens,
   }));
 
-  if (editandoId) {
-    const { error: updateError } = await supabase
-      .from("campaigns")
-      .update({
-        imagens_roteiro: novasImagens,
-      })
-      .eq("id", editandoId);
-
-    if (updateError) {
-      console.error("ERRO AO SALVAR IMAGENS ROTEIRO:", updateError);
-      alert(updateError.message);
-      return;
-    }
-  }
+  await buscarCampanhas();
 
   alert("Imagem do roteiro enviada e salva!");
 }
