@@ -633,25 +633,7 @@ numero_federal: campanha.numero_federal || "",
   <option value="EM_BREVE">Em breve</option>
 </select>
 
-{editForm.status === "ENCERRADA" && (
-  <>
-    <AdminInput
-      placeholder="PASS-ID vencedor"
-      value={editForm.pass_id_vencedor || ""}
-      onChange={(v) =>
-        setEditForm({ ...editForm, pass_id_vencedor: v })
-      }
-    />
 
-    <AdminInput
-      placeholder="Número Federal"
-      value={editForm.numero_federal || ""}
-      onChange={(v) =>
-        setEditForm({ ...editForm, numero_federal: v })
-      }
-    />
-  </>
-)}
 
   function cancelarEdicao() {
     setEditandoId(null);
@@ -673,6 +655,31 @@ numero_federal: editForm.numero_federal,
   }
 
   async function salvarEdicao(id: number) {
+
+    alert(
+  `Status: ${editForm.status} | PASS-ID: ${editForm.pass_id_vencedor} | Federal: ${editForm.numero_federal}`
+);
+
+{editForm.status === "ENCERRADA" && (
+  <>
+    <AdminInput
+      placeholder="PASS-ID vencedor"
+      value={editForm.pass_id_vencedor || ""}
+      onChange={(v) =>
+        setEditForm({ ...editForm, pass_id_vencedor: v })
+      }
+    />
+
+    <AdminInput
+      placeholder="Número Federal"
+      value={editForm.numero_federal || ""}
+      onChange={(v) =>
+        setEditForm({ ...editForm, numero_federal: v })
+      }
+    />
+  </>
+)}
+
     const { error } = await supabase
     
       .from("campaigns")
@@ -1459,7 +1466,7 @@ const comprasFiltradas = compras.filter((compra) => {
   accept="image/*"
   onChange={(e) => {
     const file = e.target.files?.[0];
-    if (file) uploadImagem(file, "nova");
+    if (file) uploadImagem(file, "editar");
   }}
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
 />
@@ -1481,7 +1488,7 @@ const comprasFiltradas = compras.filter((compra) => {
   accept="image/*"
   onChange={(e) => {
     const file = e.target.files?.[0];
-    if (file) uploadImagem(file, "nova");
+    if (file) uploadImagem(file, "editar");
   }}
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
 />
