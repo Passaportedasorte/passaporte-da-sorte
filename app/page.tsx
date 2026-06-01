@@ -691,9 +691,7 @@ async function salvarMeusDados() {
     <div className="rounded-[2.2rem] bg-white/10 border border-white/15 overflow-hidden shadow-2xl backdrop-blur-xl">
       <div className="relative overflow-hidden rounded-[2.2rem] border border-white/15 shadow-2xl cursor-pointer hover:scale-[1.01] transition">
         <img
-         onClick={() =>
-  (window.location.href = `/campanha/${campanhaBanner?.id}`)
-}
+          src={campanhaBanner?.imagem || "/logo.png"}
           alt={campanhaBanner?.destino ?? "Destino"}
           className="h-[460px] w-full object-cover"
         />
@@ -957,7 +955,7 @@ async function salvarMeusDados() {
         onClick={() => (window.location.href = "/campanhas")}
         className="rounded-2xl bg-[#23C997] text-[#061832] px-8 py-4 font-black hover:scale-105 transition"
       >
-        Ver Campanhas
+        Ver Destino
       </button>
 
       <button
