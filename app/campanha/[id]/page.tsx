@@ -201,13 +201,25 @@ export default function CampanhaPage({
       <section className="max-w-7xl mx-auto px-5 md:px-8 py-12 grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
-            <h2 className="text-3xl font-black">Sobre esta experiência</h2>
+  <h2 className="text-3xl font-black">Sobre o destino</h2>
+  <div className="text-white/70 mt-4 leading-relaxed text-lg whitespace-pre-line">
+    {campanha.sobre_destino || "Em breve adicionaremos mais informações sobre este destino."}
+  </div>
+</div>
 
-            <p className="text-white/70 mt-4 leading-relaxed text-lg">
-              {campanha.descricao_curta ||
-                `Esta campanha foi criada para transformar sorte em memória, conectando você a destinos especiais por meio do Passaporte da Sorte.`}
-            </p>
-          </div>
+<div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
+  <h2 className="text-3xl font-black">Roteiro da experiência</h2>
+  <div className="text-white/70 mt-4 leading-relaxed whitespace-pre-line">
+    {campanha.roteiro || "O roteiro desta experiência será divulgado em breve."}
+  </div>
+</div>
+
+<div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
+  <h2 className="text-3xl font-black">O que está incluso</h2>
+  <div className="text-white/70 mt-4 leading-relaxed whitespace-pre-line">
+    {campanha.incluso || "Os itens inclusos serão divulgados em breve."}
+  </div>
+</div>
 
           <div className="grid md:grid-cols-3 gap-4">
             <InfoCard
