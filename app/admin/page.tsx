@@ -476,17 +476,16 @@ incluso: form.incluso,
     }
 
     setForm({
-      titulo: "",
-      destino: "",
-      preco: "",
-      milhas: "",
-      data_sorteio: "",
-      imagem: "",
-      sobre_destino: form.sobre_destino,
-roteiro: form.roteiro,
-incluso: form.incluso,
-    });
-
+  titulo: "",
+  destino: "",
+  preco: "",
+  milhas: "",
+  data_sorteio: "",
+  imagem: "",
+  sobre_destino: "",
+  roteiro: "",
+  incluso: "",
+});
     await buscarCampanhas();
     await buscarResumo();
 
@@ -527,13 +526,17 @@ incluso: campanha.incluso || "",
     const { error } = await supabase
       .from("campaigns")
       .update({
-        titulo: editForm.titulo,
-        destino: editForm.destino,
-        preco: Number(editForm.preco),
-        milhas: Number(editForm.milhas || 0),
-        data_sorteio: editForm.data_sorteio,
-        imagem: editForm.imagem,
-      })
+  titulo: editForm.titulo,
+  destino: editForm.destino,
+  preco: Number(editForm.preco),
+  milhas: Number(editForm.milhas || 0),
+  data_sorteio: editForm.data_sorteio,
+  imagem: editForm.imagem,
+
+  sobre_destino: editForm.sobre_destino,
+  roteiro: editForm.roteiro,
+  incluso: editForm.incluso,
+})
       .eq("id", id);
 
     if (error) {
