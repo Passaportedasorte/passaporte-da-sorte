@@ -629,6 +629,48 @@ async function salvarMeusDados() {
   </motion.div>
 </section>
 
+<section className="max-w-7xl mx-auto px-5 md:px-8 py-8">
+  <div className="grid md:grid-cols-3 gap-4">
+
+    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 backdrop-blur-xl">
+      <div className="text-3xl mb-3">🍀</div>
+
+      <h3 className="text-xl font-black">
+        PASS-IDs digitais
+      </h3>
+
+      <p className="text-white/60 mt-2">
+        Todos os PASS-IDs são gerados automaticamente e ficam disponíveis no seu painel.
+      </p>
+    </div>
+
+    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 backdrop-blur-xl">
+      <div className="text-3xl mb-3">🏆</div>
+
+      <h3 className="text-xl font-black">
+        Resultado oficial
+      </h3>
+
+      <p className="text-white/60 mt-2">
+        Os sorteios são vinculados aos números da Loteria Federal para total transparência.
+      </p>
+    </div>
+
+    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 backdrop-blur-xl">
+      <div className="text-3xl mb-3">✈️</div>
+
+      <h3 className="text-xl font-black">
+        Acumule milhas
+      </h3>
+
+      <p className="text-white/60 mt-2">
+        Cada participação gera milhas que poderão ser utilizadas em futuras experiências.
+      </p>
+    </div>
+
+  </div>
+</section>
+
 <section className="max-w-7xl mx-auto px-5 md:px-8 py-12">
   <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
     <div>
