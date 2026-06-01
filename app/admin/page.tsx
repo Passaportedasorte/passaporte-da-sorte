@@ -624,7 +624,7 @@ numero_federal: editForm.numero_federal,
 roteiro: campanha.roteiro || "",
 incluso: campanha.incluso || "",
 imagens_roteiro: campanha.imagens_roteiro || [],
-status: "ATIVA",
+status: campanha.status || "ATIVA",
 pass_id_vencedor: campanha.pass_id_vencedor || "",
 numero_federal: campanha.numero_federal || "",
     });
@@ -689,6 +689,7 @@ numero_federal: editForm.numero_federal,
 
   async function salvarEdicao(id: number) {
     const { error } = await supabase
+    
       .from("campaigns")
       .update({
   titulo: editForm.titulo,
@@ -697,12 +698,14 @@ numero_federal: editForm.numero_federal,
   milhas: Number(editForm.milhas || 0),
   data_sorteio: editForm.data_sorteio,
   imagem: editForm.imagem,
-  imagens_roteiro: form.imagens_roteiro || [],
-
+  imagens_roteiro: editForm.imagens_roteiro || [],
   sobre_destino: editForm.sobre_destino,
   roteiro: editForm.roteiro,
   incluso: editForm.incluso,
   status: editForm.status,
+pass_id_vencedor: editForm.pass_id_vencedor,
+numero_federal: editForm.numero_federal,
+  
   
 })
       .eq("id", id);
