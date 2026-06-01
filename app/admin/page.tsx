@@ -23,6 +23,9 @@ export default function AdminPage() {
   const [numeroFederal, setNumeroFederal] = useState("");
   const [resultadoEncontrado, setResultadoEncontrado] = useState<any>(null);
   const [resultados, setResultados] = useState<any[]>([]);
+
+  const [nomeVencedor, setNomeVencedor] = useState("");
+const [cidadeVencedor, setCidadeVencedor] = useState("");
   const [resumo, setResumo] = useState({
   campanhas: 0,
   compras: 0,
@@ -239,6 +242,8 @@ const { error: resultadoError } = await supabase
     user_id_vencedor: vencedor.user_id,
     compra_id_vencedora: vencedor.compra_id,
     tipo_resultado: tipoResultado,
+    nome_vencedor: nomeVencedor,
+cidade_vencedor: cidadeVencedor,
   });
 
 if (resultadoError) {
@@ -672,9 +677,13 @@ numero_federal: editForm.numero_federal,
       onChange={(v) =>
         setEditForm({ ...editForm, numero_federal: v })
       }
+
+      
     />
   </>
 )}
+
+
 
     const { error } = await supabase
     
@@ -857,6 +866,8 @@ const comprasFiltradas = compras.filter((compra) => {
             <td className="py-4 text-[#23C997] font-black">
               {resultado.pass_id_vencedor}
             </td>
+
+            
             
             <td className="py-4">
   {resultado.tipo_resultado === "EXATO" ? (
@@ -918,6 +929,20 @@ const comprasFiltradas = compras.filter((compra) => {
       placeholder="Últimos 5 números"
       className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
     />
+
+      <input
+  value={nomeVencedor}
+  onChange={(e) => setNomeVencedor(e.target.value)}
+  placeholder="Nome do vencedor"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={cidadeVencedor}
+  onChange={(e) => setCidadeVencedor(e.target.value)}
+  placeholder="Cidade do vencedor"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
 
     <button
       onClick={encontrarVencedorFederal}
