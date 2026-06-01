@@ -198,39 +198,6 @@ export default function CampanhaPage({
         </div>
       </section>
 
-      {campanha.status === "ENCERRADA" && (
-  <div className="rounded-[2rem] bg-[#23C997] text-[#061832] p-6 md:p-8 mb-8">
-    <p className="font-black text-sm">
-      RESULTADO OFICIAL
-    </p>
-
-    <h2 className="text-4xl font-black mt-2">
-      🏆 Campanha Encerrada
-    </h2>
-
-    <div className="grid md:grid-cols-2 gap-6 mt-6">
-      <div>
-        <p className="font-bold opacity-70">
-          PASS-ID vencedor
-        </p>
-
-        <p className="text-3xl font-black">
-          {campanha.pass_id_vencedor || "---"}
-        </p>
-      </div>
-
-      <div>
-        <p className="font-bold opacity-70">
-          Número Federal
-        </p>
-
-        <p className="text-3xl font-black">
-          {campanha.numero_federal || "---"}
-        </p>
-      </div>
-    </div>
-  </div>
-)}
 
       <section className="max-w-7xl mx-auto px-5 md:px-8 py-12 grid lg:grid-cols-3 gap-8">
 {campanha.status === "ENCERRADA" && (
