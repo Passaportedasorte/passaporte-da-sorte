@@ -554,20 +554,6 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
       return;
     }
 
-    <select
-  value={form.status || "ATIVA"}
-  onChange={(e) =>
-    setForm({
-      ...form,
-      status: e.target.value,
-    })
-  }
-  className="w-full rounded-2xl border border-slate-200 px-4 py-3"
->
-  <option value="ATIVA">Ativa</option>
-  <option value="ENCERRADA">Encerrada</option>
-  <option value="EM_BREVE">Em breve</option>
-</select>
 
     const { error } = await supabase.from("campaigns").insert({
       titulo: form.titulo,
@@ -579,9 +565,8 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
       sobre_destino: form.sobre_destino,
 roteiro: form.roteiro,
 incluso: form.incluso,
-imagens_roteiro: editForm.imagens_roteiro || [],
-status: form.status,
-
+pass_id_vencedor: form.pass_id_vencedor,
+numero_federal: form.numero_federal,
     });
 
     if (error) {
@@ -601,8 +586,8 @@ status: form.status,
   incluso: "",
   imagens_roteiro: [],
   status: "ATIVA",
-pass_id_vencedor: editForm.pass_id_vencedor,
-numero_federal: editForm.numero_federal,
+  pass_id_vencedor: "",
+numero_federal: "",
   
 });
     await buscarCampanhas();
@@ -703,8 +688,8 @@ numero_federal: editForm.numero_federal,
   roteiro: editForm.roteiro,
   incluso: editForm.incluso,
   status: editForm.status,
-pass_id_vencedor: editForm.pass_id_vencedor,
-numero_federal: editForm.numero_federal,
+  pass_id_vencedor: editForm.pass_id_vencedor,
+  numero_federal: editForm.numero_federal,
   
   
 })
