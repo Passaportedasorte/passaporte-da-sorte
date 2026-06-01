@@ -592,16 +592,7 @@ async function salvarMeusDados() {
     transition={{ duration: 0.7 }}
     className="max-w-4xl mx-auto"
   >
-    <button
-      onClick={() => {
-        document
-          .getElementById("como-funciona")
-          ?.scrollIntoView({ behavior: "smooth" });
-      }}
-      className="mb-6 rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition"
-    >
-      Como funciona
-    </button>
+  
 
     <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
       Participe. Acumule milhas. Viaje.
@@ -700,7 +691,9 @@ async function salvarMeusDados() {
     <div className="rounded-[2.2rem] bg-white/10 border border-white/15 overflow-hidden shadow-2xl backdrop-blur-xl">
       <div className="relative overflow-hidden rounded-[2.2rem] border border-white/15 shadow-2xl cursor-pointer hover:scale-[1.01] transition">
         <img
-          src={campanhaBanner?.imagem ?? "/logo.png"}
+         onClick={() =>
+  (window.location.href = `/campanha/${campanhaBanner?.id}`)
+}
           alt={campanhaBanner?.destino ?? "Destino"}
           className="h-[460px] w-full object-cover"
         />
@@ -782,13 +775,13 @@ async function salvarMeusDados() {
       </div>
 
       <div className="p-6 md:p-8">
-        <h3 className="text-2xl md:text-3xl font-black">
-          Viagem para casal + experiência exclusiva
-        </h3>
+        <h3>
+  {campanhaBanner?.titulo}
+</h3>
 
-        <p className="text-white/60 mt-2">
-          Um destino para transformar sorte em memória.
-        </p>
+<p>
+  {campanhaBanner?.descricao_curta}
+</p>
 
         <div className="grid grid-cols-3 gap-3 mt-6">
           <Mini
