@@ -477,8 +477,12 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
   const { data } = supabase.storage
     .from("campanhas")
     .getPublicUrl(fileName);
+    
 
   const novaUrl = data.publicUrl;
+
+  console.log("EDITANDO ID:", editandoId);
+console.log("NOVA URL:", novaUrl);
 
   if (tipo === "nova") {
     setForm((prev: any) => ({
@@ -514,12 +518,13 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
   const novasImagens = [...imagensAtuais, novaUrl];
 
   const { error: updateError } = await supabase
+  
     .from("campaigns")
     .update({
       imagens_roteiro: novasImagens,
     })
     .eq("id", editandoId);
-
+console.log("UPDATE IMAGENS OK");
   if (updateError) {
     console.error("ERRO AO SALVAR IMAGENS ROTEIRO:", updateError);
     alert(updateError.message);
@@ -1214,24 +1219,24 @@ const comprasFiltradas = compras.filter((compra) => {
   multiple
   onChange={(e) => {
     const files = Array.from(e.target.files || []);
-    files.forEach((file) => uploadImagemRoteiro(file, "nova"));
+    files.forEach((file) => uploadImagemRoteiro(file, "editar"));
   }}
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
 />
 
-              <input
+         <input
   type="file"
   accept="image/*"
   onChange={(e) => {
     const file = e.target.files?.[0];
-    if (file) uploadImagem(file, "nova");
+    if (file) uploadImagem(file, "editar");
   }}
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
 />
 
-{form.imagem && (
+{editForm.imagem && (
   <img
-    src={form.imagem}
+    src={editForm.imagem}
     alt="Prévia"
     className="w-full h-40 object-cover rounded-2xl"
   />
