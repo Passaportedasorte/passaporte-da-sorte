@@ -454,10 +454,7 @@ async function uploadImagem(
   alert("Imagem enviada com sucesso!");
 }
 
-async function uploadImagemRoteiro(
-  file: File,
-  tipo: "nova" | "editar"
-) {
+async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
   const extensao = file.name.split(".").pop();
 
   const fileName = `roteiro-${Date.now()}-${Math.random()
@@ -466,9 +463,13 @@ async function uploadImagemRoteiro(
 
   const { error } = await supabase.storage
     .from("campanhas")
-    .upload(fileName, file);
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
 
   if (error) {
+    console.error("ERRO UPLOAD ROTEIRO:", error);
     alert(error.message);
     return;
   }
@@ -477,17 +478,31 @@ async function uploadImagemRoteiro(
     .from("campanhas")
     .getPublicUrl(fileName);
 
+  const novaUrl = data.publicUrl;
+
   if (tipo === "nova") {
-    setForm((prev: any) => ({
-      ...prev,
-      imagens_roteiro: [...(prev.imagens_roteiro || []), data.publicUrl],
-    }));
+    setForm((prev: any) => {
+      const novasImagens = [...(prev.imagens_roteiro || []), novaUrl];
+      console.log("IMAGENS ROTEIRO NOVA:", novasImagens);
+
+      return {
+        ...prev,
+        imagens_roteiro: novasImagens,
+      };
+    });
   } else {
-    setEditForm((prev: any) => ({
-      ...prev,
-      imagens_roteiro: [...(prev.imagens_roteiro || []), data.publicUrl],
-    }));
+    setEditForm((prev: any) => {
+      const novasImagens = [...(prev.imagens_roteiro || []), novaUrl];
+      console.log("IMAGENS ROTEIRO EDITAR:", novasImagens);
+
+      return {
+        ...prev,
+        imagens_roteiro: novasImagens,
+      };
+    });
   }
+
+  alert("Imagem do roteiro enviada!");
 }
 
   async function criarCampanha() {
@@ -506,7 +521,7 @@ async function uploadImagemRoteiro(
       sobre_destino: form.sobre_destino,
 roteiro: form.roteiro,
 incluso: form.incluso,
-imagens_roteiro: form.imagens_roteiro,
+imagens_roteiro: editForm.imagens_roteiro || [],
 
     });
 
