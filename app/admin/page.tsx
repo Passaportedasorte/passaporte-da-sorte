@@ -586,10 +586,11 @@ imagens_roteiro: campanha.imagens_roteiro || [],
 })
       .eq("id", id);
 
-    if (error) {
-      alert("Erro ao salvar alterações.");
-      return;
-    }
+   if (error) {
+  console.error("ERRO AO SALVAR CAMPANHA:", error);
+  alert(error.message);
+  return;
+}
 
     cancelarEdicao();
     await buscarCampanhas();
