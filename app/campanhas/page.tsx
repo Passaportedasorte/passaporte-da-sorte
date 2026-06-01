@@ -87,9 +87,21 @@ export default function CampanhasPage() {
 
                   <div className="absolute inset-0 bg-gradient-to-t from-[#061832] via-[#061832]/30 to-transparent" />
 
-                  <div className="absolute top-4 left-4 rounded-full bg-[#23C997] text-[#061832] px-4 py-2 text-xs font-black">
-                    CAMPANHA ATIVA
-                  </div>
+                  <div
+  className={`absolute top-4 left-4 rounded-full px-4 py-2 text-xs font-black ${
+    campanha.status === "ENCERRADA"
+      ? "bg-red-500 text-white"
+      : campanha.status === "EM_BREVE"
+      ? "bg-yellow-400 text-[#061832]"
+      : "bg-[#23C997] text-[#061832]"
+  }`}
+>
+  {campanha.status === "ENCERRADA"
+    ? "🏆 ENCERRADA"
+    : campanha.status === "EM_BREVE"
+    ? "⏳ EM BREVE"
+    : "🍀 CAMPANHA ATIVA"}
+</div>
 
                   <div className="absolute bottom-0 left-0 right-0 p-5">
                     <p className="text-white/70 text-sm font-black flex items-center gap-2">

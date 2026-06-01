@@ -44,6 +44,7 @@ export default function AdminPage() {
   roteiro: "",
   incluso: "",
   imagens_roteiro: [],
+  status: "ATIVA",
 });
 
 const [editForm, setEditForm] = useState({
@@ -57,6 +58,7 @@ const [editForm, setEditForm] = useState({
   roteiro: "",
   incluso: "",
   imagens_roteiro: [],
+  status: "ATIVA",
 });
 
 
@@ -548,6 +550,21 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
       return;
     }
 
+    <select
+  value={form.status || "ATIVA"}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      status: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3"
+>
+  <option value="ATIVA">Ativa</option>
+  <option value="ENCERRADA">Encerrada</option>
+  <option value="EM_BREVE">Em breve</option>
+</select>
+
     const { error } = await supabase.from("campaigns").insert({
       titulo: form.titulo,
       destino: form.destino,
@@ -559,6 +576,7 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
 roteiro: form.roteiro,
 incluso: form.incluso,
 imagens_roteiro: editForm.imagens_roteiro || [],
+status: form.status,
 
     });
 
@@ -578,6 +596,7 @@ imagens_roteiro: editForm.imagens_roteiro || [],
   roteiro: "",
   incluso: "",
   imagens_roteiro: [],
+  status: "ATIVA",
   
 });
     await buscarCampanhas();
@@ -599,9 +618,24 @@ imagens_roteiro: editForm.imagens_roteiro || [],
 roteiro: campanha.roteiro || "",
 incluso: campanha.incluso || "",
 imagens_roteiro: campanha.imagens_roteiro || [],
-
+status: "ATIVA",
     });
   }
+
+  <select
+  value={editForm.status || "ATIVA"}
+  onChange={(e) =>
+    setEditForm({
+      ...editForm,
+      status: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3"
+>
+  <option value="ATIVA">Ativa</option>
+  <option value="ENCERRADA">Encerrada</option>
+  <option value="EM_BREVE">Em breve</option>
+</select>
 
   function cancelarEdicao() {
     setEditandoId(null);
@@ -616,6 +650,7 @@ imagens_roteiro: campanha.imagens_roteiro || [],
       roteiro: "",
       incluso: "",
       imagens_roteiro: [],
+      status: "ATIVA",
       
     });
   }
@@ -630,7 +665,7 @@ imagens_roteiro: campanha.imagens_roteiro || [],
   milhas: Number(editForm.milhas || 0),
   data_sorteio: editForm.data_sorteio,
   imagem: editForm.imagem,
-  imagens_roteiro: editForm.imagens_roteiro || [],
+  imagens_roteiro: form.imagens_roteiro || [],
 
   sobre_destino: editForm.sobre_destino,
   roteiro: editForm.roteiro,
@@ -1177,6 +1212,9 @@ const comprasFiltradas = compras.filter((compra) => {
                 placeholder="Data do sorteio"
                 value={form.data_sorteio}
                 onChange={(v) => setForm({ ...form, data_sorteio: v })}
+
+                
+                
               />
 
               <textarea
@@ -1283,8 +1321,24 @@ const comprasFiltradas = compras.filter((compra) => {
                         onChange={(v) =>
                           setEditForm({ ...editForm, data_sorteio: v })
                         }
-                      />
 
+
+                        
+                      />
+<select
+  value={editForm.status || "ATIVA"}
+  onChange={(e) =>
+    setEditForm({
+      ...editForm,
+      status: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3"
+>
+  <option value="ATIVA">Ativa</option>
+  <option value="ENCERRADA">Encerrada</option>
+  <option value="EM_BREVE">Em breve</option>
+</select>
                       <textarea
   placeholder="Sobre o destino"
   value={editForm.sobre_destino || ""}
