@@ -979,51 +979,65 @@ async function salvarMeusDados() {
           </div>
         </section>
 
-        <footer className="max-w-7xl mx-auto px-5 md:px-8 py-12 text-center text-white/45 text-sm">
-          <div className="flex flex-wrap items-center justify-center gap-6 mb-4">
-            <a
-              href="https://instagram.com/passaporte.dasorte"
-              target="_blank"
-              className="hover:text-white transition"
-            >
-              Instagram
-            </a>
+        <footer className="border-t border-white/10 mt-24">
+  <div className="max-w-7xl mx-auto px-5 md:px-8 py-12">
 
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              className="hover:text-white transition"
-            >
-              Facebook
-            </a>
+    <div className="grid md:grid-cols-4 gap-10">
 
-            <a
-              href="https://wa.me/5554999304474?text=Olá,%20vim%20pelo%20Passaporte%20da%20Sorte!"
-              target="_blank"
-              className="hover:text-white transition"
-            >
-              WhatsApp
-            </a>
-          </div>
+      <div>
+        <h3 className="text-2xl font-black">
+          Passaporte da Sorte
+        </h3>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
-            <a
-              href="/termos"
-              className="rounded-full bg-white/10 border border-white/15 px-5 py-3 text-sm font-black text-white hover:bg-white/15 transition"
-            >
-              Termos de Uso
-            </a>
+        <p className="text-white/60 mt-3">
+          Participe das campanhas, acumule milhas e viva experiências inesquecíveis.
+        </p>
+      </div>
 
-            <a
-              href="/regulamento"
-              className="rounded-full bg-[#23C997] px-5 py-3 text-sm font-black text-[#061832] hover:scale-105 transition"
-            >
-              Política de Privacidade e Regulamento
-            </a>
-          </div>
+      <div>
+        <h4 className="font-black mb-4">
+          Navegação
+        </h4>
 
-          <p>© Passaporte da Sorte — Todos os direitos reservados.</p>
-        </footer>
+        <div className="flex flex-col gap-2 text-white/60">
+          <a href="/campanhas">Campanhas</a>
+          <a href="/resultados">Resultados</a>
+          <a href="/painel">Meu Painel</a>
+        </div>
+      </div>
+
+      <div>
+        <h4 className="font-black mb-4">
+          Transparência
+        </h4>
+
+        <div className="flex flex-col gap-2 text-white/60">
+          <span>Resultados pela Loteria Federal</span>
+          <span>PASS-IDs rastreáveis</span>
+          <span>Milhas acumulativas</span>
+        </div>
+      </div>
+
+      <div>
+        <h4 className="font-black mb-4">
+          Contato
+        </h4>
+
+        <div className="flex flex-col gap-2 text-white/60">
+          <span>Nova Prata • RS</span>
+          <span>Instagram</span>
+          <span>WhatsApp</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div className="border-t border-white/10 mt-10 pt-6 text-center text-white/40 text-sm">
+      © {new Date().getFullYear()} Passaporte da Sorte. Todos os direitos reservados.
+    </div>
+
+  </div>
+</footer>
       </div>
 
       {loginAberto && (
