@@ -595,7 +595,7 @@ async function salvarMeusDados() {
   
 
     <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
-      Participe. Acumule milhas. Viaje.
+      Participe. Realize seu Sonho. Viaje.
     </h2>
 
     <p className="mt-6 text-lg md:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
