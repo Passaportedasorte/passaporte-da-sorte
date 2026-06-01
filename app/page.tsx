@@ -872,7 +872,7 @@ async function salvarMeusDados() {
     </button>
   </div>
 
-  <div className="grid md:grid-cols-3 gap-5 mt-8">
+  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mt-8">
     {ultimosResultados.map((resultado) => (
       <div
   key={resultado.id}
@@ -921,6 +921,29 @@ async function salvarMeusDados() {
         </p>
       </>
     )}
+<div className="rounded-[2rem] bg-[#23C997] text-[#061832] p-6 mt-4">
+  <div className="flex items-center gap-3">
+    <span className="text-4xl">🏆</span>
+
+    <div>
+      <p className="text-sm font-black opacity-70">
+        VENCEDOR
+      </p>
+
+      <h2 className="text-4xl md:text-5xl font-black">
+        {resultado.nome_vencedor}
+      </h2>
+
+      <p className="text-lg opacity-80">
+        {resultado.cidade_vencedor}
+      </p>
+    </div>
+  </div>
+
+  <p className="mt-5 text-xl font-black">
+    ✈️ Ganhou: {resultado.campaigns?.titulo}
+  </p>
+</div>
 
     <div className="rounded-2xl bg-[#23C997] text-[#061832] p-5 mt-2">
       <p className="text-sm font-black opacity-70">
