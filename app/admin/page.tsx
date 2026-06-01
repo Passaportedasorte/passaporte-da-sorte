@@ -481,28 +481,42 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
   const novaUrl = data.publicUrl;
 
   if (tipo === "nova") {
-    setForm((prev: any) => {
-      const novasImagens = [...(prev.imagens_roteiro || []), novaUrl];
-      console.log("IMAGENS ROTEIRO NOVA:", novasImagens);
+    setForm((prev: any) => ({
+      ...prev,
+      imagens_roteiro: [...(prev.imagens_roteiro || []), novaUrl],
+    }));
 
-      return {
-        ...prev,
-        imagens_roteiro: novasImagens,
-      };
-    });
-  } else {
-    setEditForm((prev: any) => {
-      const novasImagens = [...(prev.imagens_roteiro || []), novaUrl];
-      console.log("IMAGENS ROTEIRO EDITAR:", novasImagens);
-
-      return {
-        ...prev,
-        imagens_roteiro: novasImagens,
-      };
-    });
+    alert("Imagem do roteiro enviada!");
+    return;
   }
 
-  alert("Imagem do roteiro enviada!");
+  const imagensAtuais = Array.isArray(editForm.imagens_roteiro)
+    ? editForm.imagens_roteiro
+    : [];
+
+  const novasImagens = [...imagensAtuais, novaUrl];
+
+  setEditForm((prev: any) => ({
+    ...prev,
+    imagens_roteiro: novasImagens,
+  }));
+
+  if (editandoId) {
+    const { error: updateError } = await supabase
+      .from("campaigns")
+      .update({
+        imagens_roteiro: novasImagens,
+      })
+      .eq("id", editandoId);
+
+    if (updateError) {
+      console.error("ERRO AO SALVAR IMAGENS ROTEIRO:", updateError);
+      alert(updateError.message);
+      return;
+    }
+  }
+
+  alert("Imagem do roteiro enviada e salva!");
 }
 
   async function criarCampanha() {
