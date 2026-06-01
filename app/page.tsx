@@ -585,153 +585,190 @@ async function salvarMeusDados() {
   </div>
 </header>
 
-        <section className="max-w-7xl mx-auto px-5 md:px-8 pt-10 pb-16 grid lg:grid-cols-2 gap-10 items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
+       <section className="max-w-7xl mx-auto px-5 md:px-8 pt-16 pb-10 text-center">
+  <motion.div
+    initial={{ opacity: 0, y: 24 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.7 }}
+    className="max-w-4xl mx-auto"
+  >
+    <button
+      onClick={() => {
+        document
+          .getElementById("como-funciona")
+          ?.scrollIntoView({ behavior: "smooth" });
+      }}
+      className="mb-6 rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition"
+    >
+      Como funciona
+    </button>
+
+    <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
+      Participe. Acumule milhas. Viaje.
+    </h2>
+
+    <p className="mt-6 text-lg md:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+      Participe das campanhas, receba seus PASS-IDs, acumule milhas e acompanhe os resultados oficiais pela Loteria Federal.
+    </p>
+
+    <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+      <button
+        onClick={() => (window.location.href = "/campanhas")}
+        className="rounded-full bg-[#23C997] px-8 py-4 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
+      >
+        Ver campanhas
+      </button>
+
+      <button
+        onClick={() => (window.location.href = "/resultados")}
+        className="rounded-full bg-white/10 border border-white/15 px-8 py-4 font-black text-white hover:bg-white/15 transition"
+      >
+        Ver resultados
+      </button>
+    </div>
+  </motion.div>
+</section>
+
+<section className="max-w-7xl mx-auto px-5 md:px-8 py-12">
+  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+    <div>
+      <p className="text-[#23C997] font-black">
+        CAMPANHA EM DESTAQUE
+      </p>
+
+      <h2 className="text-4xl md:text-5xl font-black mt-2">
+        Escolha sua próxima experiência
+      </h2>
+    </div>
+
+    <button
+      onClick={() => (window.location.href = "/campanhas")}
+      className="rounded-2xl bg-white/10 border border-white/15 px-6 py-4 font-black hover:bg-white/15 transition"
+    >
+      Ver todas
+    </button>
+  </div>
+
+  <motion.div
+    initial={{ opacity: 0, scale: 0.94 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.7, delay: 0.1 }}
+    className="max-w-5xl mx-auto"
+  >
+    <div className="rounded-[2.2rem] bg-white/10 border border-white/15 overflow-hidden shadow-2xl backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/15 shadow-2xl cursor-pointer hover:scale-[1.01] transition">
+        <img
+          src={campanhaBanner?.imagem ?? "/logo.png"}
+          alt={campanhaBanner?.destino ?? "Destino"}
+          className="h-[460px] w-full object-cover"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#061832] via-[#061832]/40 to-transparent" />
+
+        <div className="absolute bottom-0 left-0 right-0 p-8">
+          <p className="text-white/60 text-sm font-black">
+            {campanhaBanner?.titulo ?? "Destino"}
+          </p>
+
+          <h3 className="text-5xl font-black text-white">
+            {campanhaBanner?.destino ?? "Destino"}
+          </h3>
+
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <span className="rounded-full bg-[#23C997] px-4 py-2 text-sm font-black text-[#061832]">
+              R$ {campanhaBanner?.preco}
+            </span>
+
+            <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black text-white">
+              +{campanhaBanner?.milhas} milhas
+            </span>
+
             <button
-  onClick={() => {
-    document
-      .getElementById("como-funciona")
-      ?.scrollIntoView({ behavior: "smooth" });
-  }}
-  className="mb-5 rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition"
->
-  Como funciona
-</button>
+              onClick={() => {
+                window.location.href = `/campanha/${campanhaBanner?.id}`;
+              }}
+              className="rounded-full bg-white text-[#061832] px-5 py-2 font-black hover:scale-105 transition"
+            >
+              Ver detalhes
+            </button>
+          </div>
+        </div>
 
-            <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
-              Participe. Acumule milhas. Viaje.
-            </h2>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            const indexAtual = campanhas.findIndex(
+              (c) => c.id === campanhaBanner?.id
+            );
+            const anterior =
+              indexAtual <= 0 ? campanhas.length - 1 : indexAtual - 1;
+            setCampanhaBanner(campanhas[anterior]);
+          }}
+          className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/30 px-4 py-3 text-white backdrop-blur-xl hover:bg-black/50 transition"
+        >
+          ‹
+        </button>
 
-            <p className="mt-6 text-lg md:text-xl text-white/70 max-w-xl leading-relaxed">
-              Participe das campanhas, receba seus PASS-IDs, acumule milhas e acompanhe os resultados oficiais pela Loteria Federal.
-            </p>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            const indexAtual = campanhas.findIndex(
+              (c) => c.id === campanhaBanner?.id
+            );
+            const proximo =
+              indexAtual >= campanhas.length - 1 ? 0 : indexAtual + 1;
+            setCampanhaBanner(campanhas[proximo]);
+          }}
+          className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/30 px-4 py-3 text-white backdrop-blur-xl hover:bg-black/50 transition"
+        >
+          ›
+        </button>
+      </div>
 
-            
-          </motion.div>
+      <div className="flex items-center justify-center gap-2 mt-4">
+        {campanhas.map((campanha) => (
+          <button
+            key={campanha.id}
+            onClick={() => setCampanhaBanner(campanha)}
+            className={`h-3 w-3 rounded-full transition ${
+              campanhaBanner?.id === campanha.id
+                ? "bg-[#23C997] w-8"
+                : "bg-white/30"
+            }`}
+          />
+        ))}
+      </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-          >
-            <div className="rounded-[2.2rem] bg-white/10 border border-white/15 overflow-hidden shadow-2xl backdrop-blur-xl">
-              <div className="relative overflow-hidden rounded-[2.2rem] border border-white/15 shadow-2xl cursor-pointer hover:scale-[1.01] transition">
-                <img
-                  src={campanhaBanner?.imagem ?? "/maceio.jpg"}
-                  alt={campanhaBanner?.destino ?? "Destino"}
-                  className="h-96 w-full object-cover"
-                />
+      <div className="p-6 md:p-8">
+        <h3 className="text-2xl md:text-3xl font-black">
+          Viagem para casal + experiência exclusiva
+        </h3>
 
-                <div className="absolute inset-0 bg-gradient-to-t from-[#061832] via-[#061832]/40 to-transparent" />
+        <p className="text-white/60 mt-2">
+          Um destino para transformar sorte em memória.
+        </p>
 
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <p className="text-white/60 text-sm font-black">
-                    {campanhaBanner?.titulo ?? "Destino"}
-                  </p>
-
-                  <h3 className="text-5xl font-black text-white">
-                    {campanhaBanner?.destino ?? "Destino"}
-                  </h3>
-
-                  <div className="mt-5 flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-[#23C997] px-4 py-2 text-sm font-black text-[#061832]">
-                      R$ {campanhaBanner?.preco}
-                    </span>
-
-                    <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black text-white">
-                      +{campanhaBanner?.milhas} milhas
-                    </span>
-
-                    <button
-                      onClick={() => {
-                        window.location.href = `/campanha/${campanhaBanner?.id}`;
-                      }}
-                      className="rounded-full bg-white text-[#061832] px-5 py-2 font-black hover:scale-105 transition"
-                    >
-                      Ver detalhes
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const indexAtual = campanhas.findIndex(
-                      (c) => c.id === campanhaBanner?.id
-                    );
-                    const anterior =
-                      indexAtual <= 0 ? campanhas.length - 1 : indexAtual - 1;
-                    setCampanhaBanner(campanhas[anterior]);
-                  }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/30 px-4 py-3 text-white backdrop-blur-xl hover:bg-black/50 transition"
-                >
-                  ‹
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const indexAtual = campanhas.findIndex(
-                      (c) => c.id === campanhaBanner?.id
-                    );
-                    const proximo =
-                      indexAtual >= campanhas.length - 1 ? 0 : indexAtual + 1;
-                    setCampanhaBanner(campanhas[proximo]);
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/30 px-4 py-3 text-white backdrop-blur-xl hover:bg-black/50 transition"
-                >
-                  ›
-                </button>
-              </div>
-
-              <div className="flex items-center justify-center gap-2 mt-4">
-                {campanhas.map((campanha) => (
-                  <button
-                    key={campanha.id}
-                    onClick={() => setCampanhaBanner(campanha)}
-                    className={`h-3 w-3 rounded-full transition ${
-                      campanhaBanner?.id === campanha.id
-                        ? "bg-[#23C997] w-8"
-                        : "bg-white/30"
-                    }`}
-                  />
-                ))}
-              </div>
-
-              <div className="p-6 md:p-8">
-                <h3 className="text-2xl md:text-3xl font-black">
-                  Viagem para casal + experiência exclusiva
-                </h3>
-
-                <p className="text-white/60 mt-2">
-                  Um destino para transformar sorte em memória.
-                </p>
-
-                <div className="grid grid-cols-3 gap-3 mt-6">
-                  <Mini
-                    icon={<Ticket />}
-                    label="Passaporte"
-                    value={`R$ ${campanhaSelecionada?.preco ?? 3.99}`}
-                  />
-                  <Mini
-                    icon={<Star />}
-                    label="Milhas"
-                    value={`+${campanhaSelecionada?.milhas ?? 10}`}
-                  />
-                  <Mini
-                    icon={<MapPin />}
-                    label="Sorteio"
-                    value={campanhaSelecionada?.data_sorteio ?? "21/06"}
-                  />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </section>
+        <div className="grid grid-cols-3 gap-3 mt-6">
+          <Mini
+            icon={<Ticket />}
+            label="Passaporte"
+            value={`R$ ${campanhaBanner?.preco ?? 3.99}`}
+          />
+          <Mini
+            icon={<Star />}
+            label="Milhas"
+            value={`+${campanhaBanner?.milhas ?? 10}`}
+          />
+          <Mini
+            icon={<MapPin />}
+            label="Sorteio"
+            value={campanhaBanner?.data_sorteio ?? "21/06"}
+          />
+        </div>
+      </div>
+    </div>
+  </motion.div>
+</section>
 
         
 
