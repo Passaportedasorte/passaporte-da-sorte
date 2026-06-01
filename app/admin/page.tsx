@@ -408,14 +408,22 @@ async function uploadImagem(
   file: File,
   tipo: "nova" | "editar"
 ) {
-  const fileName = `${Date.now()}-${file.name}`;
+  const extensao = file.name.split(".").pop();
+
+  const fileName = `${Date.now()}-${Math.random()
+    .toString(36)
+    .substring(2)}.${extensao}`;
 
   const { error } = await supabase.storage
     .from("campanhas")
-    .upload(fileName, file);
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
 
   if (error) {
-    alert("Erro ao enviar imagem.");
+    console.error("ERRO UPLOAD IMAGEM:", error);
+    alert(error.message);
     return;
   }
 
@@ -424,10 +432,18 @@ async function uploadImagem(
     .getPublicUrl(fileName);
 
   if (tipo === "nova") {
-    setForm({ ...form, imagem: data.publicUrl });
+    setForm((prev) => ({
+      ...prev,
+      imagem: data.publicUrl,
+    }));
   } else {
-    setEditForm({ ...editForm, imagem: data.publicUrl });
+    setEditForm((prev) => ({
+      ...prev,
+      imagem: data.publicUrl,
+    }));
   }
+
+  alert("Imagem enviada com sucesso!");
 }
 
   async function criarCampanha() {
