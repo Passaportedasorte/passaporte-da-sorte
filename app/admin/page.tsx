@@ -611,7 +611,6 @@ imagens_roteiro: campanha.imagens_roteiro || [],
   sobre_destino: editForm.sobre_destino,
   roteiro: editForm.roteiro,
   incluso: editForm.incluso,
-  imagens_roteiro: form.imagens_roteiro,
 })
       .eq("id", id);
 
