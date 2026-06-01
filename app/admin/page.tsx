@@ -483,6 +483,7 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
 
   console.log("EDITANDO ID:", editandoId);
 console.log("NOVA URL:", novaUrl);
+alert(`URL GERADA: ${novaUrl}`);
 
   if (tipo === "nova") {
     setForm((prev: any) => ({
@@ -516,6 +517,9 @@ console.log("NOVA URL:", novaUrl);
     : [];
 
   const novasImagens = [...imagensAtuais, novaUrl];
+
+  alert(`EDITANDO ID: ${editandoId}`);
+alert(`IMAGENS QUE SERÃO SALVAS: ${JSON.stringify(novasImagens)}`);
 
   const { error: updateError } = await supabase
   
