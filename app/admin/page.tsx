@@ -481,9 +481,8 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
 
   const novaUrl = data.publicUrl;
 
-  console.log("EDITANDO ID:", editandoId);
-console.log("NOVA URL:", novaUrl);
-alert(`URL GERADA: ${novaUrl}`);
+  
+
 
   if (tipo === "nova") {
     setForm((prev: any) => ({
@@ -518,8 +517,7 @@ alert(`URL GERADA: ${novaUrl}`);
 
   const novasImagens = [...imagensAtuais, novaUrl];
 
-  alert(`EDITANDO ID: ${editandoId}`);
-alert(`IMAGENS QUE SERÃO SALVAS: ${JSON.stringify(novasImagens)}`);
+
 
   const { error: updateError } = await supabase
   
@@ -528,7 +526,6 @@ alert(`IMAGENS QUE SERÃO SALVAS: ${JSON.stringify(novasImagens)}`);
       imagens_roteiro: novasImagens,
     })
     .eq("id", editandoId);
-console.log("UPDATE IMAGENS OK");
   if (updateError) {
     console.error("ERRO AO SALVAR IMAGENS ROTEIRO:", updateError);
     alert(updateError.message);
@@ -1330,7 +1327,12 @@ const comprasFiltradas = compras.filter((compra) => {
   accept="image/*"
   multiple
   onChange={(e) => {
+    
+
     const files = Array.from(e.target.files || []);
+
+  
+
     files.forEach((file) => uploadImagemRoteiro(file, "editar"));
   }}
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
