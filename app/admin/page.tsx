@@ -23,8 +23,7 @@ export default function AdminPage() {
   const [numeroFederal, setNumeroFederal] = useState("");
   const [resultadoEncontrado, setResultadoEncontrado] = useState<any>(null);
   const [resultados, setResultados] = useState<any[]>([]);
-
- const [resumo, setResumo] = useState({
+  const [resumo, setResumo] = useState({
   campanhas: 0,
   compras: 0,
   passIds: 0,
@@ -34,24 +33,31 @@ export default function AdminPage() {
   comprasPagas: 0,
   comprasPendentes: 0,
 });
-
   const [form, setForm] = useState({
-    titulo: "",
-    destino: "",
-    preco: "",
-    milhas: "",
-    data_sorteio: "",
-    imagem: "",
-  });
+  titulo: "",
+  destino: "",
+  preco: "",
+  milhas: "",
+  data_sorteio: "",
+  imagem: "",
+  sobre_destino: "",
+  roteiro: "",
+  incluso: "",
+});
 
-  const [editForm, setEditForm] = useState({
-    titulo: "",
-    destino: "",
-    preco: "",
-    milhas: "",
-    data_sorteio: "",
-    imagem: "",
-  });
+const [editForm, setEditForm] = useState({
+  titulo: "",
+  destino: "",
+  preco: "",
+  milhas: "",
+  data_sorteio: "",
+  imagem: "",
+  sobre_destino: "",
+  roteiro: "",
+  incluso: "",
+});
+
+
 
 useEffect(() => {
   async function carregar() {
@@ -459,6 +465,9 @@ async function uploadImagem(
       milhas: Number(form.milhas || 0),
       data_sorteio: form.data_sorteio,
       imagem: form.imagem,
+      sobre_destino: form.sobre_destino,
+roteiro: form.roteiro,
+incluso: form.incluso,
     });
 
     if (error) {
@@ -473,6 +482,9 @@ async function uploadImagem(
       milhas: "",
       data_sorteio: "",
       imagem: "",
+      sobre_destino: form.sobre_destino,
+roteiro: form.roteiro,
+incluso: form.incluso,
     });
 
     await buscarCampanhas();
@@ -490,6 +502,9 @@ async function uploadImagem(
       milhas: String(campanha.milhas || ""),
       data_sorteio: campanha.data_sorteio || "",
       imagem: campanha.imagem || "",
+      sobre_destino: campanha.sobre_destino || "",
+roteiro: campanha.roteiro || "",
+incluso: campanha.incluso || "",
     });
   }
 
@@ -502,6 +517,9 @@ async function uploadImagem(
       milhas: "",
       data_sorteio: "",
       imagem: "",
+      sobre_destino: "",
+      roteiro: "",
+      incluso: "",
     });
   }
 
@@ -1058,6 +1076,42 @@ const comprasFiltradas = compras.filter((compra) => {
                 onChange={(v) => setForm({ ...form, data_sorteio: v })}
               />
 
+              <textarea
+  placeholder="Sobre o destino"
+  value={editForm.sobre_destino || ""}
+  onChange={(e) =>
+    setEditForm({
+      ...editForm,
+      sobre_destino: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none min-h-[120px]"
+/>
+
+<textarea
+  placeholder="Roteiro da experiência"
+  value={editForm.roteiro || ""}
+  onChange={(e) =>
+    setEditForm({
+      ...editForm,
+      roteiro: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none min-h-[160px]"
+/>
+
+<textarea
+  placeholder="O que está incluso"
+  value={editForm.incluso || ""}
+  onChange={(e) =>
+    setEditForm({
+      ...editForm,
+      incluso: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none min-h-[120px]"
+/>
+
               <input
   type="file"
   accept="image/*"
@@ -1135,6 +1189,42 @@ const comprasFiltradas = compras.filter((compra) => {
                           setEditForm({ ...editForm, data_sorteio: v })
                         }
                       />
+
+                      <textarea
+  placeholder="Sobre o destino"
+  value={editForm.sobre_destino || ""}
+  onChange={(e) =>
+    setEditForm({
+      ...editForm,
+      sobre_destino: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none min-h-[120px]"
+/>
+
+<textarea
+  placeholder="Roteiro da experiência"
+  value={editForm.roteiro || ""}
+  onChange={(e) =>
+    setEditForm({
+      ...editForm,
+      roteiro: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none min-h-[160px]"
+/>
+
+<textarea
+  placeholder="O que está incluso"
+  value={editForm.incluso || ""}
+  onChange={(e) =>
+    setEditForm({
+      ...editForm,
+      incluso: e.target.value,
+    })
+  }
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none min-h-[120px]"
+/>
 
                       <input
   type="file"

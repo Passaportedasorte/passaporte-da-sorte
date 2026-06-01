@@ -217,7 +217,7 @@ export default function CampanhaPage({
 
             <InfoCard
               title="Resultado Federal"
-              text="A apuração é vinculada aos últimos 5 números da Loteria Federal."
+              text="A apuração é vinculada ao primeiro prêmio da Loteria Federal."
             />
 
             <InfoCard
