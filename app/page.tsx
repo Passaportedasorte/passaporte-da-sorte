@@ -752,7 +752,7 @@ async function salvarMeusDados() {
           <Mini
             icon={<Ticket />}
             label="Passaporte"
-            value={`R$ ${campanhaBanner?.preco ?? 3.99}`}
+            value={`R$ ${campanhaBanner?.preco ?? "—"}`}
           />
           <Mini
             icon={<Star />}
@@ -762,7 +762,7 @@ async function salvarMeusDados() {
           <Mini
             icon={<MapPin />}
             label="Sorteio"
-            value={campanhaBanner?.data_sorteio ?? "21/06"}
+            value={campanhaBanner?.data_sorteio ?? "Em breve"}
           />
         </div>
       </div>
