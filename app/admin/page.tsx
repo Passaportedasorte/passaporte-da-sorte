@@ -43,6 +43,7 @@ export default function AdminPage() {
   sobre_destino: "",
   roteiro: "",
   incluso: "",
+  imagens_roteiro: "",
 });
 
 const [editForm, setEditForm] = useState({
@@ -55,6 +56,7 @@ const [editForm, setEditForm] = useState({
   sobre_destino: "",
   roteiro: "",
   incluso: "",
+  imagens_roteiro: "",
 });
 
 
@@ -452,6 +454,42 @@ async function uploadImagem(
   alert("Imagem enviada com sucesso!");
 }
 
+async function uploadImagemRoteiro(
+  file: File,
+  tipo: "nova" | "editar"
+) {
+  const extensao = file.name.split(".").pop();
+
+  const fileName = `roteiro-${Date.now()}-${Math.random()
+    .toString(36)
+    .substring(2)}.${extensao}`;
+
+  const { error } = await supabase.storage
+    .from("campanhas")
+    .upload(fileName, file);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  const { data } = supabase.storage
+    .from("campanhas")
+    .getPublicUrl(fileName);
+
+  if (tipo === "nova") {
+    setForm((prev: any) => ({
+      ...prev,
+      imagens_roteiro: [...(prev.imagens_roteiro || []), data.publicUrl],
+    }));
+  } else {
+    setEditForm((prev: any) => ({
+      ...prev,
+      imagens_roteiro: [...(prev.imagens_roteiro || []), data.publicUrl],
+    }));
+  }
+}
+
   async function criarCampanha() {
     if (!form.titulo || !form.destino || !form.preco) {
       alert("Preencha título, destino e preço.");
@@ -468,6 +506,8 @@ async function uploadImagem(
       sobre_destino: form.sobre_destino,
 roteiro: form.roteiro,
 incluso: form.incluso,
+imagens_roteiro: form.imagens_roteiro,
+
     });
 
     if (error) {
@@ -485,6 +525,8 @@ incluso: form.incluso,
   sobre_destino: "",
   roteiro: "",
   incluso: "",
+  imagens_roteiro: "",
+  
 });
     await buscarCampanhas();
     await buscarResumo();
@@ -504,6 +546,8 @@ incluso: form.incluso,
       sobre_destino: campanha.sobre_destino || "",
 roteiro: campanha.roteiro || "",
 incluso: campanha.incluso || "",
+imagens_roteiro: campanha.imagens_roteiro || [],
+
     });
   }
 
@@ -519,6 +563,8 @@ incluso: campanha.incluso || "",
       sobre_destino: "",
       roteiro: "",
       incluso: "",
+      imagens_roteiro: ""
+      
     });
   }
 
@@ -536,6 +582,7 @@ incluso: campanha.incluso || "",
   sobre_destino: editForm.sobre_destino,
   roteiro: editForm.roteiro,
   incluso: editForm.incluso,
+  imagens_roteiro: form.imagens_roteiro,
 })
       .eq("id", id);
 
@@ -1115,6 +1162,17 @@ const comprasFiltradas = compras.filter((compra) => {
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none min-h-[120px]"
 />
 
+<input
+  type="file"
+  accept="image/*"
+  multiple
+  onChange={(e) => {
+    const files = Array.from(e.target.files || []);
+    files.forEach((file) => uploadImagemRoteiro(file, "editar"));
+  }}
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+/>
+
               <input
   type="file"
   accept="image/*"
@@ -1234,7 +1292,7 @@ const comprasFiltradas = compras.filter((compra) => {
   accept="image/*"
   onChange={(e) => {
     const file = e.target.files?.[0];
-    if (file) uploadImagem(file, "editar");
+    if (file) uploadImagem(file, "nova");
   }}
   className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
 />
