@@ -23,6 +23,21 @@ export default function CampanhaPage({
 
   const [quantidade, setQuantidade] = useState(5);
   const [loadingPix, setLoadingPix] = useState(false);
+  const [resultado, setResultado] = useState<any>(null);
+
+useEffect(() => {
+  async function carregarResultado() {
+    const { data } = await supabase
+      .from("resultados_federal")
+      .select("*")
+      .eq("campaign_id", id)
+      .maybeSingle();
+
+    setResultado(data);
+  }
+
+  carregarResultado();
+}, [id]);
 
   useEffect(() => {
     async function carregarCampanha() {
@@ -200,11 +215,9 @@ export default function CampanhaPage({
 
 
       <section className="max-w-7xl mx-auto px-5 md:px-8 py-12 grid lg:grid-cols-3 gap-8">
-{campanha.status === "ENCERRADA" && (
+{campanha.status === "ENCERRADA" && resultado && (
   <div className="lg:col-span-3 rounded-[2rem] bg-[#23C997] text-[#061832] p-6 md:p-8">
-    <p className="font-black text-sm">
-      RESULTADO OFICIAL
-    </p>
+    <p className="font-black text-sm">RESULTADO OFICIAL</p>
 
     <h2 className="text-4xl font-black mt-2">
       🏆 Campanha Encerrada
@@ -212,22 +225,16 @@ export default function CampanhaPage({
 
     <div className="grid md:grid-cols-2 gap-6 mt-6">
       <div>
-        <p className="font-bold opacity-70">
-          PASS-ID vencedor
-        </p>
-
+        <p className="font-bold opacity-70">PASS-ID vencedor</p>
         <p className="text-3xl font-black">
-          {campanha.pass_id_vencedor || "---"}
+          {resultado.pass_id_vencedor || "---"}
         </p>
       </div>
 
       <div>
-        <p className="font-bold opacity-70">
-          Número Federal
-        </p>
-
+        <p className="font-bold opacity-70">Número Federal</p>
         <p className="text-3xl font-black">
-          {campanha.numero_federal || "---"}
+          {resultado.numero_sorteado || "---"}
         </p>
       </div>
     </div>
