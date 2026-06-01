@@ -214,6 +214,25 @@ export default function CampanhaPage({
   </div>
 </div>
 
+{campanha.imagens_roteiro && campanha.imagens_roteiro.length > 0 && (
+  <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
+    <h2 className="text-3xl font-black mb-5">
+      Galeria do roteiro
+    </h2>
+
+    <div className="grid md:grid-cols-3 gap-4">
+      {campanha.imagens_roteiro.map((imagem: string, index: number) => (
+        <img
+          key={index}
+          src={imagem}
+          alt={`Imagem do roteiro ${index + 1}`}
+          className="w-full h-56 object-cover rounded-[2rem] border border-white/15"
+        />
+      ))}
+    </div>
+  </div>
+)}
+
 {campanha.imagens_roteiro?.length > 0 && (
   <div className="grid md:grid-cols-3 gap-4">
     {campanha.imagens_roteiro.map((imagem: string, index: number) => (
