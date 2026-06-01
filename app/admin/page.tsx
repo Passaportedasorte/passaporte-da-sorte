@@ -43,7 +43,7 @@ export default function AdminPage() {
   sobre_destino: "",
   roteiro: "",
   incluso: "",
-  imagens_roteiro: "",
+  imagens_roteiro: [],
 });
 
 const [editForm, setEditForm] = useState({
@@ -56,7 +56,7 @@ const [editForm, setEditForm] = useState({
   sobre_destino: "",
   roteiro: "",
   incluso: "",
-  imagens_roteiro: "",
+  imagens_roteiro: [],
 });
 
 
@@ -525,7 +525,7 @@ imagens_roteiro: form.imagens_roteiro,
   sobre_destino: "",
   roteiro: "",
   incluso: "",
-  imagens_roteiro: "",
+  imagens_roteiro: [],
   
 });
     await buscarCampanhas();
@@ -563,7 +563,7 @@ imagens_roteiro: campanha.imagens_roteiro || [],
       sobre_destino: "",
       roteiro: "",
       incluso: "",
-      imagens_roteiro: ""
+      imagens_roteiro: [],
       
     });
   }
