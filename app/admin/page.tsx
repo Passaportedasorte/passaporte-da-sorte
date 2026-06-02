@@ -365,7 +365,7 @@ if (!cidadeVencedor.trim()) {
       ? "EXATO"
       : "MAIS_PROXIMO";
 
-  const { error } = await supabase.from("resultados_federal").insert({
+  const { error } = await supabase.from("resultados_federal").upsert({
   campaign_id: campanhaResultado,
   numero_sorteado: numeroFederal?.padStart(5, "0") || "",
   pass_id_vencedor: resultadoEncontrado?.pass_id || "",
