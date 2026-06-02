@@ -37,6 +37,8 @@ const passIdsFiltrados = passIdsCompra.filter((item) => {
   const [nomeVencedor, setNomeVencedor] = useState("");
 const [cidadeVencedor, setCidadeVencedor] = useState("");
 const [resultadoBuscaPassId, setResultadoBuscaPassId] = useState<any>(null);
+const [fotoVencedor, setFotoVencedor] = useState("");
+const [videoVencedor, setVideoVencedor] = useState("");
 
 
   const [resumo, setResumo] = useState({
@@ -81,6 +83,41 @@ const [editForm, setEditForm] = useState({
 numero_federal: "",
 });
 
+
+async function uploadMidiaVencedor(
+  file: File,
+  tipo: "foto" | "video"
+) {
+  const extensao = file.name.split(".").pop();
+
+  const fileName = `vencedor-${tipo}-${Date.now()}-${Math.random()
+    .toString(36)
+    .substring(2)}.${extensao}`;
+
+  const { error } = await supabase.storage
+    .from("campanhas")
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  const { data } = supabase.storage
+    .from("campanhas")
+    .getPublicUrl(fileName);
+
+  if (tipo === "foto") {
+    setFotoVencedor(data.publicUrl);
+  } else {
+    setVideoVencedor(data.publicUrl);
+  }
+
+  alert("Mídia do vencedor enviada!");
+}
 
 async function buscarPassIdGlobal() {
   if (!buscaPassId.trim()) {
@@ -307,8 +344,10 @@ const { error: resultadoError } = await supabase
     user_id_vencedor: vencedor.user_id,
     compra_id_vencedora: vencedor.compra_id,
     tipo_resultado: tipoResultado,
-    nome_vencedor: nomeVencedor,
+   nome_vencedor: nomeVencedor,
 cidade_vencedor: cidadeVencedor,
+foto_vencedor: fotoVencedor,
+video_vencedor: videoVencedor,
   });
 
 if (resultadoError) {
@@ -319,13 +358,13 @@ if (resultadoError) {
 
 await buscarResultados();
 
-  setResultadoEncontrado(vencedor);
+setResultadoEncontrado(vencedor);
 
-  alert(
-    vencedor.pass_id === passIdExato
-      ? "Vencedor exato encontrado!"
-      : "Vencedor mais próximo encontrado!"
-  );
+alert(
+  vencedor.pass_id === passIdExato
+    ? "Vencedor exato encontrado!"
+    : "Vencedor mais próximo encontrado!"
+);
 }
 
 async function abrirDetalhesCompra(compra: any) {
@@ -1234,6 +1273,76 @@ const comprasFiltradas = compras.filter((compra) => {
     </div>
   </div>
 )}
+</div>
+
+<div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 mt-8 mb-8">
+  <h2 className="text-2xl font-black text-white mb-4">
+    🏆 Declarar vencedor
+  </h2>
+
+  <div className="grid md:grid-cols-2 gap-4">
+    <input
+      value={nomeVencedor}
+      onChange={(e) => setNomeVencedor(e.target.value)}
+      placeholder="Nome do vencedor"
+      className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+    />
+
+    <input
+      value={cidadeVencedor}
+      onChange={(e) => setCidadeVencedor(e.target.value)}
+      placeholder="Cidade do vencedor"
+      className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+    />
+
+    <div>
+      <p className="text-white/60 mb-2 font-black text-sm">
+        Foto do vencedor
+      </p>
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) uploadMidiaVencedor(file, "foto");
+        }}
+        className="w-full rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+      />
+    </div>
+
+    <div>
+      <p className="text-white/60 mb-2 font-black text-sm">
+        Vídeo/depoimento
+      </p>
+
+      <input
+        type="file"
+        accept="video/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) uploadMidiaVencedor(file, "video");
+        }}
+        className="w-full rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+      />
+    </div>
+  </div>
+
+  {fotoVencedor && (
+    <img
+      src={fotoVencedor}
+      alt="Foto do vencedor"
+      className="mt-5 w-40 h-40 object-cover rounded-2xl border border-white/15"
+    />
+  )}
+
+  {videoVencedor && (
+    <video
+      src={videoVencedor}
+      controls
+      className="mt-5 w-full max-w-md rounded-2xl border border-white/15"
+    />
+  )}
 </div>
 
   <div className="overflow-x-auto">
