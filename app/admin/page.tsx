@@ -88,13 +88,17 @@ async function buscarPassIdGlobal() {
     return;
   }
 
-  const busca = buscaPassId.trim().toUpperCase();
+const busca = buscaPassId.trim().toUpperCase();
 
-  const { data, error } = await supabase
-    .from("pass_ids")
-    .select("*")
-    .eq("pass_id", busca)
-    .maybeSingle();
+const buscaFormatada = busca.startsWith("PSD-")
+  ? busca
+  : `PSD-${busca}`;
+
+const { data, error } = await supabase
+  .from("pass_ids")
+  .select("*")
+  .eq("pass_id", buscaFormatada)
+  .maybeSingle();
 
   if (error) {
     alert(error.message);
@@ -1133,22 +1137,7 @@ const comprasFiltradas = compras.filter((compra) => {
     🔎 Localizar PASS-ID
   </h2>
 
-  <div className="flex flex-col md:flex-row gap-3">
-    <input
-      value={buscaPassId}
-      onChange={(e) => setBuscaPassId(e.target.value)}
-      placeholder="Digite um PASS-ID"
-      className="flex-1 rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
-    />
-
-    <button
-      type="button"
-      onClick={buscarPassIdGlobal}
-      className="rounded-2xl bg-[#23C997] text-[#061832] px-6 py-3 font-black"
-    >
-      Buscar
-    </button>
-  </div>
+  
 
   {resultadoBuscaPassId && (
     <div className="mt-6 rounded-2xl bg-white/5 border border-white/10 p-4">
@@ -1893,19 +1882,22 @@ const comprasFiltradas = compras.filter((compra) => {
       <div className="mt-8">
         <h3 className="text-xl font-black mb-4">PASS IDs do usuário</h3>
 
-        <div className="grid md:grid-cols-4 gap-3">
-          {passIdsUsuario.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-xl bg-white/10 border border-white/10 p-3 text-center"
-            >
-              <p className="font-black text-[#23C997]">{item.pass_id}</p>
-              <p className="text-xs text-white/50 mt-1">
-                {item.milhas} milhas
-              </p>
-            </div>
-          ))}
-        </div>
+        <div className="grid md:grid-cols-3 gap-3">
+  {passIdsCompra.map((item) => (
+    <div
+      key={item.id}
+      className="rounded-xl bg-white/10 border border-white/10 p-3 text-center"
+    >
+      <p className="font-black text-[#23C997]">
+        {item.pass_id}
+      </p>
+
+      <p className="text-xs text-white/50 mt-1">
+        {item.milhas} milhas
+      </p>
+    </div>
+  ))}
+</div>
       </div>
     </div>
   </div>
