@@ -1053,20 +1053,7 @@ const comprasFiltradas = compras.filter((compra) => {
       className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
     />
 
-      <input
-  value={nomeVencedor}
-  onChange={(e) => setNomeVencedor(e.target.value)}
-  placeholder="Nome do vencedor"
-  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
-/>
-
-<input
-  value={cidadeVencedor}
-  onChange={(e) => setCidadeVencedor(e.target.value)}
-  placeholder="Cidade do vencedor"
-  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
-/>
-
+    
     <button
       onClick={encontrarVencedorFederal}
       className="rounded-2xl bg-[#23C997] text-[#061832] font-black"
@@ -1074,14 +1061,7 @@ const comprasFiltradas = compras.filter((compra) => {
       Encontrar vencedor
     </button>
 
-    <button
-  type="button"
-  onClick={salvarResultadoFederal}
-  disabled={!resultadoEncontrado}
-  className="rounded-2xl bg-[#23C997] text-[#061832] px-6 py-3 font-black disabled:opacity-50"
->
-  Salvar resultado
-</button>
+  
   </div>
 
   {resultadoEncontrado && (
@@ -1300,6 +1280,17 @@ const comprasFiltradas = compras.filter((compra) => {
   <h2 className="text-2xl font-black text-white mb-4">
     🏆 Declarar vencedor
   </h2>
+  {resultadoEncontrado && (
+  <div className="rounded-2xl bg-[#23C997]/10 border border-[#23C997]/30 p-4 mb-4">
+    <p className="text-[#23C997] font-black">
+      PASS-ID encontrado
+    </p>
+
+    <p className="text-2xl font-black text-white mt-1">
+      {resultadoEncontrado.pass_id}
+    </p>
+  </div>
+)}
 
   <div className="grid md:grid-cols-2 gap-4">
     <input
@@ -1347,6 +1338,15 @@ const comprasFiltradas = compras.filter((compra) => {
         className="w-full rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
       />
     </div>
+
+    <button
+  type="button"
+  onClick={salvarResultadoFederal}
+  disabled={!resultadoEncontrado}
+  className="mt-6 w-full rounded-2xl bg-[#23C997] text-[#061832] py-4 font-black disabled:opacity-50"
+>
+  Salvar resultado
+</button>
   </div>
 
   {fotoVencedor && (
