@@ -26,6 +26,7 @@ export default function AdminPage() {
   const [buscaPassId, setBuscaPassId] = useState("");
 const passIdsFiltrados = passIdsCompra.filter((item) => {
   const busca = buscaPassId.toLowerCase();
+  
 
   return (
     item.pass_id?.toLowerCase().includes(busca) ||
@@ -35,7 +36,7 @@ const passIdsFiltrados = passIdsCompra.filter((item) => {
 });
   const [nomeVencedor, setNomeVencedor] = useState("");
 const [cidadeVencedor, setCidadeVencedor] = useState("");
-
+const [resultadoBuscaPassId, setResultadoBuscaPassId] = useState<any>(null);
 
 
   const [resumo, setResumo] = useState({
@@ -81,6 +82,33 @@ numero_federal: "",
 });
 
 
+async function buscarPassIdGlobal() {
+  if (!buscaPassId.trim()) {
+    alert("Digite um PASS-ID.");
+    return;
+  }
+
+  const busca = buscaPassId.trim().toUpperCase();
+
+  const { data, error } = await supabase
+    .from("pass_ids")
+    .select("*")
+    .eq("pass_id", busca)
+    .maybeSingle();
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  if (!data) {
+    alert("PASS-ID não encontrado.");
+    setResultadoBuscaPassId(null);
+    return;
+  }
+
+  setResultadoBuscaPassId(data);
+}
 
 useEffect(() => {
   async function carregar() {
@@ -93,6 +121,8 @@ useEffect(() => {
       buscarCompras();
       buscarUsuarios();
       buscarResultados();
+
+      
       
 
       async function buscarCompras() {
@@ -1697,6 +1727,63 @@ const comprasFiltradas = compras.filter((compra) => {
   placeholder="Buscar PASS-ID"
   className="w-full rounded-2xl bg-white text-[#061832] px-4 py-3 mb-4 outline-none"
 />
+
+<div className="flex gap-3 mb-4">
+  <input
+    value={buscaPassId}
+    onChange={(e) => setBuscaPassId(e.target.value)}
+    placeholder="Buscar PASS-ID"
+    className="flex-1 rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+  />
+
+  <button
+    type="button"
+    onClick={buscarPassIdGlobal}
+    className="rounded-2xl bg-[#23C997] text-[#061832] px-6 font-black"
+  >
+    Buscar
+  </button>
+</div>
+
+{resultadoBuscaPassId && (
+  <div className="rounded-2xl bg-[#23C997]/10 border border-[#23C997]/30 p-5 mb-5">
+    <h3 className="text-xl font-black text-[#23C997]">
+      PASS-ID encontrado
+    </h3>
+
+    <div className="grid md:grid-cols-3 gap-4 mt-4">
+      <div>
+        <p className="text-white/50 text-sm">PASS-ID</p>
+        <p className="font-black">{resultadoBuscaPassId.pass_id}</p>
+      </div>
+
+      <div>
+        <p className="text-white/50 text-sm">Nome</p>
+        <p className="font-black">{resultadoBuscaPassId.nome || "—"}</p>
+      </div>
+
+      <div>
+        <p className="text-white/50 text-sm">Contato</p>
+        <p className="font-black">{resultadoBuscaPassId.contato || "—"}</p>
+      </div>
+
+      <div>
+        <p className="text-white/50 text-sm">Campanha</p>
+        <p className="font-black">#{resultadoBuscaPassId.campaign_id}</p>
+      </div>
+
+      <div>
+        <p className="text-white/50 text-sm">Compra</p>
+        <p className="font-black">#{resultadoBuscaPassId.compra_id}</p>
+      </div>
+
+      <div>
+        <p className="text-white/50 text-sm">Milhas</p>
+        <p className="font-black">{resultadoBuscaPassId.milhas}</p>
+      </div>
+    </div>
+  </div>
+)}
 
         <div className="grid md:grid-cols-3 gap-3">
           {passIdsFiltrados.map((item) => (
