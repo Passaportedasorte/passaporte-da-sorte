@@ -930,7 +930,9 @@ async function salvarMeusDados() {
         alt={resultado.nome_vencedor || "Vencedor"}
         className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
       />
+
     )}
+
 
     <div>
       <p className="text-sm font-black opacity-70">
@@ -945,9 +947,9 @@ async function salvarMeusDados() {
         {resultado.cidade_vencedor}
       </p>
 
-      <p className="font-black mt-2">
-        ✈️ Ganhou: {resultado.campaigns?.titulo}
-      </p>
+      <p className="font-black mt-2 text-sm md:text-base">
+  ✅ Resultado oficial validado
+</p>
     </div>
   </div>
 </div>
