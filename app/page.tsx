@@ -922,45 +922,34 @@ async function salvarMeusDados() {
       </>
     )}
 <div className="rounded-[2rem] bg-[#23C997] text-[#061832] p-6 mt-4">
-  <div className="flex items-center gap-3">
-    <span className="text-4xl">🏆</span>
+  <div className="flex items-center gap-5">
+
+    {resultado.foto_vencedor && (
+      <img
+        src={resultado.foto_vencedor}
+        alt={resultado.nome_vencedor || "Vencedor"}
+        className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
+      />
+    )}
 
     <div>
       <p className="text-sm font-black opacity-70">
-        VENCEDOR
+        🏆 VENCEDOR
       </p>
 
-      <h2 className="text-4xl md:text-5xl font-black">
+      <h2 className="text-3xl md:text-4xl font-black leading-tight">
         {resultado.nome_vencedor}
       </h2>
 
       <p className="text-lg opacity-80">
         {resultado.cidade_vencedor}
       </p>
+
+      <p className="font-black mt-2">
+        ✈️ Ganhou: {resultado.campaigns?.titulo}
+      </p>
     </div>
-
-    {resultado.foto_vencedor && (
-  <img
-    src={resultado.foto_vencedor}
-    alt={resultado.nome_vencedor || "Vencedor"}
-    className="w-full h-80 object-cover rounded-2xl mt-5"
-  />
-)}
-
-{resultado.video_vencedor && (
-  <video
-    src={resultado.video_vencedor}
-    controls
-    className="w-full rounded-2xl mt-5"
-  />
-)}
   </div>
-
-  
-
-  <p className="mt-5 text-xl font-black">
-    ✈️ Ganhou: {resultado.campaigns?.titulo}
-  </p>
 </div>
 
     <div className="rounded-2xl bg-[#23C997] text-[#061832] p-5 mt-2">

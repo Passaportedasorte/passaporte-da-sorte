@@ -1387,20 +1387,40 @@ const comprasFiltradas = compras.filter((compra) => {
   </div>
 
   {fotoVencedor && (
+  <div className="mt-5">
     <img
       src={fotoVencedor}
       alt="Foto do vencedor"
-      className="mt-5 w-40 h-40 object-cover rounded-2xl border border-white/15"
+      className="w-40 h-40 object-cover rounded-2xl border border-white/15"
     />
-  )}
 
-  {videoVencedor && (
+    <button
+      type="button"
+      onClick={() => setFotoVencedor("")}
+      className="mt-3 rounded-xl bg-red-500 text-white px-4 py-2 font-black"
+    >
+      Remover foto
+    </button>
+  </div>
+)}
+
+{videoVencedor && (
+  <div className="mt-5">
     <video
       src={videoVencedor}
       controls
-      className="mt-5 w-full max-w-md rounded-2xl border border-white/15"
+      className="w-full max-w-md rounded-2xl border border-white/15"
     />
-  )}
+
+    <button
+      type="button"
+      onClick={() => setVideoVencedor("")}
+      className="mt-3 rounded-xl bg-red-500 text-white px-4 py-2 font-black"
+    >
+      Remover vídeo
+    </button>
+  </div>
+)}
 </div>
 
   <div className="overflow-x-auto">
