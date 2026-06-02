@@ -335,29 +335,6 @@ async function encontrarVencedorFederal() {
   vencedor.pass_id === passIdExato ? "EXATO" : "MAIS_PROXIMO";
   
 
-const { error: resultadoError } = await supabase
-  .from("resultados_federal")
-  .insert({
-    campaign_id: campanhaResultado,
-    numero_sorteado: numeroFederal.padStart(5, "0"),
-    pass_id_vencedor: vencedor.pass_id,
-    user_id_vencedor: vencedor.user_id,
-    compra_id_vencedora: vencedor.compra_id,
-    tipo_resultado: tipoResultado,
-   nome_vencedor: nomeVencedor,
-cidade_vencedor: cidadeVencedor,
-foto_vencedor: fotoVencedor,
-video_vencedor: videoVencedor,
-  });
-
-if (resultadoError) {
-  console.error("Erro ao salvar resultado:", resultadoError);
-  alert(resultadoError.message);
-  return;
-}
-
-await buscarResultados();
-
 setResultadoEncontrado(vencedor);
 
 alert(
@@ -365,6 +342,41 @@ alert(
     ? "Vencedor exato encontrado!"
     : "Vencedor mais próximo encontrado!"
 );
+}
+
+async function salvarResultadoFederal() {
+  if (!resultadoEncontrado) {
+    alert("Encontre um vencedor antes de salvar.");
+    return;
+  }
+
+  const tipoResultado =
+    resultadoEncontrado.pass_id === `PSD-${numeroFederal.padStart(5, "0")}`
+      ? "EXATO"
+      : "MAIS_PROXIMO";
+
+  const { error } = await supabase.from("resultados_federal").insert({
+    campaign_id: campanhaResultado,
+    numero_sorteado: numeroFederal.padStart(5, "0"),
+    pass_id_vencedor: resultadoEncontrado.pass_id,
+    user_id_vencedor: resultadoEncontrado.user_id,
+    compra_id_vencedora: resultadoEncontrado.compra_id,
+    tipo_resultado: tipoResultado,
+    nome_vencedor: nomeVencedor,
+    cidade_vencedor: cidadeVencedor,
+    foto_vencedor: fotoVencedor,
+    video_vencedor: videoVencedor,
+  });
+
+  if (error) {
+    console.error("Erro ao salvar resultado:", error);
+    alert(error.message);
+    return;
+  }
+
+  await buscarResultados();
+
+  alert("Resultado salvo com sucesso!");
 }
 
 async function abrirDetalhesCompra(compra: any) {
@@ -1061,6 +1073,15 @@ const comprasFiltradas = compras.filter((compra) => {
     >
       Encontrar vencedor
     </button>
+
+    <button
+  type="button"
+  onClick={salvarResultadoFederal}
+  disabled={!resultadoEncontrado}
+  className="rounded-2xl bg-[#23C997] text-[#061832] px-6 py-3 font-black disabled:opacity-50"
+>
+  Salvar resultado
+</button>
   </div>
 
   {resultadoEncontrado && (
