@@ -124,6 +124,22 @@ export default function ResultadosPage() {
                     </>
                   )}
 
+                  {resultado.nome_vencedor && (
+  <div className="rounded-[2rem] bg-[#23C997] text-[#061832] p-6 mt-4">
+    <p className="text-sm font-black opacity-70">
+      🏆 VENCEDOR
+    </p>
+
+    <h2 className="text-4xl font-black">
+      {resultado.nome_vencedor}
+    </h2>
+
+    <p className="text-lg opacity-80">
+      {resultado.cidade_vencedor}
+    </p>
+  </div>
+)}
+
                   <div className="grid md:grid-cols-2 gap-3 mt-6">
                     <Info
                       icon={<Target />}
@@ -131,6 +147,8 @@ export default function ResultadosPage() {
                       value={resultado.numero_sorteado}
                     />
 
+
+                  
                     <Info
                       icon={<Ticket />}
                       label="PASS-ID vencedor"

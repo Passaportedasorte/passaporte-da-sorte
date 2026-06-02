@@ -938,7 +938,25 @@ async function salvarMeusDados() {
         {resultado.cidade_vencedor}
       </p>
     </div>
+
+    {resultado.foto_vencedor && (
+  <img
+    src={resultado.foto_vencedor}
+    alt={resultado.nome_vencedor || "Vencedor"}
+    className="w-full h-80 object-cover rounded-2xl mt-5"
+  />
+)}
+
+{resultado.video_vencedor && (
+  <video
+    src={resultado.video_vencedor}
+    controls
+    className="w-full rounded-2xl mt-5"
+  />
+)}
   </div>
+
+  
 
   <p className="mt-5 text-xl font-black">
     ✈️ Ganhou: {resultado.campaigns?.titulo}
