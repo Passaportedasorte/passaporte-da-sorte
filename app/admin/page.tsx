@@ -366,17 +366,17 @@ if (!cidadeVencedor.trim()) {
       : "MAIS_PROXIMO";
 
   const { error } = await supabase.from("resultados_federal").insert({
-    campaign_id: campanhaResultado,
-    numero_sorteado: numeroFederal.padStart(5, "0"),
-    pass_id_vencedor: resultadoEncontrado.pass_id,
-user_id_vencedor: resultadoEncontrado.user_id,
-compra_id_vencedora: resultadoEncontrado.compra_id,
-    tipo_resultado: tipoResultado,
-    nome_vencedor: nomeVencedor,
-    cidade_vencedor: cidadeVencedor,
-    foto_vencedor: fotoVencedor,
-    video_vencedor: videoVencedor,
-  });
+  campaign_id: campanhaResultado,
+  numero_sorteado: numeroFederal?.padStart(5, "0") || "",
+  pass_id_vencedor: resultadoEncontrado?.pass_id || "",
+  user_id_vencedor: resultadoEncontrado?.user_id || null,
+  compra_id_vencedora: resultadoEncontrado?.compra_id || null,
+  tipo_resultado: resultadoEncontrado ? tipoResultado : "MANUAL",
+  nome_vencedor: nomeVencedor,
+  cidade_vencedor: cidadeVencedor,
+  foto_vencedor: fotoVencedor,
+  video_vencedor: videoVencedor,
+});
 
   if (error) {
     console.error("Erro ao salvar resultado:", error);
