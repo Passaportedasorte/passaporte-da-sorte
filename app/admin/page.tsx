@@ -96,7 +96,22 @@ const buscaFormatada = busca.startsWith("PSD-")
 
 const { data, error } = await supabase
   .from("pass_ids")
-  .select("*")
+  .select(`
+  *,
+  compras (
+    nome,
+    email,
+    cpf,
+    celular,
+    valor,
+    quantidade,
+    status
+  ),
+  campaigns (
+    titulo,
+    destino
+  )
+`)
   .eq("pass_id", buscaFormatada)
   .maybeSingle();
 
@@ -113,6 +128,8 @@ const { data, error } = await supabase
 
   setResultadoBuscaPassId(data);
 }
+
+
 
 useEffect(() => {
   async function carregar() {
@@ -1167,20 +1184,56 @@ const comprasFiltradas = compras.filter((compra) => {
   
 
   {resultadoBuscaPassId && (
-    <div className="mt-6 rounded-2xl bg-white/5 border border-white/10 p-4">
-      <p className="text-[#23C997] font-black text-xl">
-        {resultadoBuscaPassId.pass_id}
-      </p>
+  <div className="mt-6 rounded-2xl bg-white/5 border border-white/10 p-4">
+    <p className="text-[#23C997] font-black text-xl">
+      {resultadoBuscaPassId.pass_id}
+    </p>
 
-      <p className="text-white/70 mt-2">
-        Compra: {resultadoBuscaPassId.compra_id}
-      </p>
+    <div className="grid md:grid-cols-2 gap-4 mt-4">
+      <div>
+        <p className="text-white/50 text-sm">Comprador</p>
+        <p className="font-black">
+          {resultadoBuscaPassId.compras?.nome || "—"}
+        </p>
+      </div>
 
-      <p className="text-white/70">
-        Campanha: {resultadoBuscaPassId.campaign_id}
-      </p>
+      <div>
+        <p className="text-white/50 text-sm">Email</p>
+        <p className="font-black">
+          {resultadoBuscaPassId.compras?.email || "—"}
+        </p>
+      </div>
+
+      <div>
+        <p className="text-white/50 text-sm">CPF</p>
+        <p className="font-black">
+          {resultadoBuscaPassId.compras?.cpf || "—"}
+        </p>
+      </div>
+
+      <div>
+        <p className="text-white/50 text-sm">Celular</p>
+        <p className="font-black">
+          {resultadoBuscaPassId.compras?.celular || "—"}
+        </p>
+      </div>
+
+      <div>
+        <p className="text-white/50 text-sm">Campanha</p>
+        <p className="font-black">
+          {resultadoBuscaPassId.campaigns?.titulo || "—"}
+        </p>
+      </div>
+
+      <div>
+        <p className="text-white/50 text-sm">Destino</p>
+        <p className="font-black">
+          {resultadoBuscaPassId.campaigns?.destino || "—"}
+        </p>
+      </div>
     </div>
-  )}
+  </div>
+)}
 </div>
 
   <div className="overflow-x-auto">
