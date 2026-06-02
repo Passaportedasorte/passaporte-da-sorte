@@ -1128,6 +1128,45 @@ const comprasFiltradas = compras.filter((compra) => {
     </div>
   </div>
 
+  <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 mt-8 mb-8">
+  <h2 className="text-2xl font-black text-white mb-4">
+    🔎 Localizar PASS-ID
+  </h2>
+
+  <div className="flex flex-col md:flex-row gap-3">
+    <input
+      value={buscaPassId}
+      onChange={(e) => setBuscaPassId(e.target.value)}
+      placeholder="Digite um PASS-ID"
+      className="flex-1 rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+    />
+
+    <button
+      type="button"
+      onClick={buscarPassIdGlobal}
+      className="rounded-2xl bg-[#23C997] text-[#061832] px-6 py-3 font-black"
+    >
+      Buscar
+    </button>
+  </div>
+
+  {resultadoBuscaPassId && (
+    <div className="mt-6 rounded-2xl bg-white/5 border border-white/10 p-4">
+      <p className="text-[#23C997] font-black text-xl">
+        {resultadoBuscaPassId.pass_id}
+      </p>
+
+      <p className="text-white/70 mt-2">
+        Compra: {resultadoBuscaPassId.compra_id}
+      </p>
+
+      <p className="text-white/70">
+        Campanha: {resultadoBuscaPassId.campaign_id}
+      </p>
+    </div>
+  )}
+</div>
+
   <div className="overflow-x-auto">
     <table className="w-full text-left min-w-[900px]">
       <thead>
@@ -1721,13 +1760,7 @@ const comprasFiltradas = compras.filter((compra) => {
         <h3 className="text-xl font-black text-white mb-4">
           PASS IDs
         </h3>
-        <input
-  value={buscaPassId}
-  onChange={(e) => setBuscaPassId(e.target.value)}
-  placeholder="Buscar PASS-ID"
-  className="w-full rounded-2xl bg-white text-[#061832] px-4 py-3 mb-4 outline-none"
-/>
-
+        
 <div className="flex gap-3 mb-4">
   <input
     value={buscaPassId}
