@@ -1137,6 +1137,38 @@ const comprasFiltradas = compras.filter((compra) => {
     🔎 Localizar PASS-ID
   </h2>
 
+  <div className="flex gap-3 mb-4">
+
+  <input
+
+    value={buscaPassId}
+
+    onChange={(e) => setBuscaPassId(e.target.value)}
+
+    placeholder="Buscar PASS-ID"
+
+    className="flex-1 rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+
+  />
+
+
+
+  <button
+
+    type="button"
+
+    onClick={buscarPassIdGlobal}
+
+    className="rounded-2xl bg-[#23C997] text-[#061832] px-6 font-black"
+
+  >
+
+    Buscar
+
+  </button>
+
+</div>
+
   
 
   {resultadoBuscaPassId && (
@@ -1750,22 +1782,6 @@ const comprasFiltradas = compras.filter((compra) => {
           PASS IDs
         </h3>
         
-<div className="flex gap-3 mb-4">
-  <input
-    value={buscaPassId}
-    onChange={(e) => setBuscaPassId(e.target.value)}
-    placeholder="Buscar PASS-ID"
-    className="flex-1 rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
-  />
-
-  <button
-    type="button"
-    onClick={buscarPassIdGlobal}
-    className="rounded-2xl bg-[#23C997] text-[#061832] px-6 font-black"
-  >
-    Buscar
-  </button>
-</div>
 
 {resultadoBuscaPassId && (
   <div className="rounded-2xl bg-[#23C997]/10 border border-[#23C997]/30 p-5 mb-5">
