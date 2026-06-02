@@ -23,9 +23,21 @@ export default function AdminPage() {
   const [numeroFederal, setNumeroFederal] = useState("");
   const [resultadoEncontrado, setResultadoEncontrado] = useState<any>(null);
   const [resultados, setResultados] = useState<any[]>([]);
+  const [buscaPassId, setBuscaPassId] = useState("");
+const passIdsFiltrados = passIdsCompra.filter((item) => {
+  const busca = buscaPassId.toLowerCase();
 
+  return (
+    item.pass_id?.toLowerCase().includes(busca) ||
+    item.nome?.toLowerCase().includes(busca) ||
+    item.contato?.toLowerCase().includes(busca)
+  );
+});
   const [nomeVencedor, setNomeVencedor] = useState("");
 const [cidadeVencedor, setCidadeVencedor] = useState("");
+
+
+
   const [resumo, setResumo] = useState({
   campanhas: 0,
   compras: 0,
@@ -200,6 +212,7 @@ async function encontrarVencedorFederal() {
     return;
   }
 
+  
   const numeroAlvo = Number(numeroFederal.padStart(5, "0"));
   const passIdExato = `PSD-${numeroFederal.padStart(5, "0")}`;
 
@@ -210,6 +223,7 @@ async function encontrarVencedorFederal() {
 
   if (error || !todosPassIds || todosPassIds.length === 0) {
     alert("Nenhum PASS-ID encontrado nesta campanha.");
+    
     return;
   }
 
@@ -791,8 +805,13 @@ const comprasFiltradas = compras.filter((compra) => {
       ? true
       : compra.status === filtroStatus;
 
+      
+
   return passouBusca && passouStatus;
 });
+
+
+
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-10">
       <div className="max-w-7xl mx-auto">
@@ -898,6 +917,8 @@ const comprasFiltradas = compras.filter((compra) => {
     )}
   </div>
 </section>
+
+
 
   <div className="grid md:grid-cols-3 gap-3">
     <select
@@ -1039,6 +1060,12 @@ const comprasFiltradas = compras.filter((compra) => {
     placeholder="Buscar por nome, e-mail ou CPF"
     className="flex-1 rounded-2xl px-4 py-3 bg-white text-[#061832]"
   />
+  <input
+  value={buscaPassId}
+  onChange={(e) => setBuscaPassId(e.target.value)}
+  placeholder="Buscar por PASS-ID, nome ou e-mail"
+  className="w-full rounded-2xl bg-white px-4 py-3 text-[#061832] outline-none"
+/>
 
   <select
     value={filtroStatus}
@@ -1664,9 +1691,15 @@ const comprasFiltradas = compras.filter((compra) => {
         <h3 className="text-xl font-black text-white mb-4">
           PASS IDs
         </h3>
+        <input
+  value={buscaPassId}
+  onChange={(e) => setBuscaPassId(e.target.value)}
+  placeholder="Buscar PASS-ID"
+  className="w-full rounded-2xl bg-white text-[#061832] px-4 py-3 mb-4 outline-none"
+/>
 
         <div className="grid md:grid-cols-3 gap-3">
-          {passIdsCompra.map((item) => (
+          {passIdsFiltrados.map((item) => (
             <div
               key={item.id}
               className="rounded-xl bg-white/10 border border-white/10 p-3 text-center"
@@ -1780,6 +1813,9 @@ function AdminInput({
   value: string;
   onChange: (v: string) => void;
 }) {
+
+
+  
   return (
     <input
       value={value}
