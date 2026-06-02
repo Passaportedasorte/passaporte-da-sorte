@@ -121,10 +121,8 @@ export default function TermosPage() {
             </p>
 
             <p>
-              Caso o número sorteado não esteja vinculado a um participante
-              válido, poderá ser aplicada regra de aproximação, considerando o
-              número imediatamente superior ou inferior, conforme regulamento da
-              campanha.
+              A forma de apuração dos resultados está descrita nestes Termos de
+              Uso, especialmente na seção “Apuração dos Resultados”.
             </p>
 
             <p>
@@ -153,7 +151,8 @@ export default function TermosPage() {
               Ao participar, o usuário autoriza o Passaporte da Sorte a utilizar
               sua imagem, nome, voz, fotos e vídeos relacionados à campanha,
               apuração, entrega de prêmio ou experiência, para fins de
-              divulgação institucional e promocional.
+              divulgação institucional e promocional, respeitando a legislação
+              vigente e os direitos de personalidade do participante.
             </p>
           </Section>
 
@@ -178,9 +177,9 @@ export default function TermosPage() {
             </p>
 
             <p>
-              Após a realização da premiação ou encerramento da campanha, poderá
-              não ser possível realizar estornos, salvo hipóteses legais
-              aplicáveis.
+              Após a realização da premiação, encerramento da campanha ou
+              publicação da apuração, não haverá cancelamento da participação,
+              salvo hipóteses legais aplicáveis.
             </p>
           </Section>
 
@@ -210,6 +209,122 @@ export default function TermosPage() {
               O Passaporte da Sorte não comercializa dados pessoais dos
               usuários.
             </p>
+          </Section>
+
+          <Section title="13. Apuração dos Resultados">
+            <p>
+              A apuração dos resultados das campanhas do Passaporte da Sorte
+              poderá ocorrer com base nos resultados oficiais da Loteria Federal
+              do Brasil, conforme definido nas regras específicas de cada
+              campanha.
+            </p>
+
+            <p>
+              Cada participante recebe um ou mais PASS-IDs exclusivos, que
+              servem como identificação para participação nas campanhas.
+            </p>
+
+            <p>
+              Quando a campanha utilizar a Loteria Federal como critério de
+              apuração, será considerado inicialmente o PASS-ID correspondente ao
+              número sorteado.
+            </p>
+
+            <p>
+              Caso não exista um PASS-ID exatamente igual ao número sorteado, a
+              busca seguirá de forma progressiva, iniciando pelo número
+              imediatamente superior ao resultado oficial. Não sendo encontrado
+              participante, será verificado o número imediatamente inferior. O
+              processo continuará alternando entre números superiores e
+              inferiores, em ordem crescente de proximidade, até que seja
+              encontrado um PASS-ID válido participante da campanha.
+            </p>
+
+            <p>
+              Após a apuração, o resultado será publicado no site oficial do
+              Passaporte da Sorte, contendo informações como PASS-ID vencedor,
+              número sorteado, nome do ganhador, cidade e demais informações
+              pertinentes, quando autorizadas.
+            </p>
+
+            <p>
+              A participação na campanha implica concordância com o método de
+              apuração adotado.
+            </p>
+          </Section>
+
+          <Section title="14. Contato com o Ganhador">
+            <p>
+              O ganhador será contatado pelos meios de comunicação informados em
+              seu cadastro, incluindo telefone, WhatsApp e e-mail.
+            </p>
+
+            <p>
+              É responsabilidade do participante manter seus dados cadastrais
+              atualizados e corretos para possibilitar o contato e a entrega da
+              premiação.
+            </p>
+
+            <p>
+              O Passaporte da Sorte poderá divulgar o resultado da campanha em
+              seus canais oficiais, respeitando a legislação vigente e os
+              direitos dos participantes.
+            </p>
+          </Section>
+
+          <Section title="15. Responsabilidade do Participante">
+            <p>
+              É responsabilidade exclusiva do participante fornecer informações
+              verdadeiras, completas e atualizadas durante o cadastro na
+              plataforma.
+            </p>
+
+            <p>
+              O Passaporte da Sorte não se responsabiliza por dificuldades de
+              comunicação decorrentes de informações incorretas, incompletas ou
+              desatualizadas fornecidas pelo participante.
+            </p>
+
+            <p>
+              O participante declara ser o legítimo titular dos dados informados
+              e responsável pela utilização de sua conta na plataforma.
+            </p>
+          </Section>
+
+          <Section title="16. Identificação da Plataforma">
+            <p>
+              <strong>Passaporte da Sorte</strong>
+            </p>
+
+            <p>CNPJ: _______________________________</p>
+
+            <p>E-mail para contato: _______________________________</p>
+
+            <p>WhatsApp: _______________________________</p>
+
+            <p>Endereço: _______________________________</p>
+
+            <p>Cidade/UF: _______________________________</p>
+
+            <p>
+              Todos os atendimentos, comunicações, divulgações de campanhas e
+              publicações de resultados ocorrerão por meio dos canais oficiais
+              da plataforma.
+            </p>
+          </Section>
+
+          <Section title="17. Atualizações dos Termos">
+            <p>
+              O Passaporte da Sorte poderá atualizar estes Termos de Uso sempre
+              que necessário para adequação legal, operacional ou comercial.
+            </p>
+
+            <p>
+              A versão mais recente estará sempre disponível na plataforma e
+              passará a produzir efeitos a partir de sua publicação.
+            </p>
+
+            <p>Última atualização: 02/06/2026</p>
           </Section>
 
           <section className="rounded-[2rem] bg-[#23C997] text-[#061832] p-8">
