@@ -345,10 +345,20 @@ alert(
 }
 
 async function salvarResultadoFederal() {
-  if (!resultadoEncontrado) {
-    alert("Encontre um vencedor antes de salvar.");
-    return;
-  }
+ if (!campanhaResultado) {
+  alert("Selecione uma campanha.");
+  return;
+}
+
+if (!nomeVencedor.trim()) {
+  alert("Informe o nome do vencedor.");
+  return;
+}
+
+if (!cidadeVencedor.trim()) {
+  alert("Informe a cidade do vencedor.");
+  return;
+}
 
   const tipoResultado =
     resultadoEncontrado.pass_id === `PSD-${numeroFederal.padStart(5, "0")}`
@@ -359,8 +369,8 @@ async function salvarResultadoFederal() {
     campaign_id: campanhaResultado,
     numero_sorteado: numeroFederal.padStart(5, "0"),
     pass_id_vencedor: resultadoEncontrado.pass_id,
-    user_id_vencedor: resultadoEncontrado.user_id,
-    compra_id_vencedora: resultadoEncontrado.compra_id,
+user_id_vencedor: resultadoEncontrado.user_id,
+compra_id_vencedora: resultadoEncontrado.compra_id,
     tipo_resultado: tipoResultado,
     nome_vencedor: nomeVencedor,
     cidade_vencedor: cidadeVencedor,
