@@ -1094,12 +1094,7 @@ const comprasFiltradas = compras.filter((compra) => {
     placeholder="Buscar por nome, e-mail ou CPF"
     className="flex-1 rounded-2xl px-4 py-3 bg-white text-[#061832]"
   />
-  <input
-  value={buscaPassId}
-  onChange={(e) => setBuscaPassId(e.target.value)}
-  placeholder="Buscar por PASS-ID, nome ou e-mail"
-  className="w-full rounded-2xl bg-white px-4 py-3 text-[#061832] outline-none"
-/>
+  
 
   <select
     value={filtroStatus}
