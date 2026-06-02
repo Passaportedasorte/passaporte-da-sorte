@@ -1342,7 +1342,6 @@ const comprasFiltradas = compras.filter((compra) => {
     <button
   type="button"
   onClick={salvarResultadoFederal}
-  disabled={!resultadoEncontrado}
   className="mt-6 w-full rounded-2xl bg-[#23C997] text-[#061832] py-4 font-black disabled:opacity-50"
 >
   Salvar resultado
