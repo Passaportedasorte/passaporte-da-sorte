@@ -345,38 +345,65 @@ alert(
 }
 
 async function salvarResultadoFederal() {
- if (!campanhaResultado) {
-  alert("Selecione uma campanha.");
-  return;
-}
+  if (!campanhaResultado) {
+    alert("Selecione uma campanha.");
+    return;
+  }
 
-if (!nomeVencedor.trim()) {
-  alert("Informe o nome do vencedor.");
-  return;
-}
+  if (!nomeVencedor.trim()) {
+    alert("Informe o nome do vencedor.");
+    return;
+  }
 
-if (!cidadeVencedor.trim()) {
-  alert("Informe a cidade do vencedor.");
-  return;
-}
+  if (!cidadeVencedor.trim()) {
+    alert("Informe a cidade do vencedor.");
+    return;
+  }
+
+  const numeroFormatado = numeroFederal?.trim()
+    ? numeroFederal.padStart(5, "0")
+    : "";
 
   const tipoResultado =
-    resultadoEncontrado.pass_id === `PSD-${numeroFederal.padStart(5, "0")}`
+    resultadoEncontrado && resultadoEncontrado.pass_id === `PSD-${numeroFormatado}`
       ? "EXATO"
-      : "MAIS_PROXIMO";
+      : resultadoEncontrado
+      ? "MAIS_PROXIMO"
+      : "MANUAL";
 
-  const { error } = await supabase.from("resultados_federal").upsert({
-  campaign_id: campanhaResultado,
-  numero_sorteado: numeroFederal?.padStart(5, "0") || "",
-  pass_id_vencedor: resultadoEncontrado?.pass_id || "",
-  user_id_vencedor: resultadoEncontrado?.user_id || null,
-  compra_id_vencedora: resultadoEncontrado?.compra_id || null,
-  tipo_resultado: resultadoEncontrado ? tipoResultado : "MANUAL",
-  nome_vencedor: nomeVencedor,
-  cidade_vencedor: cidadeVencedor,
-  foto_vencedor: fotoVencedor,
-  video_vencedor: videoVencedor,
-});
+  const payload = {
+    campaign_id: campanhaResultado,
+    numero_sorteado: numeroFormatado,
+    pass_id_vencedor: resultadoEncontrado?.pass_id || "",
+    user_id_vencedor: resultadoEncontrado?.user_id || null,
+    compra_id_vencedora: resultadoEncontrado?.compra_id || null,
+    tipo_resultado: tipoResultado,
+    nome_vencedor: nomeVencedor,
+    cidade_vencedor: cidadeVencedor,
+    foto_vencedor: fotoVencedor,
+    video_vencedor: videoVencedor,
+  };
+
+  const { data: existente, error: buscaError } = await supabase
+    .from("resultados_federal")
+    .select("id")
+    .eq("campaign_id", campanhaResultado)
+    .maybeSingle();
+
+  if (buscaError) {
+    console.error("Erro ao buscar resultado existente:", buscaError);
+    alert(buscaError.message);
+    return;
+  }
+
+  const { error } = existente
+    ? await supabase
+        .from("resultados_federal")
+        .update(payload)
+        .eq("id", existente.id)
+    : await supabase
+        .from("resultados_federal")
+        .insert(payload);
 
   if (error) {
     console.error("Erro ao salvar resultado:", error);
@@ -388,6 +415,7 @@ if (!cidadeVencedor.trim()) {
 
   alert("Resultado salvo com sucesso!");
 }
+
 
 async function abrirDetalhesCompra(compra: any) {
   setCompraSelecionada(compra);
