@@ -107,29 +107,34 @@ export default function TermosPage() {
             </p>
           </Section>
 
-          <Section title="6. Regras dos sorteios">
-            <p>
-              Poderá participar das campanhas a pessoa física maior de 18 anos
-              que realizar a aquisição válida de PASS-IDs, conforme as regras da
-              campanha vigente.
-            </p>
+         <Section title="6. Regras dos Sorteios">
+  <p>
+    Poderá participar das campanhas a pessoa física maior de 18 anos que
+    realizar a aquisição válida de PASS-IDs, conforme as regras da campanha
+    vigente.
+  </p>
 
-            <p>
-              Os sorteios, quando realizados, seguirão as regras divulgadas na
-              página oficial da campanha, podendo utilizar critérios públicos de
-              apuração, como a Loteria Federal, quando aplicável.
-            </p>
+  <p>
+    Os sorteios, quando realizados, seguirão as regras divulgadas na página
+    oficial da campanha e no Regulamento Geral das Campanhas disponível na
+    plataforma.
+  </p>
 
-            <p>
-              A forma de apuração dos resultados está descrita nestes Termos de
-              Uso, especialmente na seção “Apuração dos Resultados”.
-            </p>
+  <p>
+    Cada campanha poderá possuir critérios próprios de participação,
+    apuração, premiação, prazos e condições específicas.
+  </p>
 
-            <p>
-              O resultado poderá ser divulgado nos canais oficiais do
-              Passaporte da Sorte.
-            </p>
-          </Section>
+  <p>
+    A participação na campanha implica ciência e concordância com o
+    Regulamento Geral das Campanhas e com os Termos de Uso da plataforma.
+  </p>
+
+  <p>
+    O resultado poderá ser divulgado nos canais oficiais do Passaporte da
+    Sorte.
+  </p>
+</Section>
 
           <Section title="7. Premiação">
             <p>
