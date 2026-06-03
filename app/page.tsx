@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { League_Spartan, Cinzel } from "next/font/google";
 
+
 import {
   Ticket,
   MapPin,
@@ -28,6 +29,7 @@ const cinzel = Cinzel({
   subsets: ["latin"],
   variable: "--font-cinzel",
 });
+
 
 export default function PassaporteDaSorteSite() {
   const [nome, setNome] = useState("");
@@ -457,6 +459,23 @@ async function salvarMeusDados() {
     }
   }
 
+  const imagensHero = [
+  "/malta-hero.jpg",
+  "/malta-2.jpg",
+  "/malta-3.jpg",
+  "/italia-1.jpg",
+];
+
+const [imagemAtual, setImagemAtual] = useState(0);
+
+useEffect(() => {
+  const intervalo = setInterval(() => {
+    setImagemAtual((prev) => (prev + 1) % imagensHero.length);
+  }, 4000);
+
+  return () => clearInterval(intervalo);
+}, []);
+
   return (
     <main
       className={`${league.variable} ${cinzel.variable} min-h-screen bg-[#061832] text-white overflow-hidden pb-24 font-[family-name:var(--font-league)]`}
@@ -591,10 +610,10 @@ async function salvarMeusDados() {
      <section className="relative max-w-7xl mx-auto px-5 md:px-8 py-32 rounded-[3rem] overflow-hidden mt-8">
   <div className="absolute inset-0">
     <img
-      src="/malta-hero.jpg"
-      alt="Malta"
-      className="w-full h-full object-cover"
-    />
+  src={imagensHero[imagemAtual]}
+  alt="Destino"
+  className="w-full h-full object-cover transition-all duration-1000"
+/>
 
     <div className="absolute inset-0 bg-[#061832]/50" />
   </div>
@@ -606,12 +625,11 @@ async function salvarMeusDados() {
     className="relative z-10 text-center max-w-4xl mx-auto"
   >
     <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
-       Viva Malta.
+       Itália + Malta: duas joias do Mediterrâneo em uma única viagem.
     </h2>
 
     <p className="mt-6 text-lg md:text-2xl text-white/90 max-w-2xl mx-auto text-center leading-relaxed">
-      Descubra águas cristalinas, cidades históricas e uma das ilhas mais
-      encantadoras da Europa.
+      Participe da campanha e viva uma experiência que ficará para sempre na memória. 🍀✈️🌍
       <br />
       <br />
       Participe da campanha e transforme seu próximo destino em realidade.
@@ -1023,13 +1041,18 @@ async function salvarMeusDados() {
 
       <section className="relative max-w-7xl mx-auto px-5 md:px-8 py-20 rounded-[3rem] overflow-hidden">
 <div className="absolute inset-0">
-  <img
-    src="/malta-hero.jpg"
-    alt="Malta"
-    className="w-full h-full object-cover"
-  />
+  {imagensHero.map((imagem, index) => (
+    <img
+      key={imagem}
+      src={imagem}
+      alt="Destino"
+      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+        index === imagemAtual ? "opacity-100" : "opacity-0"
+      }`}
+    />
+  ))}
 
-  <div className="absolute inset-0 bg-[#061832]/70" />
+  <div className="absolute inset-0 bg-black/45" />
 </div>
 
   <div className="rounded-[2.5rem] bg-white/10 border border-white/15 p-10 text-center backdrop-blur-xl">
