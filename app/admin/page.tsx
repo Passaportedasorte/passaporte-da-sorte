@@ -790,6 +790,7 @@ numero_federal: campanha.numero_federal || "",
   <option value="ATIVA">Ativa</option>
   <option value="ENCERRADA">Encerrada</option>
   <option value="EM_BREVE">Em breve</option>
+  <option value="ARQUIVADA">Arquivada</option>
 </select>
 
 
@@ -1740,6 +1741,7 @@ const comprasFiltradas = compras.filter((compra) => {
   <option value="ATIVA">Ativa</option>
   <option value="ENCERRADA">Encerrada</option>
   <option value="EM_BREVE">Em breve</option>
+  <option value="ARQUIVADA">Arquivada</option>
 </select>
                       <textarea
   placeholder="Sobre o destino"
