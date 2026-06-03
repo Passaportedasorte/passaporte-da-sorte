@@ -67,15 +67,13 @@ export default function PassaporteDaSorteSite() {
 
   useEffect(() => {
     async function buscarCampanhas() {
-      const { data, error } = await supabase
-        .from("campaigns")
-        .select("*")
-        .order("id", { ascending: false });
+      const { data } = await supabase
+  .from("campaigns")
+  .select("*")
+  .eq("status", "ATIVA")
+  .order("id", { ascending: false });
 
-      if (error) {
-        console.error("Erro ao buscar campanhas:", error);
-        return;
-      }
+      
 
       setCampanhas(data ?? []);
       setCampanhaBanner(data?.[0] ?? null);
