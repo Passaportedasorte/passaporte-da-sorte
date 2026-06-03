@@ -490,10 +490,10 @@ async function salvarMeusDados() {
   </div>
 </div>
 
-    <nav className="flex items-center gap-4 ml-auto min-w-0">
+    <nav className="w-full md:w-auto grid grid-cols-2 md:flex md:items-center gap-3 md:gap-4 md:ml-auto min-w-0">
       <button
         onClick={() => (window.location.href = "/resultados")}
-        className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+        className="flex items-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
       >
         <Trophy className="w-5 h-5 text-[#23C997]" />
         Resultados
@@ -501,7 +501,7 @@ async function salvarMeusDados() {
 
    <button
   onClick={() => (window.location.href = "/campanhas")}
-  className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+  className="flex items-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
 >
   <Briefcase className="w-5 h-5 text-[#23C997]" />
   Campanhas
@@ -510,7 +510,7 @@ async function salvarMeusDados() {
       {user && (
         <button
           onClick={() => (window.location.href = "/painel")}
-          className="flex items-center gap-2 rounded-full px-4 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+          className="flex items-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
         >
           <Clover className="w-5 h-5 text-[#23C997]" />
           Milhas
@@ -523,7 +523,7 @@ async function salvarMeusDados() {
       {user && (
         <button
           onClick={() => (window.location.href = "/painel")}
-          className="flex items-center gap-2 rounded-full bg-[#23C997] px-5 py-3 font-black text-[#061832] hover:scale-105 transition"
+          className="flex items-center gap-2 rounded-full bg-[#23C997] px-3 py-3 font-black text-[#061832] hover:scale-105 transition"
         >
           <Gauge className="w-5 h-5" />
           Meu Painel
@@ -576,7 +576,7 @@ async function salvarMeusDados() {
       ) : (
         <button
           onClick={() => setLoginAberto(true)}
-          className="rounded-full bg-[#23C997] px-6 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
+          className="col-span-2 md:col-span-1 rounded-full bg-[#23C997] px-5 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
         >
           Entrar / Criar conta
         </button>
