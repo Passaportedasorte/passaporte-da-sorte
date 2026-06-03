@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { League_Spartan, Cinzel } from "next/font/google";
+
 import {
   Ticket,
   MapPin,
