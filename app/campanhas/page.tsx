@@ -12,6 +12,7 @@ export default function CampanhasPage() {
       const { data, error } = await supabase
         .from("campaigns")
         .select("*")
+        .neq("status", "ARQUIVADA")
         .order("id", { ascending: false });
 
       if (error) {
@@ -25,17 +26,25 @@ export default function CampanhasPage() {
     carregarCampanhas();
   }, []);
 
-  const campanhasAtivas = campanhas.filter(
+
+
+  
+const campanhasVisiveis = campanhas.filter(
+  (campanha) => campanha.status !== "ARQUIVADA"
+);
+
+const campanhasAtivas = campanhasVisiveis.filter(
   (campanha) => campanha.status === "ATIVA"
 );
 
-const campanhasEmBreve = campanhas.filter(
+const campanhasEmBreve = campanhasVisiveis.filter(
   (campanha) => campanha.status === "EM_BREVE"
 );
 
-const campanhasEncerradas = campanhas.filter(
+const campanhasEncerradas = campanhasVisiveis.filter(
   (campanha) => campanha.status === "ENCERRADA"
 );
+
 
 function SecaoCampanhas({
   titulo,
@@ -55,7 +64,7 @@ function SecaoCampanhas({
         <p className="text-white/60 mt-2">{descricao}</p>
       </div>
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">nopm
         {lista.map((campanha) => (
           <article
             key={campanha.id}

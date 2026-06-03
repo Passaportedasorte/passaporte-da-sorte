@@ -462,10 +462,12 @@ async function salvarMeusDados() {
       className={`${league.variable} ${cinzel.variable} min-h-screen bg-[#061832] text-white overflow-hidden pb-24 font-[family-name:var(--font-league)]`}
     >
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(35,201,151,.28),transparent_28%),radial-gradient(circle_at_85%_10%,rgba(30,136,229,.30),transparent_30%),linear-gradient(180deg,#061832_0%,#081f42_55%,#041021_100%)]" />
-      <div className="fixed inset-0 opacity-[0.06] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:54px_54px]" />
+      <div className="fixed inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:54px_54px]" />
 
       <div className="relative z-10">
        <header className="sticky top-4 z-[9999]">
+
+
   <div className="rounded-[2rem] bg-white/10 border border-white/15 px-4 md:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 shadow-2xl backdrop-blur-xl relative">
 
    <div
@@ -586,21 +588,33 @@ async function salvarMeusDados() {
   </div>
 </header>
 
-       <section className="max-w-7xl mx-auto px-5 md:px-8 pt-16 pb-10 text-center">
+     <section className="relative max-w-7xl mx-auto px-5 md:px-8 py-32 rounded-[3rem] overflow-hidden mt-8">
+  <div className="absolute inset-0">
+    <img
+      src="/malta-hero.jpg"
+      alt="Malta"
+      className="w-full h-full object-cover"
+    />
+
+    <div className="absolute inset-0 bg-[#061832]/50" />
+  </div>
+
   <motion.div
     initial={{ opacity: 0, y: 24 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.7 }}
-    className="max-w-4xl mx-auto"
+    className="relative z-10 text-center max-w-4xl mx-auto"
   >
-  
-
     <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
-      Participe. Realize seu Sonho. Viaje.
+       Viva Malta.
     </h2>
 
-    <p className="mt-6 text-lg md:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
-      Participe das campanhas, receba seus PASS-IDs, acumule milhas e acompanhe os resultados oficiais pela Loteria Federal.
+    <p className="mt-6 text-lg md:text-2xl text-white/90 max-w-2xl mx-auto text-center leading-relaxed">
+      Descubra águas cristalinas, cidades históricas e uma das ilhas mais
+      encantadoras da Europa.
+      <br />
+      <br />
+      Participe da campanha e transforme seu próximo destino em realidade.
     </p>
 
     <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
@@ -608,19 +622,20 @@ async function salvarMeusDados() {
         onClick={() => (window.location.href = "/campanhas")}
         className="rounded-full bg-[#23C997] px-8 py-4 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
       >
-        Ver campanhas
+        🍀 Participar da Campanha
       </button>
 
       <button
-        onClick={() => (window.location.href = "/resultados")}
-        className="rounded-full bg-white/10 border border-white/15 px-8 py-4 font-black text-white hover:bg-white/15 transition"
+        onClick={() =>
+          window.open("https://pt.wikipedia.org/wiki/Malta", "_blank")
+        }
+        className="rounded-full border border-white/20 bg-white/10 px-6 py-4 font-black hover:bg-white/15 transition"
       >
-        Ver resultados
+        ✈️ Conhecer Malta
       </button>
     </div>
   </motion.div>
 </section>
-
 <section className="max-w-7xl mx-auto px-5 md:px-8 py-8">
   <div className="grid md:grid-cols-3 gap-4">
 
@@ -1006,7 +1021,17 @@ async function salvarMeusDados() {
   )}
 </section>
 
-      <section className="max-w-7xl mx-auto px-5 md:px-8 py-20">
+      <section className="relative max-w-7xl mx-auto px-5 md:px-8 py-20 rounded-[3rem] overflow-hidden">
+<div className="absolute inset-0">
+  <img
+    src="/malta-hero.jpg"
+    alt="Malta"
+    className="w-full h-full object-cover"
+  />
+
+  <div className="absolute inset-0 bg-[#061832]/70" />
+</div>
+
   <div className="rounded-[2.5rem] bg-white/10 border border-white/15 p-10 text-center backdrop-blur-xl">
 
     <h2 className="text-4xl md:text-5xl font-black">
