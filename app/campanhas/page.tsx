@@ -64,7 +64,7 @@ function SecaoCampanhas({
         <p className="text-white/60 mt-2">{descricao}</p>
       </div>
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">nopm
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
         {lista.map((campanha) => (
           <article
             key={campanha.id}
