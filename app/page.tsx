@@ -1038,12 +1038,12 @@ async function salvarMeusDados() {
 </section>
 
         <section className="max-w-7xl mx-auto px-5 md:px-8 py-14">
-          <div className="rounded-[2rem] bg-white/10 border border-white/15 px-6 py-4 flex items-center justify-between gap-8">
+          <div className="rounded-[2rem] bg-white/10 border border-white/15 p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className="cursor-pointer hover:scale-105 transition"
+              className="cursor-pointer hover:scale-[1.02] transition rounded-2xl bg-white/5 border border-white/10 p-4"
             >
               <Feature
                 icon={<Gift />}
@@ -1056,7 +1056,7 @@ async function salvarMeusDados() {
               onClick={() => {
                 window.location.href = "/painel";
               }}
-              className="cursor-pointer hover:scale-105 transition"
+              className="cursor-pointer hover:scale-[1.02] transition rounded-2xl bg-white/5 border border-white/10 p-4"
             >
               <Feature
                 icon={<User />}
@@ -1069,7 +1069,7 @@ async function salvarMeusDados() {
               onClick={() => {
                 window.location.href = "/regulamento";
               }}
-              className="cursor-pointer hover:scale-105 transition"
+              className="cursor-pointer hover:scale-[1.02] transition rounded-2xl bg-white/5 border border-white/10 p-4"
             >
               <Feature
                 icon={<ShieldCheck />}
