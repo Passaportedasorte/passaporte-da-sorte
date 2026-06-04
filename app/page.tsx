@@ -880,161 +880,42 @@ useEffect(() => {
   </div>
 </section>
 
-<section className="max-w-7xl mx-auto px-5 md:px-8 py-16">
+<section className="max-w-7xl mx-auto px-5 md:px-8 py-14">
   <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
     <div>
       <p className="text-[#23C997] font-black">
-        RESULTADOS OFICIAIS
+        AVALIAÇÕES
       </p>
 
       <h2 className="text-4xl md:text-5xl font-black mt-2">
-        Últimos resultados
+        O que nossos participantes estão dizendo
       </h2>
 
-      <p className="text-white/60 mt-3">
-        Transparência total nos resultados apurados pela Loteria Federal.
+      <p className="text-white/60 mt-3 max-w-2xl text-lg">
+        Quem já comprou PASS-IDs compartilha a experiência com a plataforma.
       </p>
     </div>
-
-    <button
-      onClick={() => (window.location.href = "/resultados")}
-      className="rounded-2xl bg-white/10 border border-white/15 px-6 py-4 font-black hover:bg-white/15 transition"
-    >
-      Ver todos
-    </button>
   </div>
 
-  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mt-8">
-    {ultimosResultados.map((resultado) => (
-      <div
-  key={resultado.id}
-  onClick={() => (window.location.href = "/resultados")}
-  className="group rounded-[2rem] bg-white/10 border border-white/15 overflow-hidden cursor-pointer hover:-translate-y-1 transition duration-300 shadow-2xl"
->
-  {resultado.campaigns?.imagem && (
-    <div className="relative h-56 overflow-hidden">
-      <img
-        src={resultado.campaigns.imagem}
-        alt={resultado.campaigns?.destino || "Resultado"}
-        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-      />
+  <div className="grid md:grid-cols-3 gap-6 mt-8">
+    <DepoimentoCard
+      nome="Juliana M."
+      cidade="Nova Prata/RS"
+      texto="Entrei só pra conhecer a plataforma e acabei gostando bastante, É tudo bem simples, espero ganhar kkkk."
+    />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-[#061832] via-[#061832]/40 to-transparent" />
+    <DepoimentoCard
+      nome="Rafael P."
+      cidade="Carapicuiba/SP"
+      texto="Achei interessante a ideia das milhas. Fiz meu cadastro espero ganhar, uma vez a sorte vem."
+    />
 
-      <div className="absolute top-4 left-4 rounded-full bg-[#23C997] text-[#061832] px-4 py-2 text-xs font-black">
-        🏆 Resultado oficial
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 p-5">
-        <p className="text-white/70 text-sm font-black">
-          {resultado.campaigns?.destino || "Destino"}
-        </p>
-
-        <h3 className="text-3xl font-black">
-          {resultado.campaigns?.titulo || "Campanha"}
-        </h3>
-      </div>
-    </div>
-  )}
-
-  <div className="p-6">
-    {!resultado.campaigns?.imagem && (
-      <>
-        <p className="text-[#23C997] font-black text-sm">
-          🏆 Resultado oficial
-        </p>
-
-        <h3 className="text-2xl font-black mt-2">
-          {resultado.campaigns?.titulo || "Campanha"}
-        </h3>
-
-        <p className="text-white/60 mt-1">
-          {resultado.campaigns?.destino || "Destino"}
-        </p>
-      </>
-    )}
-<div className="rounded-[2rem] bg-[#23C997] text-[#061832] p-6 mt-4">
-  <div className="flex items-center gap-5">
-
-    {resultado.foto_vencedor && (
-      <img
-        src={resultado.foto_vencedor}
-        alt={resultado.nome_vencedor || "Vencedor"}
-        className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
-      />
-
-    )}
-
-
-    <div>
-      <p className="text-sm font-black opacity-70">
-        🏆 VENCEDOR
-      </p>
-
-      <h2 className="text-3xl md:text-4xl font-black leading-tight">
-        {resultado.nome_vencedor}
-      </h2>
-
-      <p className="text-lg opacity-80">
-        {resultado.cidade_vencedor}
-      </p>
-
-      <p className="font-black mt-2 text-sm md:text-base">
-  ✅ Resultado oficial validado
-</p>
-    </div>
+    <DepoimentoCard
+      nome="Camila S."
+      cidade="São Paulo/SP"
+      texto="O que mais gostei foi a área do cliente, Dá para acompanhar todos os números por lá."
+    />
   </div>
-</div>
-
-    <div className="rounded-2xl bg-[#23C997] text-[#061832] p-5 mt-2">
-      <p className="text-sm font-black opacity-70">
-        PASS-ID vencedor
-      </p>
-
-      <p className="text-3xl font-black mt-1">
-        {resultado.pass_id_vencedor || "—"}
-      </p>
-    </div>
-
-    <div className="grid grid-cols-2 gap-3 mt-3">
-      <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
-        <p className="text-white/50 text-sm">
-          Número Federal
-        </p>
-
-        <p className="font-black mt-1">
-          {resultado.numero_sorteado || "—"}
-        </p>
-      </div>
-
-      <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
-        <p className="text-white/50 text-sm">
-          Apuração
-        </p>
-
-        <p className="font-black mt-1">
-          {resultado.tipo_resultado === "EXATO"
-            ? "🎯 Resultado exato"
-            : "📍 Ganhador mais próximo"}
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-    ))}
-  </div>
-
-  {ultimosResultados.length === 0 && (
-    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-8 mt-8 text-center">
-      <h3 className="text-2xl font-black">
-        Nenhum resultado publicado ainda.
-      </h3>
-
-      <p className="text-white/60 mt-2">
-        Assim que uma campanha for apurada, o resultado aparecerá aqui.
-      </p>
-    </div>
-  )}
 </section>
 
       <section className="relative max-w-7xl mx-auto px-5 md:px-8 py-20 rounded-[3rem] overflow-hidden">
@@ -1573,6 +1454,38 @@ function Input({
     disabled ? "bg-slate-100 text-slate-500 cursor-not-allowed" : ""
   }`}
 />
+    </div>
+  );
+}
+
+function DepoimentoCard({
+  nome,
+  cidade,
+  texto,
+}: {
+  nome: string;
+  cidade: string;
+  texto: string;
+}) {
+  return (
+    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 shadow-2xl">
+      <div className="text-[#23C997] text-xl">
+        ★★★★★
+      </div>
+
+      <p className="text-white/80 mt-5 leading-relaxed text-lg">
+        “{texto}”
+      </p>
+
+      <div className="mt-6 pt-5 border-t border-white/10">
+        <p className="font-black text-xl">
+          {nome}
+        </p>
+
+        <p className="text-white/50 mt-1">
+          {cidade}
+        </p>
+      </div>
     </div>
   );
 }
