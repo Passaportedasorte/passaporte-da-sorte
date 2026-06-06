@@ -468,36 +468,34 @@ useEffect(() => {
 </div>
 
 {cupomValidado && (
-  <div className="rounded-2xl bg-[#23C997]/10 border border-[#23C997]/30 p-4 mt-4">
-    <div className="flex justify-between text-white/70">
+  <div className="rounded-2xl bg-[#061832] text-white border border-[#23C997]/40 p-4 mt-4">
+    <p className="text-[#23C997] font-black">
+      🏷️ Cupom {cupomValidado.codigo} aplicado
+    </p>
+
+    <div className="flex justify-between mt-4 text-white/70">
       <span>Subtotal</span>
-      <strong>
-        R$ {valorOriginal.toFixed(2).replace(".", ",")}
-      </strong>
+      <strong>R$ {valorOriginal.toFixed(2).replace(".", ",")}</strong>
     </div>
 
-    <div className="flex justify-between text-[#23C997] mt-2">
-      <span>
-        Cupom {cupomValidado.codigo} ({percentualDesconto}%)
-      </span>
-      <strong>
-        - R$ {valorDesconto.toFixed(2).replace(".", ",")}
-      </strong>
+    <div className="flex justify-between mt-2 text-[#23C997]">
+      <span>Desconto ({percentualDesconto}%)</span>
+      <strong>- R$ {valorDesconto.toFixed(2).replace(".", ",")}</strong>
     </div>
 
-    <div className="flex justify-between text-white mt-3 pt-3 border-t border-white/10 text-xl">
-      <span className="font-black">Total</span>
-      <strong>
-        R$ {valorFinal.toFixed(2).replace(".", ",")}
-      </strong>
+    <div className="flex justify-between mt-4 pt-4 border-t border-white/10 text-xl">
+      <span className="font-black">Total com desconto</span>
+      <strong>R$ {valorFinal.toFixed(2).replace(".", ",")}</strong>
     </div>
   </div>
 )}
 
             <div className="rounded-2xl bg-slate-100 p-4">
               <div className="flex justify-between font-black text-lg">
-                <span>Total</span>
-                <span>R$ {total}</span>
+                <span>Valor Final</span>
+                <span>
+  R$ {valorFinal.toFixed(2).replace(".", ",")}
+</span>
               </div>
 
               <p className="text-slate-500 text-sm mt-1">
