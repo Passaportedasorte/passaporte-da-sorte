@@ -422,8 +422,8 @@ cupom_id: cupomValidado?.id || null,
               />
             </div>
             <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
-  <label className="text-white/60 text-sm font-black">
-    Cupom de indicação (opcional)
+  <label className="text-black/60 text-sm font-black">
+    Cupom de indicação
   </label>
 
   <div className="flex flex-col md:flex-row gap-3 mt-2">
