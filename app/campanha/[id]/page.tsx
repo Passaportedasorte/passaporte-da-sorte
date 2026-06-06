@@ -27,6 +27,15 @@ const [validandoCupom, setValidandoCupom] = useState(false);
   const [quantidade, setQuantidade] = useState(5);
   const [loadingPix, setLoadingPix] = useState(false);
   const [resultado, setResultado] = useState<any>(null);
+  const valorOriginal = Number(campanha?.preco || 0) * quantidade;
+
+const percentualDesconto = Number(
+  cupomValidado?.percentual_desconto || 0
+);
+
+const valorDesconto = (valorOriginal * percentualDesconto) / 100;
+
+const valorFinal = Math.max(valorOriginal - valorDesconto, 0);
 
 useEffect(() => {
   async function carregarResultado() {
@@ -139,18 +148,22 @@ useEffect(() => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          valor: Number(campanha.preco) * quantidade,
-          nome,
-          email: contato,
-          cpf,
-          celular,
-          campanhaId: campanha.id,
-          quantidade,
-          userId: user?.id,
-          cupom_codigo: cupomValidado?.codigo || null,
-cupom_id: cupomValidado?.id || null,
-        }),
+       body: JSON.stringify({
+  valor: valorFinal,
+  nome,
+  email: contato,
+  cpf,
+  celular,
+  campanhaId: campanha.id,
+  quantidade,
+  userId: user?.id,
+  cupom_codigo: cupomValidado?.codigo || null,
+  cupom_id: cupomValidado?.id || null,
+  valor_original: valorOriginal,
+  valor_final: valorFinal,
+  cupom_desconto_percentual: percentualDesconto,
+  cupom_desconto_valor: valorDesconto,
+}),
       });
 
       const data = await response.json();
@@ -433,7 +446,7 @@ cupom_id: cupomValidado?.id || null,
         setCupomCodigo(e.target.value.toUpperCase());
         setCupomValidado(null);
       }}
-      placeholder="Ex: BRUNO10"
+      placeholder="Ex: PASSAPORTE10"
       className="flex-1 rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
     />
 
@@ -453,6 +466,33 @@ cupom_id: cupomValidado?.id || null,
     </p>
   )}
 </div>
+
+{cupomValidado && (
+  <div className="rounded-2xl bg-[#23C997]/10 border border-[#23C997]/30 p-4 mt-4">
+    <div className="flex justify-between text-white/70">
+      <span>Subtotal</span>
+      <strong>
+        R$ {valorOriginal.toFixed(2).replace(".", ",")}
+      </strong>
+    </div>
+
+    <div className="flex justify-between text-[#23C997] mt-2">
+      <span>
+        Cupom {cupomValidado.codigo} ({percentualDesconto}%)
+      </span>
+      <strong>
+        - R$ {valorDesconto.toFixed(2).replace(".", ",")}
+      </strong>
+    </div>
+
+    <div className="flex justify-between text-white mt-3 pt-3 border-t border-white/10 text-xl">
+      <span className="font-black">Total</span>
+      <strong>
+        R$ {valorFinal.toFixed(2).replace(".", ",")}
+      </strong>
+    </div>
+  </div>
+)}
 
             <div className="rounded-2xl bg-slate-100 p-4">
               <div className="flex justify-between font-black text-lg">
