@@ -3,6 +3,8 @@
 import React, { use, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Calendar, Clover, ShieldCheck, Ticket } from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
+
 
 export default function CampanhaPage({
   params,
@@ -227,6 +229,7 @@ useEffect(() => {
 
   return (
     <main className="min-h-screen bg-[#061832] text-white">
+      <SiteHeader />
       <section className="relative min-h-[78vh] overflow-hidden">
         <img
           src={campanha.imagem || "/logo.png"}

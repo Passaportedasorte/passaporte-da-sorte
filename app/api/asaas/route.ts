@@ -14,15 +14,21 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const {
-      valor,
-      nome,
-      email,
-      cpf,
-      celular,
-      campanhaId,
-      quantidade,
-      userId,
-    } = body;
+  valor,
+  nome,
+  email,
+  cpf,
+  celular,
+  campanhaId,
+  quantidade,
+  userId,
+  cupom_codigo,
+  cupom_id,
+  valor_original,
+  valor_final,
+  cupom_desconto_percentual,
+  cupom_desconto_valor,
+} = body;
 
     if (!valor || !nome || !email || !cpf) {
       return NextResponse.json(
@@ -77,8 +83,14 @@ export async function POST(req: Request) {
           cpf,
           celular,
           quantidade,
-          valor,
-          status: paymentData.status,
+          valor: Number(valor),
+valor_original: Number(valor_original || valor),
+valor_final: Number(valor_final || valor),
+cupom_codigo: cupom_codigo || null,
+cupom_id: cupom_id || null,
+cupom_desconto_percentual: Number(cupom_desconto_percentual || 0),
+cupom_desconto_valor: Number(cupom_desconto_valor || 0),
+status: paymentData.status,
         }),
       }
     );

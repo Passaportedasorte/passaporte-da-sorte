@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Calendar, Clover, Ticket, MapPin } from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
 
 export default function CampanhasPage() {
   const [campanhas, setCampanhas] = useState<any[]>([]);
@@ -151,6 +152,7 @@ function SecaoCampanhas({
 }
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 py-10">
+      <SiteHeader />
       <div className="max-w-7xl mx-auto">
         <a href="/" className="text-[#23C997] font-black">
           ← Voltar para o início

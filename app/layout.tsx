@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import JadeChat from "@/app/components/JadeChat";
+import JadeChat from "@/components/JadeChat";
 
 
 const geistSans = Geist({
