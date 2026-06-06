@@ -17,6 +17,7 @@ import {
   Clover,
   Gauge,
   ChevronDown,
+  CircleHelp,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -966,7 +967,7 @@ useEffect(() => {
 </section>
 
         <section className="max-w-7xl mx-auto px-5 md:px-8 py-14">
-          <div className="rounded-[2rem] bg-white/10 border border-white/15 p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-[2rem] bg-white/10 border border-white/15 p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1005,8 +1006,23 @@ useEffect(() => {
                 text="Regulamento, datas e informações em um só lugar."
               />
             </div>
+
+             <div
+  onClick={() => {
+    window.location.href = "/faq";
+  }}
+  className="cursor-pointer hover:scale-[1.02] transition rounded-2xl bg-white/5 border border-white/10 p-4"
+>
+  <Feature
+    icon={<CircleHelp />}
+    title="FAQ"
+    text="Tire dúvidas sobre PASS-IDs, milhas e participação."
+  />
+</div>
           </div>
         </section>
+
+
 
         <footer className="border-t border-white/10 mt-24">
   <div className="max-w-7xl mx-auto px-5 md:px-8 py-12">
@@ -1032,6 +1048,7 @@ useEffect(() => {
           <a href="/campanhas">Campanhas</a>
           <a href="/resultados">Resultados</a>
           <a href="/painel">Meu Painel</a>
+          <a href="/faq">FAQ</a>
         </div>
       </div>
 
@@ -1039,6 +1056,7 @@ useEffect(() => {
         <h4 className="font-black mb-4">
           Transparência
         </h4>
+       
 
         <div className="flex flex-col gap-2 text-white/60">
           <span>Resultados pela Loteria Federal</span>
@@ -1053,7 +1071,7 @@ useEffect(() => {
         </h4>
 
         <div className="flex flex-col gap-2 text-white/60">
-          <span>Nova Prata • RS</span>
+          <span>Facebook • RS</span>
           <span>Instagram</span>
           <span>WhatsApp</span>
         </div>
