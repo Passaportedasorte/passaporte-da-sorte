@@ -20,6 +20,9 @@ export default function CampanhaPage({
   const [cpf, setCpf] = useState("");
   const [celular, setCelular] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
+  const [cupomCodigo, setCupomCodigo] = useState("");
+const [cupomValidado, setCupomValidado] = useState<any>(null);
+const [validandoCupom, setValidandoCupom] = useState(false);
 
   const [quantidade, setQuantidade] = useState(5);
   const [loadingPix, setLoadingPix] = useState(false);
@@ -80,6 +83,42 @@ useEffect(() => {
     .toFixed(2)
     .replace(".", ",");
 
+    async function validarCupom() {
+  if (!cupomCodigo.trim()) {
+    alert("Digite um cupom.");
+    return;
+  }
+
+  try {
+    setValidandoCupom(true);
+
+    const codigo = cupomCodigo.trim().toUpperCase();
+
+    const { data, error } = await supabase
+      .from("cupons")
+      .select("*")
+      .eq("codigo", codigo)
+      .eq("ativo", true)
+      .maybeSingle();
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    if (!data) {
+      setCupomValidado(null);
+      alert("Cupom não encontrado ou inativo.");
+      return;
+    }
+
+    setCupomCodigo(data.codigo);
+    setCupomValidado(data);
+  } finally {
+    setValidandoCupom(false);
+  }
+}
+
   async function gerarPix() {
     if (!user) {
       alert("Faça login ou crie sua conta antes de finalizar a compra.");
@@ -109,6 +148,8 @@ useEffect(() => {
           campanhaId: campanha.id,
           quantidade,
           userId: user?.id,
+          cupom_codigo: cupomValidado?.codigo || null,
+cupom_id: cupomValidado?.id || null,
         }),
       });
 
@@ -331,6 +372,7 @@ useEffect(() => {
                 <h4 className="text-2xl font-black mt-2">{nome}</h4>
                 <p className="text-white/60 mt-1">{contato}</p>
                 <p className="text-white/60 mt-1">CPF: {cpf}</p>
+                
               </div>
             ) : (
               <div className="rounded-2xl bg-slate-100 p-5">
@@ -379,6 +421,38 @@ useEffect(() => {
                 className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
               />
             </div>
+            <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
+  <label className="text-white/60 text-sm font-black">
+    Cupom de indicação (opcional)
+  </label>
+
+  <div className="flex flex-col md:flex-row gap-3 mt-2">
+    <input
+      value={cupomCodigo}
+      onChange={(e) => {
+        setCupomCodigo(e.target.value.toUpperCase());
+        setCupomValidado(null);
+      }}
+      placeholder="Ex: BRUNO10"
+      className="flex-1 rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+    />
+
+    <button
+      type="button"
+      onClick={validarCupom}
+      disabled={validandoCupom}
+      className="rounded-2xl bg-[#23C997] text-[#061832] px-6 py-3 font-black disabled:opacity-50"
+    >
+      {validandoCupom ? "Validando..." : "Validar"}
+    </button>
+  </div>
+
+  {cupomValidado && (
+    <p className="mt-3 text-[#23C997] font-black">
+      ✓ Indicação aplicada: {cupomValidado.nome}
+    </p>
+  )}
+</div>
 
             <div className="rounded-2xl bg-slate-100 p-4">
               <div className="flex justify-between font-black text-lg">

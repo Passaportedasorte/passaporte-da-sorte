@@ -900,7 +900,7 @@ useEffect(() => {
   <div className="grid md:grid-cols-3 gap-6 mt-8">
     <DepoimentoCard
       nome="Juliana M."
-      cidade="Nova Prata/RS"
+      cidade="Paranavaí/PR"
       texto="Entrei só pra conhecer a plataforma e acabei gostando bastante, É tudo bem simples, espero ganhar kkkk."
     />
 
