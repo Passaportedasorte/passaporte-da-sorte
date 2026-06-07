@@ -34,6 +34,7 @@ export default function CampanhaPage({
   const valorOriginal = Number(campanha?.preco || 0) * quantidade;
   const [paymentIdAtual, setPaymentIdAtual] = useState("");
   const [pixInterno, setPixInterno] = useState<any>(null);
+  
 
   const percentualDesconto = Number(
   cupomValidado?.percentual_desconto || 0
@@ -179,21 +180,28 @@ useEffect(() => {
   if (!pixInterno || !paymentIdAtual) return;
 
   const interval = setInterval(async () => {
-    const response = await fetch(`/api/verificar-pagamento?id=${paymentIdAtual}`);
-    const data = await response.json();
+    try {
+      const response = await fetch(
+        `/api/verificar-pagamento?id=${paymentIdAtual}`
+      );
 
-   if (
-  data.status === "RECEIVED" ||
-  data.status === "CONFIRMED"
-) {
-  clearInterval(interval);
+      const data = await response.json();
 
-  setPixInterno(null);
+      if (
+        data.status === "RECEIVED" ||
+        data.status === "CONFIRMED"
+      ) {
+        clearInterval(interval);
 
-  alert("Pagamento confirmado! Seus PASS-IDs foram gerados.");
+        setPixInterno(null);
 
-  window.location.href = "/painel";
-}
+        alert("Pagamento confirmado! Seus PASS-IDs foram gerados.");
+
+        window.location.href = "/painel";
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }, 5000);
 
   return () => clearInterval(interval);
@@ -204,14 +212,17 @@ useEffect(() => {
       console.log("RESPOSTA ASAAS:", data);
 
       if (!response.ok) {
-        alert(
-          data?.details ||
-            data?.errors?.[0]?.description ||
-            data?.error ||
-            "Erro ao gerar pagamento"
-        );
-        return;
-      }
+  console.log("ERRO API ASAAS:", data);
+
+  alert(
+    data?.details ||
+      data?.errors?.[0]?.description ||
+      data?.error ||
+      JSON.stringify(data) ||
+      "Erro ao gerar pagamento"
+  );
+  return;
+}
 
       if (billingType === "PIX" && data.pixQrCode) {
   setPaymentIdAtual(data.id);
