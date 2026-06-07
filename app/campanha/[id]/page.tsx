@@ -187,6 +187,12 @@ useEffect(() => {
         return;
       }
 
+      if (billingType === "PIX" && data.pixQrCode) {
+  console.log("PIX GERADO:", data.pixQrCode);
+  setPagamentoAberto(false);
+  return;
+}
+
       if (data.invoiceUrl) {
         window.location.href = data.invoiceUrl;
         return;
