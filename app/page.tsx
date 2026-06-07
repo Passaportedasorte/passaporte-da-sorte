@@ -19,6 +19,7 @@ import {
   Gauge,
   ChevronDown,
   CircleHelp,
+  Sparkles,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -541,6 +542,14 @@ useEffect(() => {
           </span>
         </button>
       )}
+
+       <button
+  onClick={() => (window.location.href = "/minhas-milhas")}
+  className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+>
+  <Sparkles className="w-5 h-5 text-[#23C997]" />
+  Benefícios
+</button>
 
       {user && (
         <button

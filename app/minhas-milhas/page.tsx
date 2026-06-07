@@ -6,47 +6,17 @@ import { supabase } from "@/lib/supabase";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
-const recompensas = [
-  {
-    titulo: "1 PASS-ID",
-    descricao: "Use suas milhas para resgatar uma participação extra.",
-    milhas: 200,
-    categoria: "PASS-IDs",
-    icon: <Ticket />,
-  },
-  {
-    titulo: "3 PASS-IDs",
-    descricao: "Mais chances de participar usando suas milhas.",
-    milhas: 500,
-    categoria: "PASS-IDs",
-    icon: <Ticket />,
-  },
-  {
-    titulo: "Cupom 10% OFF",
-    descricao: "Desconto especial para sua próxima compra.",
-    milhas: 500,
-    categoria: "Cupons",
-    icon: <Tag />,
-  },
-  {
-    titulo: "Acesso antecipado",
-    descricao: "Receba acesso antecipado a campanhas especiais.",
-    milhas: 800,
-    categoria: "Benefícios",
-    icon: <Star />,
-  },
-  {
-    titulo: "Café parceiro",
-    descricao: "Benefício especial em estabelecimentos parceiros.",
-    milhas: 300,
-    categoria: "Experiências",
-    icon: <Coffee />,
-  },
-];
+
+
+
 
 export default function MinhasMilhasPage() {
   const [user, setUser] = useState<any>(null);
   const [saldoMilhas, setSaldoMilhas] = useState(0);
+
+  const [recompensas, setRecompensas] = useState<any[]>([]);
+
+
 
   useEffect(() => {
     async function carregar() {
@@ -54,6 +24,7 @@ export default function MinhasMilhasPage() {
       setUser(data.user);
 
       if (!data.user) return;
+      
 
       const { data: milhas } = await supabase
         .from("user_miles")
@@ -62,10 +33,22 @@ export default function MinhasMilhasPage() {
         .single();
 
       setSaldoMilhas(milhas?.total_milhas ?? 0);
+
+      const { data: rewards } = await supabase
+  .from("rewards")
+  .select("*")
+  .eq("ativo", true)
+  .order("milhas", { ascending: true });
+
+  setRecompensas(rewards ?? []);
     }
+
+    
 
     carregar();
   }, []);
+
+  
 
   const nivel =
     saldoMilhas >= 2500
@@ -131,13 +114,19 @@ export default function MinhasMilhasPage() {
               const podeResgatar = saldoMilhas >= item.milhas;
 
               return (
+
+                
                 <div
-                  key={item.titulo}
+                  key={item.id}
                   className="rounded-[2rem] bg-white/10 border border-white/15 p-6"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-[#23C997]/15 text-[#23C997] flex items-center justify-center">
-                    {item.icon}
-                  </div>
+                 <div className="w-14 h-14 rounded-2xl bg-[#23C997]/15 text-[#23C997] flex items-center justify-center text-2xl">
+  {item.categoria === "PASS-IDs" ? "🎟️" :
+   item.categoria === "Cupons" ? "🏷️" :
+   item.categoria === "Benefícios" ? "⭐" :
+   item.categoria === "Experiências" ? "☕" :
+   "🍀"}
+</div>
 
                   <p className="text-[#23C997] font-black text-sm mt-5">
                     {item.categoria}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, CircleHelp, Home, Trophy, User } from "lucide-react";
+import { Briefcase, CircleHelp, Home, Trophy, Sparkles, User } from "lucide-react";
 
 export default function SiteHeader() {
   return (
@@ -61,6 +61,14 @@ export default function SiteHeader() {
             <CircleHelp className="w-5 h-5 text-[#23C997]" />
             FAQ
           </button>
+
+          <button
+  onClick={() => (window.location.href = "/minhas-milhas")}
+  className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+>
+  <Sparkles className="w-5 h-5 text-[#23C997]" />
+  Benefícios
+</button>
 
           <button
             onClick={() => (window.location.href = "/painel")}
