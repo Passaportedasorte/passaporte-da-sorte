@@ -521,6 +521,52 @@ async function salvarMeusDados() {
   alert("Dados atualizados com sucesso!");
 }
 
+async function abrirMeusDados() {
+  if (!user?.id) return;
+
+  const { data, error } = await supabase
+    .from("user_profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  setEmailEdicao(data.email || contato || "");
+  setCelularEdicao(data.celular || celular || "");
+
+  setCepEdicao(data.cep || "");
+  setLogradouroEdicao(data.rua || "");
+  setNumeroEdicao(data.numero || "");
+  setBairroEdicao(data.bairro || "");
+  setCidadeEdicao(data.cidade || "");
+  setEstadoEdicao(data.uf || "");
+
+  setMeusDadosAberto(true);
+}
+
+async function buscarCepEdicao(cep: string) {
+  const cepLimpo = cep.replace(/\D/g, "");
+
+  if (cepLimpo.length !== 8) return;
+
+  const resposta = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+  const dados = await resposta.json();
+
+  if (dados.erro) {
+    alert("CEP não encontrado.");
+    return;
+  }
+
+  setLogradouroEdicao(dados.logradouro || "");
+  setBairroEdicao(dados.bairro || "");
+  setCidadeEdicao(dados.localidade || "");
+  setEstadoEdicao(dados.uf || "");
+}
+
   async function gerarPix() {
     if (!user) {
       alert("Faça login ou crie sua conta antes de finalizar a compra.");
@@ -1512,6 +1558,8 @@ useEffect(() => {
   </div>
 )}
 
+
+
 {meusDadosAberto && (
   <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
     <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
@@ -1521,7 +1569,7 @@ useEffect(() => {
         </h3>
 
         <button
-          onClick={() => setMeusDadosAberto(false)}
+          onClick={abrirMeusDados}
           className="text-white/60 hover:text-white text-2xl"
         >
           ×
@@ -1568,6 +1616,10 @@ useEffect(() => {
     }
 
     setCepEdicao(valor);
+
+    if (valor.replace(/\D/g, "").length === 8) {
+      buscarCepEdicao(valor);
+    }
   }}
   placeholder="CEP"
   maxLength={9}
