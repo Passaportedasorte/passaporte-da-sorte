@@ -574,12 +574,18 @@ async function salvarMeusDados() {
 }
 
 async function abrirMeusDados() {
-  if (!user?.id) return;
+  const { data: userData } = await supabase.auth.getUser();
+  const usuarioAtual = userData.user;
+
+  if (!usuarioAtual?.id) {
+    alert("Usuário não encontrado.");
+    return;
+  }
 
   const { data, error } = await supabase
     .from("user_profiles")
     .select("*")
-    .eq("user_id", user.id)
+    .eq("user_id", usuarioAtual.id)
     .single();
 
   if (error) {
@@ -589,7 +595,6 @@ async function abrirMeusDados() {
 
   setEmailEdicao(data.email || contato || "");
   setCelularEdicao(data.celular || celular || "");
-
   setCepEdicao(data.cep || "");
   setLogradouroEdicao(data.rua || "");
   setNumeroEdicao(data.numero || "");
