@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       headers: getHeaders(),
       body: JSON.stringify({
         customer: customerId,
-        billingType: billingType || "UNDEFINED",
+        billingType: billingType === "CREDIT_CARD" ? "UNDEFINED" : billingType || "UNDEFINED",
         value: Number(valor),
         dueDate: new Date().toISOString().split("T")[0],
         description: "Passaporte da Sorte",
