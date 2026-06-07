@@ -260,106 +260,96 @@ async function buscarCep(cepDigitado: string) {
       },
     });
   }
+async function criarConta() {
+  if (!nomeCadastro.trim()) return alert("Preencha seu nome completo.");
+  if (!emailLogin.trim()) return alert("Preencha seu e-mail.");
+  if (!cpfCadastro.trim()) return alert("Preencha seu CPF.");
+  if (!celular.trim()) return alert("Preencha seu celular.");
+  if (!dataNascimento.trim()) return alert("Preencha sua data de nascimento.");
+  if (!cepCadastro.trim()) return alert("Preencha seu CEP.");
+  if (!ruaCadastro.trim()) return alert("Preencha sua rua.");
+  if (!numeroCadastro.trim()) return alert("Preencha o número.");
+  if (!bairroCadastro.trim()) return alert("Preencha seu bairro.");
+  if (!cidadeCadastro.trim()) return alert("Informe sua cidade.");
+  if (!ufCadastro.trim()) return alert("Informe seu estado.");
+  if (!senhaLogin.trim()) return alert("Crie uma senha.");
 
-  async function criarConta() {
-    if (!nomeCadastro.trim()) return alert("Preencha seu nome completo.");
-    if (!emailLogin.trim()) return alert("Preencha seu e-mail.");
-    if (!cpfCadastro.trim()) return alert("Preencha seu CPF.");
-    if (!senhaLogin.trim()) return alert("Crie uma senha.");
-    if (senhaLogin !== confirmarSenha) {
-  setErroCadastro("As senhas não conferem.");
-  return;
-}
-
-
-setErroCadastro("");
-if (!cepCadastro.trim()) return alert("Preencha seu CEP.");
-if (!ruaCadastro.trim()) return alert("Preencha sua rua.");
-if (!numeroCadastro.trim()) return alert("Preencha o número.");
-if (!bairroCadastro.trim()) return alert("Preencha seu bairro.");
-if (!cidadeCadastro.trim()) return alert("Informe sua cidade.");
-if (!ufCadastro.trim()) return alert("Informe seu estado.");
-const { data, error } = await supabase.auth.signUp({
-  email: emailLogin,
-  password: senhaLogin,
-  options: {
-    data: {
-  full_name: nomeCadastro,
-  cpf: cpfCadastro,
-  celular,
-  data_nascimento: dataNascimento,
-},
-  },
-});
-
-console.log("SIGNUP DATA:", data);
-console.log("SIGNUP ERROR:", error);
-
-if (!celular.trim()) return alert("Preencha seu celular.");
-if (error) {
-  if (error.message.includes("User already registered")) {
-    alert("Este e-mail já possui cadastro. Clique em Entrar.");
-    setModoLogin("entrar");
+  if (senhaLogin !== confirmarSenha) {
+    setErroCadastro("As senhas não conferem.");
     return;
   }
 
-  alert(error.message);
-  return;
-}
-if (data.user) {
-  const { error: profileError } = await supabase
-    .from("user_profiles")
-    .upsert({
-      user_id: data.user.id,
-      nome: nomeCadastro,
+  setErroCadastro("");
+
+  const { data, error } = await supabase.auth.signUp({
+    email: emailLogin,
+    password: senhaLogin,
+    options: {
+      data: {
+        full_name: nomeCadastro,
+        cpf: cpfCadastro,
+        celular,
+        data_nascimento: dataNascimento,
+        cep: cepCadastro,
+        rua: ruaCadastro,
+        numero: numeroCadastro,
+        complemento: complementoCadastro,
+        bairro: bairroCadastro,
+        cidade: cidadeCadastro,
+        uf: ufCadastro,
+      },
+    },
+  });
+
+  if (error) {
+    if (error.message.includes("User already registered")) {
+      alert("Este e-mail já possui cadastro. Clique em Entrar.");
+      setModoLogin("entrar");
+      return;
+    }
+
+    alert(error.message);
+    return;
+  }
+
+  if (data.user) {
+    const { error: profileError } = await supabase
+      .from("user_profiles")
+      .upsert({
+        user_id: data.user.id,
+        nome: nomeCadastro,
+        email: emailLogin,
+        cpf: cpfCadastro,
+        celular,
+        data_nascimento: dataNascimento,
+        cep: cepCadastro,
+        rua: ruaCadastro,
+        numero: numeroCadastro,
+        complemento: complementoCadastro,
+        bairro: bairroCadastro,
+        cidade: cidadeCadastro,
+        uf: ufCadastro,
+      });
+
+    if (profileError) {
+      console.error("Erro ao salvar perfil:", profileError);
+    }
+  }
+
+  const { error: loginAutomaticoError } =
+    await supabase.auth.signInWithPassword({
       email: emailLogin,
-      cpf: cpfCadastro,
-      celular,
-      data_nascimento: dataNascimento,
-      cep: cepCadastro,
-rua: ruaCadastro,
-numero: numeroCadastro,
-complemento: complementoCadastro,
-bairro: bairroCadastro,
-cidade: cidadeCadastro,
-uf: ufCadastro,
+      password: senhaLogin,
     });
 
-  if (profileError) {
-    console.error("Erro ao salvar perfil:", profileError);
+  if (loginAutomaticoError) {
+    alert("Conta criada! Agora confirme seu e-mail e faça login.");
+    return;
   }
+
+  alert("Conta criada e login realizado!");
+  setLoginAberto(false);
 }
-
-const { error: loginAutomaticoError } = await supabase.auth.signInWithPassword({
-  email: emailLogin,
-  password: senhaLogin,
-});
-
-console.log("LOGIN APÓS CADASTRO ERROR:", loginAutomaticoError);
-
-if (loginAutomaticoError) {
-  alert("Conta criada! Agora confirme seu e-mail e faça login.");
-  return;
-}
-
-alert("Conta criada e login realizado!");
-setLoginAberto(false);
-
-   await new Promise((resolve) => setTimeout(resolve, 2000));
-
-const { error: loginError } = await supabase.auth.signInWithPassword({
-  email: emailLogin,
-  password: senhaLogin,
-});
-
-if (loginError) {
-  alert("Conta criada! Agora confirme seu e-mail e faça login.");
-  return;
-}
-
-alert("Conta criada e login realizado!");
-setLoginAberto(false);
-  }
 
 async function loginEmail() {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -1124,8 +1114,8 @@ useEffect(() => {
       </div>
 
       {loginAberto && (
-        <div className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
-          <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
+        <div className="fixed inset-0 z-[999] bg-[#061832]/60 backdrop-blur-sm flex items-start justify-center overflow-y-auto py-10 px-5">
+          <div className="rounded-[2rem] bg-[#061832] w-full max-w-md max-h-[90vh] overflow-y-auto p-6">
             <div className="flex items-center justify-between">
               <h3 className="text-2xl font-black text-white">
                 Entrar ou criar conta
@@ -1203,6 +1193,57 @@ useEffect(() => {
   placeholder="Celular"
   className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
 />
+
+ <input
+  value={cepCadastro}
+  onChange={(e) => buscarCep(e.target.value)}
+  placeholder="CEP"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
+
+<div className="grid grid-cols-2 gap-3">
+  <input
+    value={cidadeCadastro}
+    readOnly
+    placeholder="Cidade"
+    className="rounded-2xl bg-white/80 text-[#061832] px-4 py-3 outline-none"
+  />
+
+  <input
+    value={ufCadastro}
+    readOnly
+    placeholder="UF"
+    className="rounded-2xl bg-white/80 text-[#061832] px-4 py-3 outline-none"
+  />
+</div>
+
+<input
+  value={ruaCadastro}
+  onChange={(e) => setRuaCadastro(e.target.value)}
+  placeholder="Rua"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
+
+<input
+  value={numeroCadastro}
+  onChange={(e) => setNumeroCadastro(e.target.value)}
+  placeholder="Número"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
+
+<input
+  value={bairroCadastro}
+  onChange={(e) => setBairroCadastro(e.target.value)}
+  placeholder="Bairro"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
+
+<input
+  value={complementoCadastro}
+  onChange={(e) => setComplementoCadastro(e.target.value)}
+  placeholder="Complemento (opcional)"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
     </>
   )}
 
@@ -1231,6 +1272,7 @@ useEffect(() => {
       {mostrarSenha ? "Ocultar" : "Ver"}
     </button>
   </div>
+
 
   {modoLogin === "criar" && (
     <>
@@ -1277,6 +1319,8 @@ useEffect(() => {
       {erroCadastro}
     </p>
   )}
+
+  
 
   {modoLogin === "criar" ? (
     <button
@@ -1359,57 +1403,6 @@ useEffect(() => {
           type="date"
           className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
         />
-
-        <input
-  value={cepCadastro}
-  onChange={(e) => buscarCep(e.target.value)}
-  placeholder="CEP"
-  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
-/>
-
-<div className="grid grid-cols-2 gap-3">
-  <input
-    value={cidadeCadastro}
-    readOnly
-    placeholder="Cidade"
-    className="rounded-2xl bg-white/80 text-[#061832] px-4 py-3 outline-none"
-  />
-
-  <input
-    value={ufCadastro}
-    readOnly
-    placeholder="UF"
-    className="rounded-2xl bg-white/80 text-[#061832] px-4 py-3 outline-none"
-  />
-</div>
-
-<input
-  value={ruaCadastro}
-  onChange={(e) => setRuaCadastro(e.target.value)}
-  placeholder="Rua"
-  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
-/>
-
-<input
-  value={numeroCadastro}
-  onChange={(e) => setNumeroCadastro(e.target.value)}
-  placeholder="Número"
-  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
-/>
-
-<input
-  value={bairroCadastro}
-  onChange={(e) => setBairroCadastro(e.target.value)}
-  placeholder="Bairro"
-  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
-/>
-
-<input
-  value={complementoCadastro}
-  onChange={(e) => setComplementoCadastro(e.target.value)}
-  placeholder="Complemento (opcional)"
-  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
-/>
 
         <button
           type="button"
