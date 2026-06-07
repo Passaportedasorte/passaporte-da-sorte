@@ -21,6 +21,15 @@ export default function AdminPage() {
   const [passIdsUsuario, setPassIdsUsuario] = useState<any[]>([]);
   const [campanhaResultado, setCampanhaResultado] = useState(""); 
   const [numeroFederal, setNumeroFederal] = useState("");
+  const [editandoRecompensaId, setEditandoRecompensaId] = useState<string | null>(null);
+
+const [editRecompensa, setEditRecompensa] = useState({
+  titulo: "",
+  descricao: "",
+  categoria: "PASS-IDs",
+  milhas: "",
+  ativo: true,
+});
   const [recompensas, setRecompensas] = useState<any[]>([]);
 const [novaRecompensa, setNovaRecompensa] = useState({
   titulo: "",
@@ -476,6 +485,83 @@ async function buscarRecompensas() {
   }
 
   setRecompensas(data ?? []);
+}
+
+function iniciarEdicaoRecompensa(item: any) {
+  setEditandoRecompensaId(item.id);
+
+  setEditRecompensa({
+    titulo: item.titulo || "",
+    descricao: item.descricao || "",
+    categoria: item.categoria || "PASS-IDs",
+    milhas: String(item.milhas || ""),
+    ativo: item.ativo ?? true,
+  });
+}
+
+function cancelarEdicaoRecompensa() {
+  setEditandoRecompensaId(null);
+
+  setEditRecompensa({
+    titulo: "",
+    descricao: "",
+    categoria: "PASS-IDs",
+    milhas: "",
+    ativo: true,
+  });
+}
+
+async function salvarEdicaoRecompensa(id: string) {
+  if (!editRecompensa.titulo.trim()) {
+    alert("Informe o título.");
+    return;
+  }
+
+  if (!editRecompensa.milhas) {
+    alert("Informe as milhas.");
+    return;
+  }
+
+  const { error } = await supabase
+    .from("rewards")
+    .update({
+      titulo: editRecompensa.titulo,
+      descricao: editRecompensa.descricao,
+      categoria: editRecompensa.categoria,
+      milhas: Number(editRecompensa.milhas),
+      ativo: editRecompensa.ativo,
+    })
+    .eq("id", id);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  cancelarEdicaoRecompensa();
+  await buscarRecompensas();
+
+  alert("Recompensa atualizada!");
+}
+
+async function excluirRecompensa(id: string) {
+  const confirmar = confirm("Tem certeza que deseja excluir esta recompensa?");
+
+  if (!confirmar) return;
+
+  const { error } = await supabase
+    .from("rewards")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  await buscarRecompensas();
+
+  alert("Recompensa excluída!");
 }
 
 async function alternarRecompensa(id: string, ativo: boolean) {
@@ -1300,10 +1386,97 @@ const comprasFiltradas = compras.filter((compra) => {
 
   <div className="grid md:grid-cols-3 gap-4 mt-6">
     {recompensas.map((item) => (
-      <div
-        key={item.id}
-        className="rounded-2xl bg-white/10 border border-white/10 p-5"
-      >
+  <div
+    key={item.id}
+    className="rounded-2xl bg-white/10 border border-white/10 p-5"
+  >
+    {editandoRecompensaId === item.id ? (
+      <div className="grid gap-3">
+        <input
+          value={editRecompensa.titulo}
+          onChange={(e) =>
+            setEditRecompensa({
+              ...editRecompensa,
+              titulo: e.target.value,
+            })
+          }
+          className="rounded-xl bg-white text-[#061832] px-4 py-3"
+          placeholder="Título"
+        />
+
+        <input
+          value={editRecompensa.descricao}
+          onChange={(e) =>
+            setEditRecompensa({
+              ...editRecompensa,
+              descricao: e.target.value,
+            })
+          }
+          className="rounded-xl bg-white text-[#061832] px-4 py-3"
+          placeholder="Descrição"
+        />
+
+        <select
+          value={editRecompensa.categoria}
+          onChange={(e) =>
+            setEditRecompensa({
+              ...editRecompensa,
+              categoria: e.target.value,
+            })
+          }
+          className="rounded-xl bg-white text-[#061832] px-4 py-3"
+        >
+          <option value="PASS-IDs">PASS-IDs</option>
+          <option value="Cupons">Cupons</option>
+          <option value="Benefícios">Benefícios</option>
+          <option value="Experiências">Experiências</option>
+        </select>
+
+        <input
+          value={editRecompensa.milhas}
+          onChange={(e) =>
+            setEditRecompensa({
+              ...editRecompensa,
+              milhas: e.target.value,
+            })
+          }
+          type="number"
+          className="rounded-xl bg-white text-[#061832] px-4 py-3"
+          placeholder="Milhas"
+        />
+
+        <label className="flex items-center gap-2 text-white/70">
+          <input
+            type="checkbox"
+            checked={editRecompensa.ativo}
+            onChange={(e) =>
+              setEditRecompensa({
+                ...editRecompensa,
+                ativo: e.target.checked,
+              })
+            }
+          />
+          Ativa
+        </label>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => salvarEdicaoRecompensa(item.id)}
+            className="flex-1 rounded-xl bg-[#23C997] text-[#061832] px-4 py-3 font-black"
+          >
+            Salvar
+          </button>
+
+          <button
+            onClick={cancelarEdicaoRecompensa}
+            className="flex-1 rounded-xl bg-white/10 text-white px-4 py-3 font-black"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    ) : (
+      <>
         <p className="text-[#23C997] font-black text-sm">
           {item.categoria}
         </p>
@@ -1320,18 +1493,40 @@ const comprasFiltradas = compras.filter((compra) => {
           {item.milhas} milhas
         </p>
 
-        <button
-          onClick={() => alternarRecompensa(item.id, item.ativo)}
-          className={`mt-4 rounded-xl px-4 py-2 font-black ${
-            item.ativo
-              ? "bg-red-500 text-white"
-              : "bg-[#23C997] text-[#061832]"
-          }`}
-        >
-          {item.ativo ? "Desativar" : "Ativar"}
-        </button>
-      </div>
-    ))}
+        <p className="text-sm mt-2">
+          {item.ativo ? "🟢 Ativa" : "🔴 Inativa"}
+        </p>
+
+        <div className="grid grid-cols-3 gap-2 mt-4">
+          <button
+            onClick={() => iniciarEdicaoRecompensa(item)}
+            className="rounded-xl bg-white/10 text-white px-3 py-2 font-black"
+          >
+            Editar
+          </button>
+
+          <button
+            onClick={() => alternarRecompensa(item.id, item.ativo)}
+            className={`rounded-xl px-3 py-2 font-black ${
+              item.ativo
+                ? "bg-yellow-500 text-[#061832]"
+                : "bg-[#23C997] text-[#061832]"
+            }`}
+          >
+            {item.ativo ? "Pausar" : "Ativar"}
+          </button>
+
+          <button
+            onClick={() => excluirRecompensa(item.id)}
+            className="rounded-xl bg-red-500 text-white px-3 py-2 font-black"
+          >
+            Excluir
+          </button>
+        </div>
+      </>
+    )}
+  </div>
+))}
   </div>
 </section>
 
