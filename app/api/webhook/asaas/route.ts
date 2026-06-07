@@ -37,6 +37,11 @@ export async function POST(req: Request) {
 
     const evento = body.event;
     const pagamento = body.payment;
+    console.log("WEBHOOK RECEBIDO:", {
+  evento,
+  payment_id: pagamento?.id,
+  status: pagamento?.status,
+});
 
     if (!pagamento?.id) {
       return NextResponse.json({ ok: true });
@@ -51,6 +56,7 @@ export async function POST(req: Request) {
   .select("*")
   .eq("payment_id", pagamento.id)
   .maybeSingle();
+console.log("ASSINATURA CLUBE:", assinatura);
 
 if (assinatura) {
   await supabase
