@@ -120,6 +120,25 @@ const [estadoEdicao, setEstadoEdicao] = useState("");
   }
 }
 
+async function buscarCepCadastro(cep: string) {
+  const cepLimpo = cep.replace(/\D/g, "");
+
+  if (cepLimpo.length !== 8) return;
+
+  const resposta = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+  const dados = await resposta.json();
+
+  if (dados.erro) {
+    alert("CEP não encontrado.");
+    return;
+  }
+
+  setRuaCadastro(dados.logradouro || "");
+  setBairroCadastro(dados.bairro || "");
+  setCidadeCadastro(dados.localidade || "");
+  setUfCadastro(dados.uf || "");
+}
+
 async function buscarCep(cepDigitado: string) {
   const cepLimpo = cepDigitado.replace(/\D/g, "");
 
@@ -447,20 +466,15 @@ async function recuperarSenha() {
     return;
   }
 
-  if (!cpfComplemento.trim()) {
-    alert("Informe seu CPF.");
-    return;
-  }
-
-  if (!nascimentoComplemento.trim()) {
-    alert("Informe sua data de nascimento.");
-    return;
-  }
-
-  if (!celular.trim()) {
-    alert("Informe seu celular.");
-    return;
-  }
+  if (!cpfComplemento.trim()) return alert("Informe seu CPF.");
+  if (!nascimentoComplemento.trim()) return alert("Informe sua data de nascimento.");
+  if (!celular.trim()) return alert("Informe seu celular.");
+  if (!cepCadastro.trim()) return alert("Informe seu CEP.");
+  if (!ruaCadastro.trim()) return alert("Informe sua rua.");
+  if (!numeroCadastro.trim()) return alert("Informe o número.");
+  if (!bairroCadastro.trim()) return alert("Informe seu bairro.");
+  if (!cidadeCadastro.trim()) return alert("Informe sua cidade.");
+  if (!ufCadastro.trim()) return alert("Informe seu estado.");
 
   const { error } = await supabase.auth.updateUser({
     data: {
@@ -476,21 +490,28 @@ async function recuperarSenha() {
   }
 
   const { error: profileError } = await supabase
-  .from("user_profiles")
-  .upsert(
-    {
-      user_id: usuarioAtual.id,
-      nome: usuarioAtual.user_metadata?.full_name || nome || "",
-      email: usuarioAtual.email || contato || "",
-      cpf: cpfComplemento,
-      celular,
-      data_nascimento: nascimentoComplemento,
-      updated_at: new Date().toISOString(),
-    },
-    {
-      onConflict: "user_id",
-    }
-  );
+    .from("user_profiles")
+    .upsert(
+      {
+        user_id: usuarioAtual.id,
+        nome: usuarioAtual.user_metadata?.full_name || nome || "",
+        email: usuarioAtual.email || contato || "",
+        cpf: cpfComplemento,
+        celular,
+        data_nascimento: nascimentoComplemento,
+        cep: cepCadastro,
+        rua: ruaCadastro,
+        numero: numeroCadastro,
+        complemento: complementoCadastro,
+        bairro: bairroCadastro,
+        cidade: cidadeCadastro,
+        uf: ufCadastro,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "user_id",
+      }
+    );
 
   if (profileError) {
     alert(profileError.message);
@@ -1576,6 +1597,83 @@ useEffect(() => {
           type="date"
           className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
         />
+
+        <input
+  value={celular}
+  onChange={(e) => setCelular(e.target.value.replace(/\D/g, ""))}
+  placeholder="Celular"
+  inputMode="numeric"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={cepCadastro}
+  onChange={(e) => {
+    let valor = e.target.value.replace(/\D/g, "");
+
+    valor = valor.slice(0, 8);
+
+    if (valor.length > 5) {
+      valor = valor.replace(/^(\d{5})(\d+)/, "$1-$2");
+    }
+
+    setCepCadastro(valor);
+
+    if (valor.replace(/\D/g, "").length === 8) {
+      buscarCepCadastro(valor);
+    }
+  }}
+  placeholder="CEP"
+  maxLength={9}
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={ruaCadastro}
+  onChange={(e) => setRuaCadastro(e.target.value)}
+  placeholder="Rua / Avenida"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={numeroCadastro}
+  onChange={(e) => setNumeroCadastro(e.target.value.replace(/\D/g, ""))}
+  placeholder="Número"
+  inputMode="numeric"
+  maxLength={6}
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={complementoCadastro}
+  onChange={(e) => setComplementoCadastro(e.target.value)}
+  placeholder="Complemento"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={bairroCadastro}
+  onChange={(e) => setBairroCadastro(e.target.value)}
+  placeholder="Bairro"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={cidadeCadastro}
+  onChange={(e) => setCidadeCadastro(e.target.value)}
+  placeholder="Cidade"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={ufCadastro}
+  onChange={(e) =>
+    setUfCadastro(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase())
+  }
+  placeholder="UF"
+  maxLength={2}
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
 
         <button
           type="button"
