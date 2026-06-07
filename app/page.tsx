@@ -438,31 +438,59 @@ async function recuperarSenha() {
     setCpf("");
   }
 
-  async function salvarCadastroComplementar() {
+ async function salvarCadastroComplementar() {
+  if (!user?.id) {
+    alert("Usuário não encontrado.");
+    return;
+  }
+
   if (!cpfComplemento.trim()) {
     alert("Informe seu CPF.");
     return;
   }
-  if (!validarCPF(cpfComplemento)) {
-  alert("CPF inválido. Verifique os números e tente novamente.");
-  return;
-}
 
   if (!nascimentoComplemento.trim()) {
     alert("Informe sua data de nascimento.");
     return;
   }
 
+  if (!celular.trim()) {
+    alert("Informe seu celular.");
+    return;
+  }
+
   const { error } = await supabase.auth.updateUser({
     data: {
-  cpf: cpfComplemento,
-  data_nascimento: nascimentoComplemento,
-  celular,
-},
+      cpf: cpfComplemento,
+      data_nascimento: nascimentoComplemento,
+      celular,
+    },
   });
 
   if (error) {
     alert(error.message);
+    return;
+  }
+
+  const { error: profileError } = await supabase
+    .from("user_profiles")
+    .upsert(
+      {
+        user_id: user.id,
+        nome: user.user_metadata?.full_name || nome || "",
+        email: user.email || contato || "",
+        cpf: cpfComplemento,
+        celular,
+        data_nascimento: nascimentoComplemento,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "user_id",
+      }
+    );
+
+  if (profileError) {
+    alert(profileError.message);
     return;
   }
 
