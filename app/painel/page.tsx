@@ -72,7 +72,7 @@ const nivel =
           Seus passaportes digitais e saldo de milhas.
         </p>
         {user && (
-  <div className="sticky top-4 z-50 mt-8 rounded-[2rem] bg-[#061832] border border-white/15 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xl">
+  <div className="relative mt-8 rounded-[2rem] bg-[#061832] border border-white/15 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xl">
 
     <div className="flex items-center gap-4">
       <img
