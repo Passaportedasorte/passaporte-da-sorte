@@ -59,13 +59,20 @@ export async function POST(req: Request) {
 console.log("ASSINATURA CLUBE:", assinatura);
 
 if (assinatura) {
-  await supabase
+  const { error: updateAssinaturaError } = await supabase
     .from("clube_assinaturas")
     .update({
       status: evento,
-      updated_at: new Date().toISOString(),
     })
     .eq("payment_id", pagamento.id);
+
+  if (updateAssinaturaError) {
+    console.error("Erro ao atualizar assinatura:", updateAssinaturaError);
+    return NextResponse.json(
+      { ok: false, error: updateAssinaturaError.message },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({
     ok: true,
