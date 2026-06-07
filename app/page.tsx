@@ -439,7 +439,10 @@ async function recuperarSenha() {
   }
 
  async function salvarCadastroComplementar() {
-  if (!user?.id) {
+  const { data: userData } = await supabase.auth.getUser();
+  const usuarioAtual = userData.user;
+
+  if (!usuarioAtual?.id) {
     alert("Usuário não encontrado.");
     return;
   }
@@ -473,21 +476,21 @@ async function recuperarSenha() {
   }
 
   const { error: profileError } = await supabase
-    .from("user_profiles")
-    .upsert(
-      {
-        user_id: user.id,
-        nome: user.user_metadata?.full_name || nome || "",
-        email: user.email || contato || "",
-        cpf: cpfComplemento,
-        celular,
-        data_nascimento: nascimentoComplemento,
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "user_id",
-      }
-    );
+  .from("user_profiles")
+  .upsert(
+    {
+      user_id: usuarioAtual.id,
+      nome: usuarioAtual.user_metadata?.full_name || nome || "",
+      email: usuarioAtual.email || contato || "",
+      cpf: cpfComplemento,
+      celular,
+      data_nascimento: nascimentoComplemento,
+      updated_at: new Date().toISOString(),
+    },
+    {
+      onConflict: "user_id",
+    }
+  );
 
   if (profileError) {
     alert(profileError.message);
