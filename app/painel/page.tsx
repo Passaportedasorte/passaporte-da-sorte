@@ -91,6 +91,9 @@ const nivel =
         <p className="text-white/60 mt-1">
           Viajante Passaporte da Sorte
         </p>
+        <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-[#23C997]/15 px-3 py-1 text-sm font-black text-[#23C997]">
+  🍀 Nível {nivel}
+</div>
       </div>
     </div>
 
@@ -106,9 +109,24 @@ const nivel =
     Milhas
   </p>
 
-  <h3 className="text-xl font-black">
-    {saldoMilhas} 🍀
-  </h3>
+  <h3 className="text-2xl font-black">
+  {saldoMilhas} 🍀
+</h3>
+
+<div className="mt-3">
+  <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+    <div
+      className="h-full bg-[#23C997]"
+      style={{
+        width: `${Math.min((saldoMilhas / 1000) * 100, 100)}%`,
+      }}
+    />
+  </div>
+
+  <p className="text-xs text-white/50 mt-2">
+    Meta Elite: 1000 milhas
+  </p>
+</div>
 </div>
 
   <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
