@@ -540,7 +540,7 @@ useEffect(() => {
       </section>
 
       {pagamentoAberto && (
-  <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+  <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-5">
     <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-black text-white">
@@ -604,8 +604,8 @@ useEffect(() => {
 )}
 
 {pixInterno && (
-  <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
-    <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl text-white">
+  <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-5">
+    <div className="relative z-[100000] w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl text-white">
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-black">Pague com PIX</h3>
 
