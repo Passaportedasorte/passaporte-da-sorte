@@ -32,6 +32,7 @@ export default function CampanhaPage({
   const [loadingPix, setLoadingPix] = useState(false);
   const [resultado, setResultado] = useState<any>(null);
   const valorOriginal = Number(campanha?.preco || 0) * quantidade;
+  const [paymentIdAtual, setPaymentIdAtual] = useState("");
   const [pixInterno, setPixInterno] = useState<any>(null);
 
   const percentualDesconto = Number(
@@ -174,6 +175,30 @@ useEffect(() => {
 }),
       });
 
+useEffect(() => {
+  if (!pixInterno || !paymentIdAtual) return;
+
+  const interval = setInterval(async () => {
+    const response = await fetch(`/api/verificar-pagamento?id=${paymentIdAtual}`);
+    const data = await response.json();
+
+   if (
+  data.status === "RECEIVED" ||
+  data.status === "CONFIRMED"
+) {
+  clearInterval(interval);
+
+  setPixInterno(null);
+
+  alert("Pagamento confirmado! Seus PASS-IDs foram gerados.");
+
+  window.location.href = "/painel";
+}
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, [pixInterno, paymentIdAtual]);
+
       const data = await response.json();
 
       console.log("RESPOSTA ASAAS:", data);
@@ -189,6 +214,7 @@ useEffect(() => {
       }
 
       if (billingType === "PIX" && data.pixQrCode) {
+  setPaymentIdAtual(data.id);
   setPixInterno(data.pixQrCode);
   setPagamentoAberto(false);
   return;
