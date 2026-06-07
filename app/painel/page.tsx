@@ -39,6 +39,7 @@ setCampanhasAtivas(count ?? 0);
 
 setMeusPassaportes(passaportes ?? []);
 
+
 const { data: milhas } = await supabase
   .from("user_miles")
   .select("total_milhas")
@@ -58,6 +59,21 @@ const nivel =
     : saldoMilhas >= 100
     ? "Aventureiro"
     : "Iniciante";
+
+const [campanhaAberta, setCampanhaAberta] = useState<string | null>(null);    
+
+const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
+  const destino = item.campaigns?.destino || "Campanha";
+
+  if (!acc[destino]) {
+    acc[destino] = [];
+  }
+
+  acc[destino].push(item);
+
+  return acc;
+}, {});
+
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-10 py-10">
       <SiteHeader />
@@ -137,16 +153,15 @@ const nivel =
     <h2 className="text-3xl font-black mt-1">
       {meusPassaportes.length} 🎟️
     </h2>
-  </div>
+ <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
+  <p className="text-sm font-black text-white/60">
+    Nível Atual
+  </p>
 
-  <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
-    <p className="text-sm font-black text-white/60">
-      Campanhas ativas
-    </p>
-
-    <h2 className="text-3xl font-black mt-1">
-      {campanhasAtivas} 🌍
-    </h2>
+  <h2 className="text-3xl font-black mt-1">
+    {nivel} ✈️
+  </h2>
+</div>
   </div>
 
 </div>
@@ -154,39 +169,83 @@ const nivel =
 )}
 
 
-        <div className="grid md:grid-cols-3 gap-4 mt-8">
-          {meusPassaportes.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-[2rem] bg-gradient-to-br from-white to-slate-100 text-[#061832] p-6 flex items-center justify-between gap-4 shadow-2xl border border-white/50 relative overflow-hidden"
-            >
-              <div>
-                <p className="text-xs font-black text-slate-400">
-                  PASSAPORTE DIGITAL
-                </p>
+        <div className="mt-10">
+  <h2 className="text-3xl font-black">
+    Minhas Campanhas
+  </h2>
 
-                <h4 className="text-2xl font-black">{item.pass_id}</h4>
+  <p className="text-white/60 mt-2">
+    Veja suas campanhas e abra para consultar seus PASS-IDs.
+  </p>
 
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="rounded-full bg-[#23C997]/15 px-3 py-1 text-xs font-black text-[#0c7a5b]">
-                    🍀 {item.milhas} milhas
-                  </span>
+  <div className="grid gap-4 mt-6">
+    {Object.entries(passaportesPorCampanha).map(([destino, passaportes]: any) => (
+      <div
+        key={destino}
+        className="rounded-[2rem] bg-white/10 border border-white/15 p-6"
+      >
+        <div
+          onClick={() =>
+            setCampanhaAberta(campanhaAberta === destino ? null : destino)
+          }
+          className="cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+          <div>
+            <p className="text-[#23C997] font-black text-sm">
+              CAMPANHA
+            </p>
 
-                  <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-black text-slate-600">
-  ✈️ {item.campaigns?.destino ?? "Destino"}
-</span>
+            <h3 className="text-2xl font-black mt-1">
+              ✈️ {destino}
+            </h3>
+
+            <p className="text-white/60 mt-1">
+              {passaportes.length} PASS-IDs nesta campanha
+            </p>
+          </div>
+
+          <button className="rounded-2xl bg-[#23C997] text-[#061832] px-5 py-3 font-black">
+            {campanhaAberta === destino ? "Fechar" : "Ver PASS-IDs"}
+          </button>
+        </div>
+
+        {campanhaAberta === destino && (
+          <div className="grid md:grid-cols-3 gap-4 mt-6">
+            {passaportes.map((item: any) => (
+              <div
+                key={item.id}
+                className="rounded-[2rem] bg-gradient-to-br from-white to-slate-100 text-[#061832] p-6 flex items-center justify-between gap-4 shadow-2xl border border-white/50"
+              >
+                <div>
+                  <p className="text-xs font-black text-slate-400">
+                    PASSAPORTE DIGITAL
+                  </p>
+
+                  <h4 className="text-2xl font-black">
+                    {item.pass_id}
+                  </h4>
+
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <span className="rounded-full bg-[#23C997]/15 px-3 py-1 text-xs font-black text-[#0c7a5b]">
+                      🍀 {item.milhas} milhas
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-slate-400 mt-3">
+                    Emitido para {item.nome}
+                  </p>
                 </div>
 
-                <p className="text-sm text-slate-400 mt-3">
-                  Emitido para {item.nome}
-                </p>
+                <QrCode className="w-8 h-8 text-[#061832]" />
               </div>
-
-              <QrCode className="w-8 h-8 text-[#061832]" />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
+    ))}
+  </div>
+</div>
+</div>
       <SiteFooter />
     </main>
   );
