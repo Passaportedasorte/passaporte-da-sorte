@@ -21,6 +21,14 @@ export default function AdminPage() {
   const [passIdsUsuario, setPassIdsUsuario] = useState<any[]>([]);
   const [campanhaResultado, setCampanhaResultado] = useState(""); 
   const [numeroFederal, setNumeroFederal] = useState("");
+  const [recompensas, setRecompensas] = useState<any[]>([]);
+const [novaRecompensa, setNovaRecompensa] = useState({
+  titulo: "",
+  descricao: "",
+  categoria: "PASS-IDs",
+  milhas: "",
+  ativo: true,
+});
   const [resultadoEncontrado, setResultadoEncontrado] = useState<any>(null);
   const [resultados, setResultados] = useState<any[]>([]);
   const [buscaPassId, setBuscaPassId] = useState("");
@@ -119,6 +127,7 @@ async function uploadMidiaVencedor(
   alert("Mídia do vencedor enviada!");
 }
 
+
 async function buscarPassIdGlobal() {
   if (!buscaPassId.trim()) {
     alert("Digite um PASS-ID.");
@@ -179,6 +188,7 @@ useEffect(() => {
       buscarCompras();
       buscarUsuarios();
       buscarResultados();
+      buscarRecompensas();
 
       
       
@@ -207,6 +217,7 @@ useEffect(() => {
 }
     }
   }
+
 
   carregar();
 }, []);
@@ -416,6 +427,70 @@ async function salvarResultadoFederal() {
   alert("Resultado salvo com sucesso!");
 }
 
+async function criarRecompensa() {
+  if (!novaRecompensa.titulo.trim()) {
+    alert("Informe o título da recompensa.");
+    return;
+  }
+
+  if (!novaRecompensa.milhas) {
+    alert("Informe a quantidade de milhas.");
+    return;
+  }
+
+  const { error } = await supabase.from("rewards").insert({
+    titulo: novaRecompensa.titulo,
+    descricao: novaRecompensa.descricao,
+    categoria: novaRecompensa.categoria,
+    milhas: Number(novaRecompensa.milhas),
+    ativo: novaRecompensa.ativo,
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  setNovaRecompensa({
+    titulo: "",
+    descricao: "",
+    categoria: "PASS-IDs",
+    milhas: "",
+    ativo: true,
+  });
+
+  await buscarRecompensas();
+
+  alert("Recompensa criada!");
+}
+
+async function buscarRecompensas() {
+  const { data, error } = await supabase
+    .from("rewards")
+    .select("*")
+    .order("milhas", { ascending: true });
+
+  if (error) {
+    console.error("Erro ao buscar recompensas:", error);
+    return;
+  }
+
+  setRecompensas(data ?? []);
+}
+
+async function alternarRecompensa(id: string, ativo: boolean) {
+  const { error } = await supabase
+    .from("rewards")
+    .update({ ativo: !ativo })
+    .eq("id", id);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  await buscarRecompensas();
+}
 
 async function abrirDetalhesCompra(compra: any) {
   setCompraSelecionada(compra);
@@ -1148,6 +1223,116 @@ const comprasFiltradas = compras.filter((compra) => {
       </div>
     </div>
   )}
+</section>
+
+
+
+<section className="rounded-[2rem] bg-white/10 border border-white/15 p-6 mt-8">
+  <h2 className="text-3xl font-black text-white">
+    🍀 Recompensas
+  </h2>
+
+  <p className="text-white/60 mt-2">
+    Cadastre benefícios que os usuários poderão resgatar com milhas.
+  </p>
+
+  <div className="grid md:grid-cols-5 gap-3 mt-6">
+    <input
+      value={novaRecompensa.titulo}
+      onChange={(e) =>
+        setNovaRecompensa({
+          ...novaRecompensa,
+          titulo: e.target.value,
+        })
+      }
+      placeholder="Título"
+      className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+    />
+
+    <input
+      value={novaRecompensa.descricao}
+      onChange={(e) =>
+        setNovaRecompensa({
+          ...novaRecompensa,
+          descricao: e.target.value,
+        })
+      }
+      placeholder="Descrição"
+      className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+    />
+
+    <select
+      value={novaRecompensa.categoria}
+      onChange={(e) =>
+        setNovaRecompensa({
+          ...novaRecompensa,
+          categoria: e.target.value,
+        })
+      }
+      className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+    >
+      <option value="PASS-IDs">PASS-IDs</option>
+      <option value="Cupons">Cupons</option>
+      <option value="Benefícios">Benefícios</option>
+      <option value="Experiências">Experiências</option>
+    </select>
+
+    <input
+      value={novaRecompensa.milhas}
+      onChange={(e) =>
+        setNovaRecompensa({
+          ...novaRecompensa,
+          milhas: e.target.value,
+        })
+      }
+      placeholder="Milhas"
+      type="number"
+      className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+    />
+
+    <button
+      onClick={criarRecompensa}
+      className="rounded-2xl bg-[#23C997] text-[#061832] px-5 py-3 font-black"
+    >
+      Criar
+    </button>
+  </div>
+
+  <div className="grid md:grid-cols-3 gap-4 mt-6">
+    {recompensas.map((item) => (
+      <div
+        key={item.id}
+        className="rounded-2xl bg-white/10 border border-white/10 p-5"
+      >
+        <p className="text-[#23C997] font-black text-sm">
+          {item.categoria}
+        </p>
+
+        <h3 className="text-2xl font-black mt-1">
+          {item.titulo}
+        </h3>
+
+        <p className="text-white/60 mt-2">
+          {item.descricao}
+        </p>
+
+        <p className="text-white font-black mt-4">
+          {item.milhas} milhas
+        </p>
+
+        <button
+          onClick={() => alternarRecompensa(item.id, item.ativo)}
+          className={`mt-4 rounded-xl px-4 py-2 font-black ${
+            item.ativo
+              ? "bg-red-500 text-white"
+              : "bg-[#23C997] text-[#061832]"
+          }`}
+        >
+          {item.ativo ? "Desativar" : "Ativar"}
+        </button>
+      </div>
+    ))}
+  </div>
 </section>
 
         <section className="grid md:grid-cols-4 lg:grid-cols-8 gap-4 mt-10">

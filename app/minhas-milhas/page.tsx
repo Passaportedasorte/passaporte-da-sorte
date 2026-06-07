@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Gift, Ticket, Tag, Star, Coffee } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
