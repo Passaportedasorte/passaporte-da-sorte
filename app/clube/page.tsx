@@ -81,88 +81,151 @@ if (!cpf) {
     setLoadingPlano(null);
   }
 }
+
   return (
-    <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-10">
-      <SiteHeader />
+  <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-10">
+    <SiteHeader />
 
-      <div className="max-w-7xl mx-auto mt-10">
-        <a href="/" className="text-[#23C997] font-black hover:underline">
-          ← Voltar
-        </a>
+    <div className="max-w-7xl mx-auto mt-10">
+      <a href="/" className="text-[#23C997] font-black hover:underline">
+        ← Voltar
+      </a>
 
-        <section className="rounded-[2.5rem] bg-white/10 border border-white/15 p-8 md:p-12 mt-8 text-center">
-          <p className="text-[#23C997] font-black">
-            🍀 CLUBE PASSAPORTE DA SORTE
-          </p>
+      <section className="rounded-[2.5rem] bg-white/10 border border-white/15 p-8 md:p-14 mt-8 text-center">
+        <p className="text-[#23C997] font-black">
+          🍀 CLUBE PASSAPORTE DA SORTE
+        </p>
 
-          <h1 className="text-4xl md:text-6xl font-black mt-3">
-            Transforme suas milhas em vantagens reais.
-          </h1>
+        <h1 className="text-4xl md:text-6xl font-black mt-3 leading-tight">
+          Suas milhas podem virar PASS-IDs, descontos e benefícios exclusivos.
+        </h1>
 
-          <p className="text-white/60 mt-5 text-lg max-w-3xl mx-auto">
-           Membros do Clube Passaporte da Sorte podem utilizar suas milhas para resgatar benefícios, participações, descontos e recompensas exclusivas.
-          </p>
-        </section>
+        <p className="text-white/70 mt-5 text-lg max-w-3xl mx-auto">
+          Assine o Clube Passaporte da Sorte e transforme suas compras em mais chances de ganhar.
+        </p>
 
-        <section className="grid md:grid-cols-2 gap-6 mt-10">
-          <PlanoCard
-  nome="Mensal"
-  preco="R$ 24,90"
-  descricao="Ideal para conhecer e aproveitar os benefícios do clube."
-  detalhes={[
-    "Acesso à Central de Recompensas",
-    "Uso das milhas para resgates",
-    "Benefícios e cupons exclusivos",
-    "Cancelamento conforme regras do plano",
-  ]}
-  destaque={false}
-  botao={loadingPlano === "mensal" ? "Gerando pagamento..." : "Assinar mensal"}
-  onClick={() => assinarClube("mensal")}
-/>
+        <div className="grid md:grid-cols-4 gap-4 mt-8">
+          <MiniCard texto="Use suas milhas" />
+          <MiniCard texto="Ganhe PASS-IDs extras" />
+          <MiniCard texto="Resgate recompensas" />
+          <MiniCard texto="Benefícios exclusivos" />
+        </div>
+      </section>
 
-          <PlanoCard
-  nome="Semestral"
-  preco="6x R$ 19,90"
-  descricao="Melhor opção para aproveitar mais benefícios."
-  detalhes={[
-    "Acesso à Central de Recompensas",
-    "Uso das milhas para resgates",
-    "Benefícios e cupons exclusivos",
-    "Economia em relação ao plano mensal",
-    "Também disponível no PIX por R$ 119,40",
-  ]}
-  destaque
-  botao={loadingPlano === "semestral" ? "Gerando pagamento..." : "Assinar semestral"}
-  onClick={() => assinarClube("semestral")}
-/>
-        </section>
+      <section className="grid md:grid-cols-2 gap-6 mt-10">
+        <Comparativo
+          titulo="Sem Clube"
+          itens={[
+            "Acumula milhas",
+            "Não pode resgatar benefícios",
+            "Não troca milhas por PASS-IDs",
+            "Menos vantagens nas campanhas",
+          ]}
+          negativo
+        />
 
-        <section className="rounded-[2rem] bg-white/10 border border-white/15 p-8 mt-10">
-          <h2 className="text-3xl font-black">
-            O que você desbloqueia no clube?
-          </h2>
+        <Comparativo
+          titulo="Com Clube"
+          itens={[
+            "Usa milhas para resgates",
+            "Troca por PASS-IDs extras",
+            "Acessa cupons e benefícios",
+            "Aumenta suas chances de ganhar",
+          ]}
+        />
+      </section>
 
-          <div className="grid md:grid-cols-4 gap-4 mt-6">
-            <Beneficio emoji="🍀" titulo="Uso das milhas" texto="Use suas milhas para resgatar benefícios." />
-            <Beneficio emoji="🎟️" titulo="PASS-IDs" texto="Resgates de participações conforme disponibilidade." />
-            <Beneficio emoji="🏷️" titulo="Cupons" texto="Acesso a descontos e vantagens exclusivas." />
-            <Beneficio emoji="🎁" titulo="Recompensas" texto="Benefícios especiais para membros do clube." />
-          </div>
-        </section>
+      <section className="rounded-[2rem] bg-[#23C997] text-[#061832] p-8 md:p-10 mt-10 text-center">
+        <p className="font-black">🎟️ PRINCIPAL BENEFÍCIO</p>
 
-        <section className="rounded-[2rem] bg-[#23C997] text-[#061832] p-8 mt-10 text-center">
-          <h2 className="text-3xl md:text-4xl font-black">
-            Pronto para entrar no clube?
-          </h2>
+        <h2 className="text-3xl md:text-5xl font-black mt-2">
+          Troque milhas por PASS-IDs extras.
+        </h2>
 
-          <p className="mt-3 font-medium">
-            Em breve a assinatura estará disponível diretamente pela plataforma.
-          </p>
-        </section>
-      </div>
+        <p className="mt-4 text-lg font-medium max-w-3xl mx-auto">
+          Mais participações. Mais chances. Mais sorte.
+        </p>
+      </section>
 
-      <SiteFooter />
-    </main>
+      <section className="rounded-[2rem] bg-white/10 border border-white/15 p-8 mt-10">
+        <h2 className="text-3xl font-black">
+          Como funciona na prática?
+        </h2>
+
+        <div className="grid md:grid-cols-4 gap-4 mt-6">
+          <Beneficio emoji="🛒" titulo="1. Compre" texto="Você compra PASS-IDs nas campanhas." />
+          <Beneficio emoji="🍀" titulo="2. Ganhe milhas" texto="Cada compra gera milhas para sua conta." />
+          <Beneficio emoji="🎁" titulo="3. Resgate" texto="Assinantes usam milhas em recompensas." />
+          <Beneficio emoji="🎟️" titulo="4. Participe mais" texto="Resgate PASS-IDs extras e aumente suas chances." />
+        </div>
+      </section>
+
+      <section className="grid md:grid-cols-2 gap-6 mt-10">
+        <PlanoCard
+          nome="Mensal"
+          preco="R$ 24,90"
+          descricao="Ideal para conhecer e começar a usar suas milhas."
+          detalhes={[
+            "Acesso à Central de Recompensas",
+            "Uso das milhas para resgates",
+            "Troca por PASS-IDs extras",
+            "Benefícios e cupons exclusivos",
+          ]}
+          destaque={false}
+          botao={loadingPlano === "mensal" ? "Gerando pagamento..." : "Assinar mensal"}
+          onClick={() => assinarClube("mensal")}
+        />
+
+        <PlanoCard
+          nome="Semestral"
+          preco="6x R$ 19,90"
+          descricao="Melhor opção para aproveitar mais e economizar."
+          detalhes={[
+            "Tudo do plano mensal",
+            "Uso das milhas para PASS-IDs extras",
+            "Economia em relação ao mensal",
+            "Também disponível no PIX por R$ 119,40",
+            "Mais tempo aproveitando benefícios",
+          ]}
+          destaque
+          botao={loadingPlano === "semestral" ? "Gerando pagamento..." : "Assinar semestral"}
+          onClick={() => assinarClube("semestral")}
+        />
+      </section>
+
+      <section className="rounded-[2rem] bg-white/10 border border-white/15 p-8 mt-10">
+        <h2 className="text-3xl font-black">
+          O que você desbloqueia no clube?
+        </h2>
+
+        <div className="grid md:grid-cols-4 gap-4 mt-6">
+          <Beneficio emoji="🍀" titulo="Uso das milhas" texto="Transforme milhas acumuladas em recompensas." />
+          <Beneficio emoji="🎟️" titulo="PASS-IDs extras" texto="Resgate novas participações em campanhas." />
+          <Beneficio emoji="🏷️" titulo="Cupons" texto="Tenha acesso a descontos e vantagens." />
+          <Beneficio emoji="🎁" titulo="Recompensas" texto="Benefícios especiais para assinantes." />
+        </div>
+      </section>
+
+      <section className="rounded-[2rem] bg-[#23C997] text-[#061832] p-8 md:p-10 mt-10 text-center">
+        <h2 className="text-3xl md:text-5xl font-black">
+          Comece a transformar suas milhas em recompensas hoje.
+        </h2>
+
+        <p className="mt-3 font-medium">
+          Entre para o Clube Passaporte da Sorte e aproveite mais cada participação.
+        </p>
+
+        <button
+          onClick={() => assinarClube("semestral")}
+          className="mt-6 rounded-2xl bg-[#061832] text-white px-8 py-4 font-black"
+        >
+          🍀 Quero entrar para o Clube
+        </button>
+      </section>
+    </div>
+
+    <SiteFooter />
+  </main>
   );
 }
 
@@ -242,6 +305,39 @@ function Beneficio({
       <div className="text-3xl">{emoji}</div>
       <h3 className="font-black text-xl mt-3">{titulo}</h3>
       <p className="text-white/60 mt-2">{texto}</p>
+    </div>
+  );
+}
+
+
+function MiniCard({ texto }: { texto: string }) {
+  return (
+    <div className="rounded-2xl bg-[#061832] border border-white/10 p-4 font-black text-sm">
+      ✓ {texto}
+    </div>
+  );
+}
+
+function Comparativo({
+  titulo,
+  itens,
+  negativo,
+}: {
+  titulo: string;
+  itens: string[];
+  negativo?: boolean;
+}) {
+  return (
+    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
+      <h2 className="text-3xl font-black">{titulo}</h2>
+
+      <ul className="space-y-3 mt-6">
+        {itens.map((item) => (
+          <li key={item} className="font-bold text-white/80">
+            {negativo ? "❌" : "✅"} {item}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
