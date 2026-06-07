@@ -4,6 +4,7 @@ import React, { use, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Calendar, Clover, ShieldCheck, Ticket } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 
 export default function CampanhaPage({
@@ -524,6 +525,7 @@ useEffect(() => {
           </div>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }

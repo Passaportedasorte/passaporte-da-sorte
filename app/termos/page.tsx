@@ -1,4 +1,5 @@
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function TermosPage() {
   return (
@@ -343,6 +344,7 @@ export default function TermosPage() {
           </section>
         </div>
       </div>
+      <SiteFooter />
     </main>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Calendar, Clover, Ticket, MapPin } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function CampanhasPage() {
   const [campanhas, setCampanhas] = useState<any[]>([]);
@@ -228,6 +229,7 @@ function SecaoCampanhas({
           )}
         </section>
       </div>
+      <SiteFooter />
     </main>
   );
 }

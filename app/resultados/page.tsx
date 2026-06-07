@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Calendar, Trophy, Ticket, Target } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function ResultadosPage() {
   const [resultados, setResultados] = useState<any[]>([]);
@@ -196,6 +197,7 @@ export default function ResultadosPage() {
           )}
         </section>
       </div>
+      <SiteFooter />
     </main>
   );
 }

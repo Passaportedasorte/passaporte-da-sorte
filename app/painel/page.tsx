@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { QrCode } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function Painel() {
   const [user, setUser] = useState<any>(null);
@@ -58,6 +60,7 @@ const nivel =
     : "Iniciante";
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-10 py-10">
+      <SiteHeader />
       <div className="max-w-7xl mx-auto">
         <a href="/" className="text-white/60 hover:text-white">
           ← Voltar
@@ -166,6 +169,7 @@ const nivel =
           ))}
         </div>
       </div>
+      <SiteFooter />
     </main>
   );
 }

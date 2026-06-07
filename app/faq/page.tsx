@@ -1,4 +1,5 @@
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 const faqs = [
   {
@@ -90,6 +91,7 @@ export default function FAQPage() {
 </a>
         </section>
       </div>
+      <SiteFooter />
     </main>
   );
 }

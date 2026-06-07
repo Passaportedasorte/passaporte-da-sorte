@@ -1,6 +1,9 @@
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 export default function RegulamentoPage() {
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-12">
+      <SiteHeader />
       <div className="max-w-5xl mx-auto">
         <a href="/" className="text-[#23C997] font-black hover:underline">
           ← Voltar
@@ -265,6 +268,7 @@ export default function RegulamentoPage() {
           </div>
         </div>
       </div>
+      <SiteFooter />
     </main>
   );
 }
