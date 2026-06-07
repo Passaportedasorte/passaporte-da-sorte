@@ -51,15 +51,58 @@ setSaldoMilhas(milhas?.total_milhas ?? 0);
 
     carregar();
   }, []);
-const nivel =
-  saldoMilhas >= 1000
-    ? "Elite"
-    : saldoMilhas >= 500
-    ? "Viajante"
-    : saldoMilhas >= 100
-    ? "Aventureiro"
-    : "Iniciante";
+const niveis = [
+  {
+    nome: "Iniciante",
+    minimo: 0,
+    proximo: 100,
+    beneficio: "Comece a acumular milhas e participar das campanhas.",
+  },
+  {
+    nome: "Aventureiro",
+    minimo: 100,
+    proximo: 500,
+    beneficio: "Acesso a benefícios e vantagens promocionais.",
+  },
+  {
+    nome: "Viajante",
+    minimo: 500,
+    proximo: 1000,
+    beneficio: "Cupons exclusivos e vantagens em campanhas selecionadas.",
+  },
+  {
+    nome: "Elite",
+    minimo: 1000,
+    proximo: 2500,
+    beneficio: "Prioridade em ofertas e possíveis PASS-IDs bônus.",
+  },
+  {
+    nome: "Diamante",
+    minimo: 2500,
+    proximo: null,
+    beneficio: "Benefícios especiais e experiências exclusivas.",
+  },
+];
 
+const nivelAtual =
+  niveis
+    .slice()
+    .reverse()
+    .find((nivel) => saldoMilhas >= nivel.minimo) || niveis[0];
+
+const proximoNivel = niveis.find(
+  (nivel) => nivel.minimo === nivelAtual.proximo
+);
+
+const faltamMilhas = proximoNivel
+  ? Math.max(proximoNivel.minimo - saldoMilhas, 0)
+  : 0;
+
+const progressoNivel = proximoNivel
+  ? ((saldoMilhas - nivelAtual.minimo) /
+      (proximoNivel.minimo - nivelAtual.minimo)) *
+    100
+  : 100;
 const [campanhaAberta, setCampanhaAberta] = useState<string | null>(null);    
 
 const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
@@ -82,10 +125,10 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
           ← Voltar
         </a>
 
-        <h1 className="text-4xl font-black mt-8">Minha Carteira</h1>
+        <h1 className="text-4xl font-black mt-8">Meu Painel</h1>
 
         <p className="text-white/60 mt-2">
-          Seus passaportes digitais e saldo de milhas.
+          Acompanhe seus PASS-IDs, milhas e campanhas.
         </p>
         {user && (
   <div className="relative mt-8 rounded-[2rem] bg-[#061832] border border-white/15 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xl">
@@ -108,7 +151,7 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
           Viajante Passaporte da Sorte
         </p>
         <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-[#23C997]/15 px-3 py-1 text-sm font-black text-[#23C997]">
-  🍀 Nível {nivel}
+  🍀 Nível {nivelAtual.nome}
 </div>
       </div>
     </div>
@@ -134,13 +177,15 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
     <div
       className="h-full bg-[#23C997]"
       style={{
-        width: `${Math.min((saldoMilhas / 1000) * 100, 100)}%`,
+        width: `${Math.min(progressoNivel, 100)}%`,
       }}
     />
   </div>
 
   <p className="text-xs text-white/50 mt-2">
-    Meta Elite: 1000 milhas
+    {proximoNivel
+  ? `Faltam ${faltamMilhas} milhas para ${proximoNivel.nome}`
+  : "Você chegou ao nível máximo"}
   </p>
 </div>
 </div>
@@ -161,7 +206,7 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
   </p>
 
   <h2 className="text-3xl font-black mt-1">
-    {nivel} ✈️
+    {nivelAtual.nome} ✈️
   </h2>
 </div>
 
