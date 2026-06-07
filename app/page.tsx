@@ -531,7 +531,7 @@ useEffect(() => {
 
       {user && (
         <button
-          onClick={() => (window.location.href = "/painel")}
+          onClick={() => (window.location.href = "/minhas-milhas")}
           className="flex items-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
         >
           <Clover className="w-5 h-5 text-[#23C997]" />
@@ -964,6 +964,32 @@ useEffect(() => {
       </button>
 
     </div>
+  </div>
+</section>
+
+<section className="max-w-7xl mx-auto px-5 md:px-8 py-12">
+  <div className="rounded-[2rem] bg-[#23C997] text-[#061832] p-8 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div>
+      <p className="font-black opacity-70">
+        🍀 CLUBE DE BENEFÍCIOS
+      </p>
+
+      <h2 className="text-3xl md:text-5xl font-black mt-2">
+        Acumule milhas e troque por recompensas.
+      </h2>
+
+      <p className="mt-3 text-lg opacity-80 max-w-2xl">
+        Participe das campanhas, acumule milhas e use na Central de
+        Recompensas para resgatar PASS-IDs, cupons e benefícios especiais.
+      </p>
+    </div>
+
+    <a
+      href="/minhas-milhas"
+      className="rounded-2xl bg-[#061832] text-white px-6 py-4 font-black text-center hover:scale-[1.02] transition"
+    >
+      Conhecer Benefícios
+    </a>
   </div>
 </section>
 
