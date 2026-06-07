@@ -22,13 +22,14 @@ export async function POST(req: Request) {
   campanhaId,
   quantidade,
   userId,
+  billingType,
   cupom_codigo,
   cupom_id,
   valor_original,
   valor_final,
   cupom_desconto_percentual,
   cupom_desconto_valor,
-} = body;
+} = await req.json();
 
     if (!valor || !nome || !email || !cpf) {
       return NextResponse.json(
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
       headers: getHeaders(),
       body: JSON.stringify({
         customer: customerId,
-        billingType: "UNDEFINED",
+        billingType: billingType || "UNDEFINED",
         value: Number(valor),
         dueDate: new Date().toISOString().split("T")[0],
         description: "Passaporte da Sorte",
@@ -96,27 +97,48 @@ status: paymentData.status,
     );
 
     if (!compraResponse.ok) {
-      const compraError = await compraResponse.text();
-      console.error("ERRO AO SALVAR COMPRA:", compraError);
+  const compraError = await compraResponse.text();
+  console.error("ERRO AO SALVAR COMPRA:", compraError);
 
-      return NextResponse.json(
-        {
-          error: "Pagamento criado, mas erro ao salvar compra.",
-          details: compraError,
-        },
-        { status: 500 }
-      );
+  return NextResponse.json(
+    {
+      error: "Pagamento criado, mas erro ao salvar compra.",
+      details: compraError,
+    },
+    { status: 500 }
+  );
+}
+
+let pixQrCode = null;
+
+if (billingType === "PIX") {
+  const pixResponse = await fetch(
+    `${ASAAS_URL}/payments/${paymentData.id}/pixQrCode`,
+    {
+      method: "GET",
+      headers: getHeaders(),
     }
+  );
 
-    return NextResponse.json({
-      id: paymentData.id,
-      status: paymentData.status,
-      value: paymentData.value,
-      dueDate: paymentData.dueDate,
-      invoiceUrl: paymentData.invoiceUrl,
-      bankSlipUrl: paymentData.bankSlipUrl,
-      rawPayment: paymentData,
-    });
+  const pixData = await pixResponse.json();
+
+  if (pixResponse.ok) {
+    pixQrCode = pixData;
+  }
+}
+
+return NextResponse.json({
+  id: paymentData.id,
+  status: paymentData.status,
+  value: paymentData.value,
+  dueDate: paymentData.dueDate,
+  invoiceUrl: paymentData.invoiceUrl,
+  bankSlipUrl: paymentData.bankSlipUrl,
+  pixQrCode,
+  billingType,
+  rawPayment: paymentData,
+});
+
   } catch (error: any) {
     console.error("ERRO ASAAS:", error);
 

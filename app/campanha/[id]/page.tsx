@@ -24,21 +24,22 @@ export default function CampanhaPage({
   const [celular, setCelular] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
   const [cupomCodigo, setCupomCodigo] = useState("");
-const [cupomValidado, setCupomValidado] = useState<any>(null);
-const [validandoCupom, setValidandoCupom] = useState(false);
-
+  const [cupomValidado, setCupomValidado] = useState<any>(null);
+  const [validandoCupom, setValidandoCupom] = useState(false);
+  const [pagamentoAberto, setPagamentoAberto] = useState(false);
+  const [formaPagamento, setFormaPagamento] = useState<"PIX" | "CREDIT_CARD" | "BOLETO" | null>(null);
   const [quantidade, setQuantidade] = useState(5);
   const [loadingPix, setLoadingPix] = useState(false);
   const [resultado, setResultado] = useState<any>(null);
   const valorOriginal = Number(campanha?.preco || 0) * quantidade;
 
-const percentualDesconto = Number(
+  const percentualDesconto = Number(
   cupomValidado?.percentual_desconto || 0
 );
 
-const valorDesconto = (valorOriginal * percentualDesconto) / 100;
+  const valorDesconto = (valorOriginal * percentualDesconto) / 100;
 
-const valorFinal = Math.max(valorOriginal - valorDesconto, 0);
+  const valorFinal = Math.max(valorOriginal - valorDesconto, 0);
 
 useEffect(() => {
   async function carregarResultado() {
@@ -131,7 +132,9 @@ useEffect(() => {
   }
 }
 
-  async function gerarPix() {
+  async function gerarPagamento(
+  billingType: "PIX" | "CREDIT_CARD" | "BOLETO"
+) {
     if (!user) {
       alert("Faça login ou crie sua conta antes de finalizar a compra.");
       return;
@@ -160,6 +163,7 @@ useEffect(() => {
   campanhaId: campanha.id,
   quantidade,
   userId: user?.id,
+  billingType,
   cupom_codigo: cupomValidado?.codigo || null,
   cupom_id: cupomValidado?.id || null,
   valor_original: valorOriginal,
@@ -170,6 +174,8 @@ useEffect(() => {
       });
 
       const data = await response.json();
+
+      console.log("RESPOSTA ASAAS:", data);
 
       if (!response.ok) {
         alert(
@@ -508,7 +514,7 @@ useEffect(() => {
             </div>
 
             <button
-  onClick={gerarPix}
+  onClick={() => setPagamentoAberto(true)}
   disabled={loadingPix || !user || campanha.status === "ENCERRADA"}
               className="w-full rounded-2xl py-4 bg-[#061832] text-white font-black hover:bg-[#0b244a] transition disabled:opacity-50"
             >
@@ -525,6 +531,71 @@ useEffect(() => {
           </div>
         </div>
       </section>
+
+      {pagamentoAberto && (
+  <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+    <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-black text-white">
+          Escolha o pagamento
+        </h3>
+
+        <button
+          onClick={() => setPagamentoAberto(false)}
+          className="text-white/60 hover:text-white text-2xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <p className="text-white/60 mt-2 text-sm">
+        Selecione como deseja finalizar sua compra.
+      </p>
+
+      <div className="grid gap-3 mt-6">
+        <button
+          onClick={() => {
+            setFormaPagamento("PIX");
+            gerarPagamento("PIX");
+          }}
+          className="rounded-2xl bg-[#23C997] text-[#061832] font-black px-5 py-4 text-left"
+        >
+          ⚡ PIX
+          <span className="block text-sm font-bold opacity-80">
+            Pague com QR Code ou copia e cola
+          </span>
+        </button>
+
+        <button
+          onClick={() => {
+            setFormaPagamento("CREDIT_CARD");
+            gerarPagamento("CREDIT_CARD");
+          }}
+          className="rounded-2xl bg-white/10 border border-white/10 text-white font-black px-5 py-4 text-left"
+        >
+          💳 Cartão de crédito
+          <span className="block text-sm font-bold text-white/60">
+            Finalize pelo checkout seguro
+          </span>
+        </button>
+
+        <button
+          onClick={() => {
+            setFormaPagamento("BOLETO");
+            gerarPagamento("BOLETO");
+          }}
+          className="rounded-2xl bg-white/10 border border-white/10 text-white font-black px-5 py-4 text-left"
+        >
+          🧾 Boleto
+          <span className="block text-sm font-bold text-white/60">
+            Gerar boleto de pagamento
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       <SiteFooter />
     </main>
   );
@@ -539,6 +610,9 @@ function Badge({
   text: string;
   green?: boolean;
 }) {
+
+  
+
   return (
     <span
       className={`rounded-full px-4 py-2 font-black flex items-center gap-2 ${
