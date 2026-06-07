@@ -160,8 +160,8 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
 
   <div
   onClick={() => {
-    alert("Em breve: histórico completo de milhas.");
-  }}
+  window.location.href = "/minhas-milhas";
+}}
   className="rounded-2xl bg-white/10 border border-white/15 p-4 cursor-pointer hover:scale-105 transition"
 >
   <p className="text-xs font-black text-white/50">
