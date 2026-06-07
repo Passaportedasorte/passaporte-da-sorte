@@ -5,6 +5,33 @@ function gerarCodigoResgate() {
   const codigo = Math.random().toString(36).substring(2, 8).toUpperCase();
   return `PSD-${codigo}`;
 }
+function gerarPassId() {
+  const n = Math.floor(Math.random() * 100000)
+    .toString()
+    .padStart(5, "0");
+
+  return `PSD-${n}`;
+}
+
+async function gerarPassIdUnico() {
+  let passId = gerarPassId();
+  let tentativas = 0;
+
+  while (tentativas < 20) {
+    const { data } = await supabase
+      .from("pass_ids")
+      .select("id")
+      .eq("pass_id", passId)
+      .limit(1);
+
+    if (!data || data.length === 0) return passId;
+
+    passId = gerarPassId();
+    tentativas++;
+  }
+
+  throw new Error("Não foi possível gerar um PASS-ID único.");
+}
 
 export async function POST(req: Request) {
   try {
@@ -90,17 +117,61 @@ export async function POST(req: Request) {
       .select()
       .single();
 
-    if (resgateError) {
+       if (resgateError) {
       return NextResponse.json(
         { error: resgateError.message },
         { status: 500 }
       );
     }
 
+let passIdsCriados: any[] = [];
+
+if (recompensa.recompensa_tipo === "PASS_ID") {
+  const quantidadePassIds = Number(recompensa.quantidade_pass_ids || 1);
+
+  if (!recompensa.campaign_id) {
+    return NextResponse.json(
+      { error: "Recompensa sem campanha vinculada." },
+      { status: 400 }
+    );
+  }
+
+  const novosPassIds = [];
+
+  for (let i = 0; i < quantidadePassIds; i++) {
+    novosPassIds.push({
+      nome: "Resgate de Milhas",
+      contato: "",
+      pass_id: await gerarPassIdUnico(),
+      milhas: 0,
+      user_id: userId,
+      campaign_id: recompensa.campaign_id,
+      compra_id: null,
+      payment_id: `resgate-${resgate.id}`,
+    });
+  }
+
+  const { data: criados, error: passError } = await supabase
+    .from("pass_ids")
+    .insert(novosPassIds)
+    .select();
+
+  if (passError) {
+    return NextResponse.json(
+      { error: passError.message },
+      { status: 500 }
+    );
+  }
+
+  passIdsCriados = criados || [];
+}
+
+
     return NextResponse.json({
       ok: true,
       novoSaldo,
       resgate,
+      passIdsCriados,
     });
   } catch (error: any) {
     return NextResponse.json(
