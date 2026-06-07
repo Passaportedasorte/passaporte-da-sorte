@@ -63,6 +63,13 @@ export default function PassaporteDaSorteSite() {
   const [cpfComplemento, setCpfComplemento] = useState("");
   const [nascimentoComplemento, setNascimentoComplemento] = useState("");
   const [celular, setCelular] = useState("");
+  const [cepCadastro, setCepCadastro] = useState("");
+const [ruaCadastro, setRuaCadastro] = useState("");
+const [numeroCadastro, setNumeroCadastro] = useState("");
+const [complementoCadastro, setComplementoCadastro] = useState("");
+const [bairroCadastro, setBairroCadastro] = useState("");
+const [cidadeCadastro, setCidadeCadastro] = useState("");
+const [ufCadastro, setUfCadastro] = useState("");
   const [meusDadosAberto, setMeusDadosAberto] = useState(false);
   const [emailEdicao, setEmailEdicao] = useState("");
   const [celularEdicao, setCelularEdicao] = useState("");
@@ -107,6 +114,29 @@ export default function PassaporteDaSorteSite() {
   }
 }
 
+async function buscarCep(cepDigitado: string) {
+  const cepLimpo = cepDigitado.replace(/\D/g, "");
+
+  setCepCadastro(cepLimpo);
+
+  if (cepLimpo.length !== 8) return;
+
+  try {
+    const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+    const data = await response.json();
+
+    if (data?.erro) {
+      alert("CEP não encontrado.");
+      return;
+    }
+
+    setCidadeCadastro(data.localidade || "");
+    setUfCadastro(data.uf || "");
+  } catch (error) {
+    console.error("Erro ao buscar CEP:", error);
+    alert("Não foi possível buscar o CEP.");
+  }
+}
   useEffect(() => {
     async function getUser() {
       const { data } = await supabase.auth.getUser();
@@ -219,6 +249,8 @@ export default function PassaporteDaSorteSite() {
     [quantidade, valorUnitario]
   );
 
+
+  
   async function loginGoogle() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -241,7 +273,12 @@ export default function PassaporteDaSorteSite() {
 
 
 setErroCadastro("");
-
+if (!cepCadastro.trim()) return alert("Preencha seu CEP.");
+if (!ruaCadastro.trim()) return alert("Preencha sua rua.");
+if (!numeroCadastro.trim()) return alert("Preencha o número.");
+if (!bairroCadastro.trim()) return alert("Preencha seu bairro.");
+if (!cidadeCadastro.trim()) return alert("Informe sua cidade.");
+if (!ufCadastro.trim()) return alert("Informe seu estado.");
 const { data, error } = await supabase.auth.signUp({
   email: emailLogin,
   password: senhaLogin,
@@ -268,6 +305,29 @@ if (error) {
 
   alert(error.message);
   return;
+}
+if (data.user) {
+  const { error: profileError } = await supabase
+    .from("user_profiles")
+    .upsert({
+      user_id: data.user.id,
+      nome: nomeCadastro,
+      email: emailLogin,
+      cpf: cpfCadastro,
+      celular,
+      data_nascimento: dataNascimento,
+      cep: cepCadastro,
+rua: ruaCadastro,
+numero: numeroCadastro,
+complemento: complementoCadastro,
+bairro: bairroCadastro,
+cidade: cidadeCadastro,
+uf: ufCadastro,
+    });
+
+  if (profileError) {
+    console.error("Erro ao salvar perfil:", profileError);
+  }
 }
 
 const { error: loginAutomaticoError } = await supabase.auth.signInWithPassword({
@@ -1299,6 +1359,57 @@ useEffect(() => {
           type="date"
           className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
         />
+
+        <input
+  value={cepCadastro}
+  onChange={(e) => buscarCep(e.target.value)}
+  placeholder="CEP"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
+
+<div className="grid grid-cols-2 gap-3">
+  <input
+    value={cidadeCadastro}
+    readOnly
+    placeholder="Cidade"
+    className="rounded-2xl bg-white/80 text-[#061832] px-4 py-3 outline-none"
+  />
+
+  <input
+    value={ufCadastro}
+    readOnly
+    placeholder="UF"
+    className="rounded-2xl bg-white/80 text-[#061832] px-4 py-3 outline-none"
+  />
+</div>
+
+<input
+  value={ruaCadastro}
+  onChange={(e) => setRuaCadastro(e.target.value)}
+  placeholder="Rua"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
+
+<input
+  value={numeroCadastro}
+  onChange={(e) => setNumeroCadastro(e.target.value)}
+  placeholder="Número"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
+
+<input
+  value={bairroCadastro}
+  onChange={(e) => setBairroCadastro(e.target.value)}
+  placeholder="Bairro"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
+
+<input
+  value={complementoCadastro}
+  onChange={(e) => setComplementoCadastro(e.target.value)}
+  placeholder="Complemento (opcional)"
+  className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
+/>
 
         <button
           type="button"

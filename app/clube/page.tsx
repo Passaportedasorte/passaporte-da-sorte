@@ -29,12 +29,18 @@ export default function ClubePage() {
 
     const email = user.email;
 
-    const cpf = prompt("Informe seu CPF para gerar o pagamento:");
+   const { data: perfil } = await supabase
+  .from("user_profiles")
+  .select("cpf, nome")
+  .eq("user_id", user.id)
+  .single();
 
-    if (!cpf) {
-      alert("CPF obrigatório.");
-      return;
-    }
+const cpf = perfil?.cpf;
+
+if (!cpf) {
+  alert("CPF não encontrado no cadastro. Atualize seus dados antes de assinar.");
+  return;
+}
 
     const response = await fetch("/api/asaas-clube", {
       method: "POST",
