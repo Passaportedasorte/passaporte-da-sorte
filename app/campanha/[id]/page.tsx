@@ -34,6 +34,7 @@ export default function CampanhaPage({
   const valorOriginal = Number(campanha?.preco || 0) * quantidade;
   const [paymentIdAtual, setPaymentIdAtual] = useState("");
   const [pixInterno, setPixInterno] = useState<any>(null);
+  const [pixConfirmado, setPixConfirmado] = useState(false);
   
 
   const percentualDesconto = Number(
@@ -193,7 +194,8 @@ useEffect(() => {
   return;
 }
 
-      if (billingType === "PIX" && data.pixQrCode) {
+     if (billingType === "PIX" && data.pixQrCode) {
+  setPixConfirmado(false);
   setPaymentIdAtual(data.id);
   setPixInterno(data.pixQrCode);
   setPagamentoAberto(false);
@@ -230,18 +232,16 @@ useEffect(() => {
 
       const data = await response.json();
 
-      if (
-        data.status === "RECEIVED" ||
-        data.status === "CONFIRMED"
-      ) {
-        clearInterval(interval);
+      if (data.status === "RECEIVED" || data.status === "CONFIRMED") {
+  clearInterval(interval);
 
-        setPixInterno(null);
+  setPixConfirmado(true);
 
-        alert("Pagamento confirmado! Seus PASS-IDs foram gerados.");
-
-        window.location.href = "/painel";
-      }
+  setTimeout(() => {
+    setPixInterno(null);
+    window.location.href = "/painel";
+  }, 2000);
+}
     } catch (error) {
       console.error(error);
     }
@@ -668,6 +668,30 @@ useEffect(() => {
         </div>
       )}
 
+      <div className="mt-4 rounded-2xl bg-white/10 border border-white/10 p-4 text-center">
+  {pixConfirmado ? (
+    <>
+      <div className="text-3xl">✅</div>
+      <p className="text-[#23C997] font-black mt-2">
+        Pagamento confirmado!
+      </p>
+      <p className="text-white/60 text-sm mt-1">
+        Seus PASS-IDs já estão disponíveis. Redirecionando...
+      </p>
+    </>
+  ) : (
+    <>
+      <div className="mx-auto w-6 h-6 border-2 border-white/20 border-t-[#23C997] rounded-full animate-spin" />
+      <p className="text-white font-black mt-3">
+        Aguardando confirmação do PIX...
+      </p>
+      <p className="text-white/50 text-sm mt-1">
+        Assim que o pagamento for identificado, você será redirecionado automaticamente.
+      </p>
+    </>
+  )}
+</div>
+
       <div className="mt-5 rounded-2xl bg-white/10 border border-white/10 p-4">
         <p className="text-white/50 text-xs font-black mb-2">
           PIX copia e cola
@@ -688,14 +712,6 @@ useEffect(() => {
         Copiar código PIX
       </button>
 
-<button
-  onClick={() => {
-    window.location.reload();
-  }}
-  className="mt-2 w-full rounded-2xl bg-white/10 border border-white/10 text-white py-3 font-black"
->
-  ✅ Já realizei o pagamento
-</button>
 
       <p className="text-white/40 text-xs text-center mt-4">
         Após o pagamento, seus PASS-IDs serão gerados automaticamente.
