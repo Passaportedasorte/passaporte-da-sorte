@@ -1234,6 +1234,13 @@ useEffect(() => {
   className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
 />
 
+<input
+  value={dataNascimento}
+  onChange={(e) => setDataNascimento(e.target.value)}
+  placeholder="Data de nascimento (DD/MM/AAAA)"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
  <input
   value={cepCadastro}
   onChange={(e) => {
