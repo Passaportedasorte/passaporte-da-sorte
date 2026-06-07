@@ -128,7 +128,7 @@ export default function MinhasMilhasPage() {
             Escolha benefícios para resgatar com suas milhas.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-5 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
             {recompensas.map((item) => {
               const podeResgatar = saldoMilhas >= item.milhas;
 
@@ -136,8 +136,8 @@ export default function MinhasMilhasPage() {
 
                 
                 <div
-                  key={item.id}
-                  className="rounded-[2rem] bg-white/10 border border-white/15 p-6"
+  key={item.id}
+  className="w-full rounded-[2rem] bg-white/10 border border-white/15 p-5 md:p-6"
                 >
                  <div className="w-14 h-14 rounded-2xl bg-[#23C997]/15 text-[#23C997] flex items-center justify-center text-2xl">
   {item.categoria === "PASS-IDs" ? "🎟️" :
@@ -166,31 +166,31 @@ export default function MinhasMilhasPage() {
 </div>
 
                   <button
-                  onClick={() => {
-  if (!assinanteClube) {
-    window.location.href = "/clube";
-    return;
-  }
+  onClick={() => {
+    if (!assinanteClube) {
+      window.location.href = "/clube";
+      return;
+    }
 
-  if (!podeResgatar) {
-    alert("Você ainda não possui milhas suficientes.");
-    return;
-  }
+    if (!podeResgatar) {
+      alert("Você ainda não possui milhas suficientes.");
+      return;
+    }
 
-  alert("Em breve você poderá resgatar este benefício.");
-}}
-                    className={`mt-5 w-full rounded-2xl px-5 py-4 font-black transition ${
-                      podeResgatar
-                        ? "bg-[#23C997] text-[#061832] hover:scale-[1.02]"
-                        : "bg-white/10 text-white/40 cursor-not-allowed"
-                    }`}
-                  >
-                    {!assinanteClube
-  ? "Entrar no Clube"
-  : podeResgatar
-  ? "Resgatar"
-  : "Milhas insuficientes"}
-                  </button>
+    alert("Em breve você poderá resgatar este benefício.");
+  }}
+  className={`mt-5 w-full rounded-2xl px-4 py-4 font-black text-sm md:text-base transition ${
+    assinanteClube && podeResgatar
+      ? "bg-[#23C997] text-[#061832] hover:scale-[1.02]"
+      : "bg-white/10 text-white/60"
+  }`}
+>
+  {!assinanteClube
+    ? "Entrar no Clube"
+    : podeResgatar
+    ? "Resgatar"
+    : "Milhas insuficientes"}
+</button>
                 </div>
               );
             })}
