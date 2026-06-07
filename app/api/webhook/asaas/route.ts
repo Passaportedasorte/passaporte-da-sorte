@@ -46,6 +46,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    const { data: assinatura } = await supabase
+  .from("clube_assinaturas")
+  .select("*")
+  .eq("payment_id", pagamento.id)
+  .maybeSingle();
+
+if (assinatura) {
+  await supabase
+    .from("clube_assinaturas")
+    .update({
+      status: evento,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("payment_id", pagamento.id);
+
+  return NextResponse.json({
+    ok: true,
+    tipo: "clube",
+    message: "Assinatura do clube atualizada",
+  });
+}
+
     const { data: compra, error: compraError } = await supabase
       .from("compras")
       .select("*")

@@ -305,15 +305,15 @@ export default function TermosPage() {
               <strong>Passaporte da Sorte</strong>
             </p>
 
-            <p>CNPJ: _______________________________</p>
+            <p>CNPJ: 51.079.783/0001-81</p>
 
-            <p>E-mail para contato: _______________________________</p>
+            <p>E-mail para contato: Passaportedasorte@gmail.com</p>
 
-            <p>WhatsApp: _______________________________</p>
+            <p>WhatsApp: (54) 999304474</p>
 
-            <p>Endereço: _______________________________</p>
+            <p>Endereço: Travessa Angelo Lorencet, 27</p>
 
-            <p>Cidade/UF: _______________________________</p>
+            <p>Cidade/UF: Porto Alegre/RS</p>
 
             <p>
               Todos os atendimentos, comunicações, divulgações de campanhas e

@@ -33,6 +33,16 @@ export default function MinhasMilhasPage() {
         .single();
 
       setSaldoMilhas(milhas?.total_milhas ?? 0);
+      
+
+      const { data: assinatura } = await supabase
+  .from("clube_assinaturas")
+  .select("status")
+  .eq("user_id", data.user.id)
+  .in("status", ["PAYMENT_CONFIRMED", "PAYMENT_RECEIVED"])
+  .maybeSingle();
+
+setAssinanteClube(!!assinatura);
 
       const { data: rewards } = await supabase
   .from("rewards")
