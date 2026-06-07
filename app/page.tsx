@@ -1564,8 +1564,8 @@ useEffect(() => {
       )}
 
       {completarCadastroAberto && (
-  <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
-    <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
+  <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+  <div className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
       <h3 className="text-2xl font-black text-white">
         Complete seu cadastro
       </h3>
