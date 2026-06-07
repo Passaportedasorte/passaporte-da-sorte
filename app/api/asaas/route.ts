@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   valor_final,
   cupom_desconto_percentual,
   cupom_desconto_valor,
-} = await req.json();
+} = body; 
 
     if (!valor || !nome || !email || !cpf) {
       return NextResponse.json(
