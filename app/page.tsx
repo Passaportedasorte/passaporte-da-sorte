@@ -71,6 +71,12 @@ const [bairroCadastro, setBairroCadastro] = useState("");
 const [cidadeCadastro, setCidadeCadastro] = useState("");
 const [ufCadastro, setUfCadastro] = useState("");
   const [meusDadosAberto, setMeusDadosAberto] = useState(false);
+  const [cepEdicao, setCepEdicao] = useState("");
+const [logradouroEdicao, setLogradouroEdicao] = useState("");
+const [numeroEdicao, setNumeroEdicao] = useState("");
+const [bairroEdicao, setBairroEdicao] = useState("");
+const [cidadeEdicao, setCidadeEdicao] = useState("");
+const [estadoEdicao, setEstadoEdicao] = useState("");
   const [emailEdicao, setEmailEdicao] = useState("");
   const [celularEdicao, setCelularEdicao] = useState("");
   const [ultimosResultados, setUltimosResultados] = useState<any[]>([]);
@@ -468,7 +474,7 @@ async function recuperarSenha() {
 }
 
 async function salvarMeusDados() {
-  const { error } = await supabase.auth.updateUser({
+  const { data: authData, error } = await supabase.auth.updateUser({
     email: emailEdicao,
     data: {
       celular: celularEdicao,
@@ -477,6 +483,33 @@ async function salvarMeusDados() {
 
   if (error) {
     alert(error.message);
+    return;
+  }
+
+  const userId = authData.user?.id;
+
+  if (!userId) {
+    alert("Usuário não encontrado.");
+    return;
+  }
+
+  const { error: erroPerfil } = await supabase
+    .from("user_profiles")
+    .update({
+      email: emailEdicao,
+      celular: celularEdicao,
+      cep: cepEdicao,
+      rua: logradouroEdicao,
+      numero: numeroEdicao,
+      bairro: bairroEdicao,
+      cidade: cidadeEdicao,
+      uf: estadoEdicao,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", userId);
+
+  if (erroPerfil) {
+    alert(erroPerfil.message);
     return;
   }
 
@@ -1283,7 +1316,13 @@ useEffect(() => {
 
 <input
   value={numeroCadastro}
-  onChange={(e) => setNumeroCadastro(e.target.value)}
+  inputMode="numeric"
+  maxLength={6}
+  onChange={(e) => {
+  const valor = e.target.value.replace(/\D/g, "");
+  setNumeroCadastro(valor);
+}}
+
   placeholder="Número"
   className="rounded-2xl bg-white text-[#061832] px-4 py-3 outline-none"
 />
@@ -1516,6 +1555,68 @@ useEffect(() => {
           disabled
           className="rounded-2xl px-4 py-3 bg-slate-200 text-slate-500 cursor-not-allowed"
         />
+
+        <input
+  value={cepEdicao}
+  onChange={(e) => {
+    let valor = e.target.value.replace(/\D/g, "");
+
+    valor = valor.slice(0, 8);
+
+    if (valor.length > 5) {
+      valor = valor.replace(/^(\d{5})(\d+)/, "$1-$2");
+    }
+
+    setCepEdicao(valor);
+  }}
+  placeholder="CEP"
+  maxLength={9}
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={logradouroEdicao}
+  onChange={(e) => setLogradouroEdicao(e.target.value)}
+  placeholder="Rua / Avenida"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={numeroEdicao}
+  onChange={(e) =>
+    setNumeroEdicao(e.target.value.replace(/\D/g, ""))
+  }
+  placeholder="Número"
+  inputMode="numeric"
+  maxLength={6}
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={bairroEdicao}
+  onChange={(e) => setBairroEdicao(e.target.value)}
+  placeholder="Bairro"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={cidadeEdicao}
+  onChange={(e) => setCidadeEdicao(e.target.value)}
+  placeholder="Cidade"
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
+
+<input
+  value={estadoEdicao}
+  onChange={(e) =>
+    setEstadoEdicao(
+      e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase()
+    )
+  }
+  placeholder="UF"
+  maxLength={2}
+  className="rounded-2xl px-4 py-3 bg-white text-[#061832]"
+/>
 
         <button
           onClick={salvarMeusDados}
