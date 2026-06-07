@@ -153,7 +153,9 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
     <h2 className="text-3xl font-black mt-1">
       {meusPassaportes.length} 🎟️
     </h2>
- <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
+  </div>
+
+   <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
   <p className="text-sm font-black text-white/60">
     Nível Atual
   </p>
@@ -162,7 +164,6 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
     {nivel} ✈️
   </h2>
 </div>
-  </div>
 
 </div>
   </div>
