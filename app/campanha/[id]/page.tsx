@@ -32,6 +32,7 @@ export default function CampanhaPage({
   const [loadingPix, setLoadingPix] = useState(false);
   const [resultado, setResultado] = useState<any>(null);
   const valorOriginal = Number(campanha?.preco || 0) * quantidade;
+  const [pixInterno, setPixInterno] = useState<any>(null);
 
   const percentualDesconto = Number(
   cupomValidado?.percentual_desconto || 0
@@ -188,7 +189,7 @@ useEffect(() => {
       }
 
       if (billingType === "PIX" && data.pixQrCode) {
-  console.log("PIX GERADO:", data.pixQrCode);
+  setPixInterno(data.pixQrCode);
   setPagamentoAberto(false);
   return;
 }
@@ -602,6 +603,60 @@ useEffect(() => {
   </div>
 )}
 
+{pixInterno && (
+  <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+    <div className="w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl text-white">
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-black">Pague com PIX</h3>
+
+        <button
+          onClick={() => setPixInterno(null)}
+          className="text-white/60 hover:text-white text-2xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <p className="text-white/60 text-sm mt-2">
+        Escaneie o QR Code ou copie o código abaixo.
+      </p>
+
+      {pixInterno.encodedImage && (
+        <div className="mt-6 rounded-2xl bg-white p-4 flex justify-center">
+          <img
+            src={`data:image/png;base64,${pixInterno.encodedImage}`}
+            alt="QR Code PIX"
+            className="w-64 h-64"
+          />
+        </div>
+      )}
+
+      <div className="mt-5 rounded-2xl bg-white/10 border border-white/10 p-4">
+        <p className="text-white/50 text-xs font-black mb-2">
+          PIX copia e cola
+        </p>
+
+        <p className="text-white/80 text-xs break-all">
+          {pixInterno.payload}
+        </p>
+      </div>
+
+      <button
+        onClick={() => {
+          navigator.clipboard.writeText(pixInterno.payload);
+          alert("Código PIX copiado!");
+        }}
+        className="mt-4 w-full rounded-2xl bg-[#23C997] text-[#061832] py-4 font-black"
+      >
+        Copiar código PIX
+      </button>
+
+      <p className="text-white/40 text-xs text-center mt-4">
+        Após o pagamento, seus PASS-IDs serão gerados automaticamente.
+      </p>
+    </div>
+  </div>
+)}
       <SiteFooter />
     </main>
   );
