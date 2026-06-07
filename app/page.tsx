@@ -868,7 +868,7 @@ useEffect(() => {
       ["1", "Escolha uma campanha", "Veja os destinos disponíveis e escolha sua experiência."],
       ["2", "Compre PASS-IDs", "Cada PASS-ID aumenta sua participação na campanha."],
       ["3", "Acumule milhas", "A cada compra você soma milhas na sua carteira."],
-      ["4", "Aguarde a Federal", "O resultado é vinculado aos últimos 5 números da Loteria Federal."],
+      ["4", "Aguarde a Federal", "O resultado é definido pelos últimos algarismos dos cinco primeiros prêmios da Loteria Federal."],
       ["5", "Confira o resultado", "Veja o PASS-ID vencedor e acompanhe tudo com transparência."],
     ].map((item) => (
       <div

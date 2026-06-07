@@ -33,6 +33,16 @@ const faqs = [
       "Os resultados são publicados na página Resultados do site.",
   },
   {
+  pergunta: "Como é definido o número contemplado?",
+  resposta:
+    "O número contemplado é definido com base na extração da Loteria Federal. São utilizados os últimos algarismos dos cinco primeiros prêmios da extração. A combinação desses cinco algarismos forma o número contemplado da campanha, garantindo um processo público, transparente e auditável.",
+},
+{
+  pergunta: "Exemplo de apuração do resultado",
+  resposta:
+    "Se os cinco primeiros prêmios da Loteria Federal terminarem em 1, 4, 5, 6 e 8, respectivamente, o número contemplado será 14568.",
+},
+  {
     pergunta: "Posso comprar mais de uma participação?",
     resposta:
       "Sim. Você pode adquirir quantas participações desejar, respeitando as regras de cada campanha.",

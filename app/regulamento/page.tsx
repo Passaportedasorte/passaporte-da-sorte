@@ -100,38 +100,67 @@ export default function RegulamentoPage() {
           </Section>
 
           <Section title="5. Apuração dos Resultados">
-            <p>
-              A apuração dos resultados poderá ocorrer com base nos resultados
-              oficiais da Loteria Federal do Brasil, conforme definido na campanha
-              correspondente.
-            </p>
+            <Section title="5. Apuração dos Resultados">
+  <p>
+    A apuração dos resultados poderá ocorrer com base nos resultados
+    oficiais da Loteria Federal do Brasil, conforme definido na campanha
+    correspondente.
+  </p>
 
-            <p>
-              Quando a campanha utilizar a Loteria Federal como critério de
-              apuração, será considerado inicialmente o PASS-ID correspondente ao
-              número sorteado.
-            </p>
+  <p>
+    Quando a campanha utilizar a Loteria Federal como critério de
+    apuração, o número contemplado será formado pela combinação dos
+    últimos algarismos dos cinco primeiros prêmios da extração utilizada
+    como referência.
+  </p>
 
-            <p>
-              Caso não exista um PASS-ID exatamente igual ao número sorteado, a
-              busca seguirá de forma progressiva, iniciando pelo número
-              imediatamente superior ao resultado oficial.
-            </p>
+  <p>
+    Para a formação do número contemplado será considerado:
+  </p>
 
-            <p>
-              Não sendo encontrado participante, será verificado o número
-              imediatamente inferior.
-            </p>
+  <ul className="list-disc pl-6 space-y-2">
+    <li>Último algarismo do 1º prêmio;</li>
+    <li>Último algarismo do 2º prêmio;</li>
+    <li>Último algarismo do 3º prêmio;</li>
+    <li>Último algarismo do 4º prêmio;</li>
+    <li>Último algarismo do 5º prêmio.</li>
+  </ul>
 
-            <p>
-              O processo continuará alternando entre números superiores e
-              inferiores, em ordem crescente de proximidade, até que seja
-              encontrado um PASS-ID válido participante da campanha.
-            </p>
+  <p>
+    A sequência desses cinco algarismos formará o número utilizado na
+    apuração da campanha.
+  </p>
 
-            <p>
-              A participação implica concordância com este método de apuração.
-            </p>
+  <p>
+    Exemplo:
+  </p>
+
+  <p>
+    Se os cinco primeiros prêmios terminarem em 1, 4, 5, 6 e 8,
+    respectivamente, o número utilizado na apuração será 14568.
+  </p>
+
+  <p>
+    Caso não exista um PASS-ID exatamente igual ao número apurado, a
+    busca seguirá de forma progressiva, iniciando pelo número
+    imediatamente superior ao resultado oficial.
+  </p>
+
+  <p>
+    Não sendo encontrado participante, será verificado o número
+    imediatamente inferior.
+  </p>
+
+  <p>
+    O processo continuará alternando entre números superiores e
+    inferiores, em ordem crescente de proximidade, até que seja
+    encontrado um PASS-ID válido participante da campanha.
+  </p>
+
+  <p>
+    A participação implica concordância com este método de apuração.
+  </p>
+</Section>
           </Section>
 
           <Section title="6. Premiação">

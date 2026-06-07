@@ -146,7 +146,7 @@ export default function ResultadosPage() {
                   <div className="grid md:grid-cols-2 gap-3 mt-6">
                     <Info
                       icon={<Target />}
-                      label="Número Federal"
+                      label="Número formado pela Federal"
                       value={resultado.numero_sorteado}
                     />
 
@@ -161,11 +161,11 @@ export default function ResultadosPage() {
 
                     <Info
                       icon={<Trophy />}
-                      label="Tipo"
+                      label="Apuração:"
                       value={
                         resultado.tipo_resultado === "EXATO"
-                          ? "🎯 Exato"
-                          : "📍 Mais próximo"
+                          ? "🎯 PASS-ID exato"
+                          : "📍 PASS-ID mais próximo"
                       }
                     />
 
@@ -194,7 +194,25 @@ export default function ResultadosPage() {
                 Assim que uma campanha for apurada, o resultado aparecerá aqui.
               </p>
             </div>
+
+            
           )}
+
+          <div className="mt-5 rounded-2xl bg-white/10 border border-white/10 p-5">
+  <p className="text-[#23C997] font-black">
+    🎯 Como este número foi formado?
+  </p>
+
+  <p className="text-white/70 mt-2 leading-relaxed">
+    O número apurado é formado pelos últimos algarismos dos cinco primeiros
+    prêmios da Loteria Federal utilizada como referência para a campanha.
+  </p>
+
+  <p className="text-white/50 text-sm mt-3">
+    Caso não exista um PASS-ID exatamente igual, é aplicada a regra de
+    aproximação prevista no regulamento da campanha.
+  </p>
+</div>
         </section>
       </div>
       <SiteFooter />

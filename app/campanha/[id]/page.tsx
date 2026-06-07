@@ -351,7 +351,7 @@ useEffect(() => {
 
             <InfoCard
               title="Resultado Federal"
-              text="A apuração é vinculada ao primeiro prêmio da Loteria Federal."
+              text="O resultado é vinculado aos últimos 5 números da Loteria Federal."
             />
 
             <InfoCard
