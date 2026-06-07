@@ -71,6 +71,53 @@ setAssinanteClube(!!assinatura);
       ? "Aventureiro"
       : "Iniciante";
 
+      async function resgatarRecompensa(item: any) {
+  if (!user?.id) {
+    alert("Faça login para resgatar.");
+    return;
+  }
+
+  if (!assinanteClube) {
+    window.location.href = "/clube";
+    return;
+  }
+
+  if (saldoMilhas < item.milhas) {
+    alert("Você ainda não possui milhas suficientes.");
+    return;
+  }
+
+  const confirmar = confirm(
+    `Deseja resgatar "${item.titulo}" por ${item.milhas} milhas?`
+  );
+
+  if (!confirmar) return;
+
+  const response = await fetch("/api/resgatar-recompensa", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userId: user.id,
+      rewardId: item.id,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    alert(data.error || "Erro ao resgatar recompensa.");
+    return;
+  }
+
+  setSaldoMilhas(data.novoSaldo);
+
+  alert(
+    `Resgate realizado com sucesso! Código: ${data.resgate.codigo}`
+  );
+}
+
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-10">
       <SiteHeader />
@@ -142,6 +189,8 @@ setAssinanteClube(!!assinatura);
             {recompensas.map((item) => {
               const podeResgatar = saldoMilhas >= item.milhas;
 
+              
+
               return (
 
                 
@@ -175,20 +224,8 @@ setAssinanteClube(!!assinatura);
   </p>
 </div>
 
-                  <button
-  onClick={() => {
-    if (!assinanteClube) {
-      window.location.href = "/clube";
-      return;
-    }
-
-    if (!podeResgatar) {
-      alert("Você ainda não possui milhas suficientes.");
-      return;
-    }
-
-    alert("Em breve você poderá resgatar este benefício.");
-  }}
+                <button
+  onClick={() => resgatarRecompensa(item)}
   className={`mt-5 w-full rounded-2xl px-4 py-4 font-black text-sm md:text-base transition ${
     assinanteClube && podeResgatar
       ? "bg-[#23C997] text-[#061832] hover:scale-[1.02]"
