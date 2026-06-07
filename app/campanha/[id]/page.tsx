@@ -605,7 +605,7 @@ useEffect(() => {
 
 {pixInterno && (
   <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-5">
-    <div className="relative z-[100000] w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl text-white">
+    <div className="relative z-[100000] w-full max-w-sm rounded-[2rem] bg-[#061832] border border-white/15 p-5 shadow-2xl text-white max-h-[90vh] overflow-y-auto">
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-black">Pague com PIX</h3>
 
@@ -626,7 +626,7 @@ useEffect(() => {
           <img
             src={`data:image/png;base64,${pixInterno.encodedImage}`}
             alt="QR Code PIX"
-            className="w-64 h-64"
+            className="w-48 h-48"
           />
         </div>
       )}
@@ -636,7 +636,7 @@ useEffect(() => {
           PIX copia e cola
         </p>
 
-        <p className="text-white/80 text-xs break-all">
+        <p className="text-white/80 text-[10px] break-all max-h-24 overflow-y-auto">
           {pixInterno.payload}
         </p>
       </div>
@@ -646,7 +646,7 @@ useEffect(() => {
           navigator.clipboard.writeText(pixInterno.payload);
           alert("Código PIX copiado!");
         }}
-        className="mt-4 w-full rounded-2xl bg-[#23C997] text-[#061832] py-4 font-black"
+        className="mt-4 w-full rounded-2xl bg-[#23C997] text-[#061832] py-3 font-black"
       >
         Copiar código PIX
       </button>
@@ -655,7 +655,7 @@ useEffect(() => {
   onClick={() => {
     window.location.reload();
   }}
-  className="mt-3 w-full rounded-2xl bg-white/10 border border-white/10 text-white py-4 font-black"
+  className="mt-2 w-full rounded-2xl bg-white/10 border border-white/10 text-white py-3 font-black"
 >
   ✅ Já realizei o pagamento
 </button>
