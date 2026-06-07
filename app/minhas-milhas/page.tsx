@@ -15,6 +15,7 @@ export default function MinhasMilhasPage() {
 
   const [recompensas, setRecompensas] = useState<any[]>([]);
   const [assinanteClube, setAssinanteClube] = useState(false);
+  const [meusResgates, setMeusResgates] = useState<any[]>([]);
 
 
 
@@ -33,6 +34,14 @@ export default function MinhasMilhasPage() {
         .single();
 
       setSaldoMilhas(milhas?.total_milhas ?? 0);
+
+      const { data: resgates } = await supabase
+  .from("reward_redemptions")
+  .select("*")
+  .eq("user_id", data.user.id)
+  .order("created_at", { ascending: false });
+
+setMeusResgates(resgates ?? []);
       
 
       const { data: assinatura } = await supabase
@@ -244,6 +253,60 @@ setAssinanteClube(!!assinatura);
           </div>
         </section>
       </div>
+
+      {assinanteClube && (
+  <section className="mt-12 rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
+    <h2 className="text-3xl font-black">Meus Resgates</h2>
+
+    <p className="text-white/60 mt-2">
+      Acompanhe os benefícios que você já resgatou com suas milhas.
+    </p>
+
+    {meusResgates.length === 0 ? (
+      <div className="mt-6 rounded-2xl bg-[#061832] border border-white/10 p-5 text-white/60">
+        Você ainda não realizou nenhum resgate.
+      </div>
+    ) : (
+      <div className="grid gap-4 mt-6">
+        {meusResgates.map((resgate) => (
+          <div
+            key={resgate.id}
+            className="rounded-2xl bg-[#061832] border border-white/10 p-5"
+          >
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <p className="text-[#23C997] font-black">
+                  {resgate.titulo}
+                </p>
+
+                <p className="text-white/60 text-sm mt-1">
+                  Código:{" "}
+                  <span className="text-white font-black">
+                    {resgate.codigo}
+                  </span>
+                </p>
+
+                <p className="text-white/40 text-sm mt-1">
+                  {new Date(resgate.created_at).toLocaleDateString("pt-BR")}
+                </p>
+              </div>
+
+              <div className="text-left md:text-right">
+                <p className="text-white font-black">
+                  {resgate.milhas_usadas} milhas
+                </p>
+
+                <p className="inline-block mt-2 rounded-full bg-[#23C997]/15 text-[#23C997] px-3 py-1 text-xs font-black uppercase">
+                  {resgate.status || "ativo"}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+)}
 
       <SiteFooter />
     </main>
