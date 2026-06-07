@@ -14,6 +14,7 @@ export default function MinhasMilhasPage() {
   const [saldoMilhas, setSaldoMilhas] = useState(0);
 
   const [recompensas, setRecompensas] = useState<any[]>([]);
+  const [assinanteClube, setAssinanteClube] = useState(false);
 
 
 
@@ -101,6 +102,25 @@ export default function MinhasMilhasPage() {
           </div>
         </section>
 
+{!assinanteClube && (
+  <div className="mt-6 rounded-2xl bg-[#23C997]/10 border border-[#23C997]/30 p-5">
+    <p className="text-[#23C997] font-black">
+      🍀 Resgate exclusivo para assinantes
+    </p>
+
+    <p className="text-white/70 mt-2">
+      Você pode conhecer todos os benefícios disponíveis, mas o uso das milhas para resgate é exclusivo para membros do Clube Passaporte da Sorte.
+    </p>
+
+    <a
+      href="/clube"
+      className="inline-block mt-4 rounded-2xl bg-[#23C997] text-[#061832] px-5 py-3 font-black"
+    >
+      Conhecer o Clube
+    </a>
+  </div>
+)}
+
         <section className="mt-10">
           <h2 className="text-3xl font-black">Loja de Recompensas</h2>
 
@@ -136,25 +156,40 @@ export default function MinhasMilhasPage() {
                   <p className="text-white/60 mt-3">{item.descricao}</p>
 
                   <div className="mt-5 rounded-2xl bg-[#061832] border border-white/10 p-4">
-                    <p className="text-white/50 text-sm">Custo</p>
-                    <p className="text-2xl font-black">{item.milhas} milhas</p>
-                  </div>
+  <p className="text-white/50 text-sm">
+    {assinanteClube ? "Custo" : "Custo exclusivo"}
+  </p>
+
+  <p className="text-2xl font-black">
+    {assinanteClube ? `${item.milhas} milhas` : "Disponível para assinantes"}
+  </p>
+</div>
 
                   <button
-                    onClick={() =>
-                      alert(
-                        podeResgatar
-                          ? "Em breve você poderá resgatar este benefício."
-                          : "Você ainda não possui milhas suficientes."
-                      )
-                    }
+                  onClick={() => {
+  if (!assinanteClube) {
+    window.location.href = "/clube";
+    return;
+  }
+
+  if (!podeResgatar) {
+    alert("Você ainda não possui milhas suficientes.");
+    return;
+  }
+
+  alert("Em breve você poderá resgatar este benefício.");
+}}
                     className={`mt-5 w-full rounded-2xl px-5 py-4 font-black transition ${
                       podeResgatar
                         ? "bg-[#23C997] text-[#061832] hover:scale-[1.02]"
                         : "bg-white/10 text-white/40 cursor-not-allowed"
                     }`}
                   >
-                    {podeResgatar ? "Resgatar" : "Milhas insuficientes"}
+                    {!assinanteClube
+  ? "Entrar no Clube"
+  : podeResgatar
+  ? "Resgatar"
+  : "Milhas insuficientes"}
                   </button>
                 </div>
               );
