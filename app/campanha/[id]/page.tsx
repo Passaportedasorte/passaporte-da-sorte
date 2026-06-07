@@ -176,37 +176,6 @@ useEffect(() => {
 }),
       });
 
-useEffect(() => {
-  if (!pixInterno || !paymentIdAtual) return;
-
-  const interval = setInterval(async () => {
-    try {
-      const response = await fetch(
-        `/api/verificar-pagamento?id=${paymentIdAtual}`
-      );
-
-      const data = await response.json();
-
-      if (
-        data.status === "RECEIVED" ||
-        data.status === "CONFIRMED"
-      ) {
-        clearInterval(interval);
-
-        setPixInterno(null);
-
-        alert("Pagamento confirmado! Seus PASS-IDs foram gerados.");
-
-        window.location.href = "/painel";
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }, 5000);
-
-  return () => clearInterval(interval);
-}, [pixInterno, paymentIdAtual]);
-
       const data = await response.json();
 
       console.log("RESPOSTA ASAAS:", data);
@@ -249,6 +218,37 @@ useEffect(() => {
       setLoadingPix(false);
     }
   }
+
+  useEffect(() => {
+  if (!pixInterno || !paymentIdAtual) return;
+
+  const interval = setInterval(async () => {
+    try {
+      const response = await fetch(
+        `/api/verificar-pagamento?id=${paymentIdAtual}`
+      );
+
+      const data = await response.json();
+
+      if (
+        data.status === "RECEIVED" ||
+        data.status === "CONFIRMED"
+      ) {
+        clearInterval(interval);
+
+        setPixInterno(null);
+
+        alert("Pagamento confirmado! Seus PASS-IDs foram gerados.");
+
+        window.location.href = "/painel";
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, [pixInterno, paymentIdAtual]);
 
   if (carregando) {
     return (
