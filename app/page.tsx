@@ -315,6 +315,30 @@ function validarCPF(cpf: string) {
   return digito2 === Number(numeros[10]);
 }
 
+function maiorDe18Anos(data: string) {
+  if (!data) return false;
+
+  const nascimento = new Date(data);
+  const hoje = new Date();
+
+  let idade = hoje.getFullYear() - nascimento.getFullYear();
+
+  const mesAtual = hoje.getMonth();
+  const diaAtual = hoje.getDate();
+
+  const mesNascimento = nascimento.getMonth();
+  const diaNascimento = nascimento.getDate();
+
+  if (
+    mesAtual < mesNascimento ||
+    (mesAtual === mesNascimento && diaAtual < diaNascimento)
+  ) {
+    idade--;
+  }
+
+  return idade >= 18;
+}
+
 async function criarConta() {
   if (!nomeCadastro.trim()) return alert("Preencha seu nome completo.");
   if (!emailLogin.trim()) return alert("Preencha seu e-mail.");
@@ -327,6 +351,9 @@ async function criarConta() {
 
   if (!celular.trim()) return alert("Preencha seu celular.");
   if (!dataNascimento.trim()) return alert("Preencha sua data de nascimento.");
+  if (!maiorDe18Anos(dataNascimento)) {
+  return alert("É necessário ter 18 anos ou mais para participar.");
+}
   if (!cepCadastro.trim()) return alert("Preencha seu CEP.");
   if (!ruaCadastro.trim()) return alert("Preencha sua rua.");
   if (!numeroCadastro.trim()) return alert("Preencha o número.");
@@ -341,6 +368,18 @@ async function criarConta() {
   }
 
   setErroCadastro("");
+
+  const { data: cpfExistente } = await supabase
+  .from("user_profiles")
+  .select("id")
+  .eq("cpf", cpfCadastro)
+  .maybeSingle();
+
+if (cpfExistente) {
+  alert("Este CPF já está cadastrado.");
+  return;
+}
+
 
   const { data, error } = await supabase.auth.signUp({
     email: emailLogin,
@@ -468,6 +507,9 @@ async function recuperarSenha() {
 
   if (!cpfComplemento.trim()) return alert("Informe seu CPF.");
   if (!nascimentoComplemento.trim()) return alert("Informe sua data de nascimento.");
+  if (!maiorDe18Anos(nascimentoComplemento)) {
+  return alert("É necessário ter 18 anos ou mais para participar.");
+}
   if (!celular.trim()) return alert("Informe seu celular.");
   if (!cepCadastro.trim()) return alert("Informe seu CEP.");
   if (!ruaCadastro.trim()) return alert("Informe sua rua.");
@@ -475,6 +517,18 @@ async function recuperarSenha() {
   if (!bairroCadastro.trim()) return alert("Informe seu bairro.");
   if (!cidadeCadastro.trim()) return alert("Informe sua cidade.");
   if (!ufCadastro.trim()) return alert("Informe seu estado.");
+
+  const { data: cpfExistente } = await supabase
+  .from("user_profiles")
+  .select("id")
+  .eq("cpf", cpfComplemento)
+  .neq("user_id", usuarioAtual.id)
+  .maybeSingle();
+
+if (cpfExistente) {
+  alert("Este CPF já está cadastrado.");
+  return;
+}
 
   const { error } = await supabase.auth.updateUser({
     data: {
