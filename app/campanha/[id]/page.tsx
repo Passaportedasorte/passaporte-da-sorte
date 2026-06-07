@@ -651,6 +651,15 @@ useEffect(() => {
         Copiar código PIX
       </button>
 
+<button
+  onClick={() => {
+    window.location.reload();
+  }}
+  className="mt-3 w-full rounded-2xl bg-white/10 border border-white/10 text-white py-4 font-black"
+>
+  ✅ Já realizei o pagamento
+</button>
+
       <p className="text-white/40 text-xs text-center mt-4">
         Após o pagamento, seus PASS-IDs serão gerados automaticamente.
       </p>
