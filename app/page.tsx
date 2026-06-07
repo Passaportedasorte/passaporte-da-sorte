@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { League_Spartan, Cinzel } from "next/font/google";
+import SiteFooter from "@/components/SiteFooter";
 
 
 import {
@@ -1024,67 +1025,7 @@ useEffect(() => {
 
 
 
-        <footer className="border-t border-white/10 mt-24">
-  <div className="max-w-7xl mx-auto px-5 md:px-8 py-12">
-
-    <div className="grid md:grid-cols-4 gap-10">
-
-      <div>
-        <h3 className="text-2xl font-black">
-          Passaporte da Sorte
-        </h3>
-
-        <p className="text-white/60 mt-3">
-          Participe das campanhas, acumule milhas e viva experiências inesquecíveis.
-        </p>
-      </div>
-
-      <div>
-        <h4 className="font-black mb-4">
-          Navegação
-        </h4>
-
-        <div className="flex flex-col gap-2 text-white/60">
-          <a href="/campanhas">Campanhas</a>
-          <a href="/resultados">Resultados</a>
-          <a href="/painel">Meu Painel</a>
-          <a href="/faq">FAQ</a>
-        </div>
-      </div>
-
-      <div>
-        <h4 className="font-black mb-4">
-          Transparência
-        </h4>
-       
-
-        <div className="flex flex-col gap-2 text-white/60">
-          <span>Resultados pela Loteria Federal</span>
-          <span>PASS-IDs rastreáveis</span>
-          <span>Milhas acumulativas</span>
-        </div>
-      </div>
-
-      <div>
-        <h4 className="font-black mb-4">
-          Contato
-        </h4>
-
-        <div className="flex flex-col gap-2 text-white/60">
-          <span>Facebook • RS</span>
-          <span>Instagram</span>
-          <span>WhatsApp</span>
-        </div>
-      </div>
-
-    </div>
-
-    <div className="border-t border-white/10 mt-10 pt-6 text-center text-white/40 text-sm">
-      © {new Date().getFullYear()} Passaporte da Sorte. Todos os direitos reservados.
-    </div>
-
-  </div>
-</footer>
+        <SiteFooter />
       </div>
 
       {loginAberto && (
