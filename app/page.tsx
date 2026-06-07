@@ -582,19 +582,38 @@ async function abrirMeusDados() {
     return;
   }
 
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("user_profiles")
     .select("*")
     .eq("user_id", usuarioAtual.id)
-    .single();
+    .maybeSingle();
+
+  if (!data && usuarioAtual.email) {
+    const resultado = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("email", usuarioAtual.email)
+      .maybeSingle();
+
+    data = resultado.data;
+    error = resultado.error;
+  }
 
   if (error) {
     alert(error.message);
     return;
   }
 
-  setEmailEdicao(data.email || contato || "");
-  setCelularEdicao(data.celular || celular || "");
+  if (!data) {
+    alert("Perfil não encontrado.");
+    return;
+  }
+
+  setEmailEdicao(data.email || usuarioAtual.email || "");
+  setCelularEdicao(data.celular || "");
+  setCpf(data.cpf || "");
+  setDataNascimento(data.data_nascimento || "");
+
   setCepEdicao(data.cep || "");
   setLogradouroEdicao(data.rua || "");
   setNumeroEdicao(data.numero || "");
@@ -604,7 +623,6 @@ async function abrirMeusDados() {
 
   setMeusDadosAberto(true);
 }
-
 async function buscarCepEdicao(cep: string) {
   const cepLimpo = cep.replace(/\D/g, "");
 
@@ -809,17 +827,15 @@ useEffect(() => {
           {menuAberto && (
             <div className="absolute right-0 top-full mt-3 w-48 rounded-2xl bg-white text-[#061832] shadow-2xl p-2 z-[9999]">
               <button
-                type="button"
-                onClick={() => {
-                  setMenuAberto(false);
-                  setEmailEdicao(contato);
-                  setCelularEdicao(celular);
-                  setMeusDadosAberto(true);
-                }}
-                className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
-              >
-                Meus dados
-              </button>
+  type="button"
+  onClick={() => {
+    setMenuAberto(false);
+    abrirMeusDados();
+  }}
+  className="w-full text-left rounded-xl px-4 py-3 font-black hover:bg-slate-100"
+>
+  Meus dados
+</button>
 
               <button
                 onClick={logout}
