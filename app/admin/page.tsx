@@ -65,7 +65,12 @@ const [resumoClube, setResumoClube] = useState({
   ativos: 0,
   receita: 0,
 });
-
+const [resumoFinanceiro, setResumoFinanceiro] = useState({
+  receitaPassIds: 0,
+  receitaClube: 0,
+  receitaTotal: 0,
+  assinantes: 0,
+});
 
   const [resumo, setResumo] = useState({
   campanhas: 0,
@@ -209,6 +214,7 @@ useEffect(() => {
   buscarResultados();
   buscarRecompensas();
   carregarAssinaturasClube();
+  carregarFinanceiro();
 
       
   
@@ -296,6 +302,56 @@ const ativos = assinaturas.filter(
   setResumoClube({
     ativos,
     receita,
+  });
+}
+
+async function carregarFinanceiro() {
+  const { data: compras } = await supabase
+    .from("compras")
+    .select("*");
+
+  const { data: assinaturas } = await supabase
+    .from("clube_assinaturas")
+    .select("*");
+
+  const receitaPassIds =
+    compras
+      ?.filter(
+        (item) =>
+          item.status === "PAYMENT_RECEIVED" ||
+          item.status === "PAYMENT_CONFIRMED"
+      )
+      .reduce(
+        (total, item) =>
+          total + Number(item.valor_final || item.valor || 0),
+        0
+      ) || 0;
+
+  const receitaClube =
+    assinaturas
+      ?.filter(
+        (item) =>
+          item.status === "PAYMENT_RECEIVED" ||
+          item.status === "PAYMENT_CONFIRMED"
+      )
+      .reduce(
+        (total, item) =>
+          total + Number(item.valor || 0),
+        0
+      ) || 0;
+
+  const assinantes =
+    assinaturas?.filter(
+      (item) =>
+        item.status === "PAYMENT_RECEIVED" ||
+        item.status === "PAYMENT_CONFIRMED"
+    ).length || 0;
+
+  setResumoFinanceiro({
+    receitaPassIds,
+    receitaClube,
+    receitaTotal: receitaPassIds + receitaClube,
+    assinantes,
   });
 }
 
@@ -1136,6 +1192,9 @@ numero_federal: editForm.numero_federal,
   }
 
   if (!user) {
+
+
+    
     return (
       <main className="min-h-screen bg-[#061832] text-white flex items-center justify-center px-5">
         <div className="rounded-[2rem] bg-white/10 border border-white/15 p-8 max-w-md w-full text-center">
@@ -1198,7 +1257,35 @@ const comprasFiltradas = compras.filter((compra) => {
   return passouBusca && passouStatus;
 });
 
+{abaAdmin === "financeiro" && (
+  <section className="mt-10">
+    <h2 className="text-3xl font-black mb-6">
+      💵 Financeiro
+    </h2>
 
+    <div className="grid md:grid-cols-4 gap-4">
+      <ResumoCard
+        titulo="Receita PASS-IDs"
+        valor={`R$ ${resumoFinanceiro.receitaPassIds.toFixed(2).replace(".", ",")}`}
+      />
+
+      <ResumoCard
+        titulo="Receita Clube"
+        valor={`R$ ${resumoFinanceiro.receitaClube.toFixed(2).replace(".", ",")}`}
+      />
+
+      <ResumoCard
+        titulo="Receita Total"
+        valor={`R$ ${resumoFinanceiro.receitaTotal.toFixed(2).replace(".", ",")}`}
+      />
+
+      <ResumoCard
+        titulo="Assinantes"
+        valor={resumoFinanceiro.assinantes}
+      />
+    </div>
+  </section>
+)}
 
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-10">
@@ -1269,6 +1356,17 @@ const comprasFiltradas = compras.filter((compra) => {
   }`}
 >
   👑 Clube
+</button>
+
+<button
+  onClick={() => setAbaAdmin("financeiro")}
+  className={`rounded-xl px-4 py-3 font-black ${
+    abaAdmin === "financeiro"
+      ? "bg-[#23C997] text-[#061832]"
+      : "bg-white/10 text-white"
+  }`}
+>
+  💵 Financeiro
 </button>
 
   <button
