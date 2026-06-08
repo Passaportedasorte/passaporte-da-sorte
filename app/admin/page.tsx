@@ -2531,17 +2531,27 @@ const comprasFiltradas = compras.filter((compra) => {
   titulo="Planos Mensais"
   valor={
     assinaturasClube.filter(
-      (item) => item.plano === "mensal"
-    ).length
+  (item) =>
+    item.plano === "mensal" &&
+    (
+      item.status === "PAYMENT_CONFIRMED" ||
+      item.status === "PAYMENT_RECEIVED"
+    )
+).length
   }
 />
 
 <ResumoCard
   titulo="Planos Semestrais"
   valor={
-    assinaturasClube.filter(
-      (item) => item.plano === "semestral"
-    ).length
+   assinaturasClube.filter(
+  (item) =>
+    item.plano === "semestral" &&
+    (
+      item.status === "PAYMENT_CONFIRMED" ||
+      item.status === "PAYMENT_RECEIVED"
+    )
+).length
   }
 />
 
