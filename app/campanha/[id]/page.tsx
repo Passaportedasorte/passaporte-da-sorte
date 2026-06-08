@@ -31,6 +31,7 @@ export default function CampanhaPage({
   const [quantidade, setQuantidade] = useState(5);
   const [loadingPix, setLoadingPix] = useState(false);
   const [resultado, setResultado] = useState<any>(null);
+  const [totalPassIds, setTotalPassIds] = useState(0);
   const valorOriginal = Number(campanha?.preco || 0) * quantidade;
   const [paymentIdAtual, setPaymentIdAtual] = useState("");
   const [pixInterno, setPixInterno] = useState<any>(null);
@@ -73,6 +74,13 @@ useEffect(() => {
 
       setCampanha(data);
       setCarregando(false);
+
+      const { count } = await supabase
+  .from("pass_ids")
+  .select("*", { count: "exact", head: true })
+  .eq("campaign_id", id);
+
+setTotalPassIds(count ?? 0);
     }
 
     carregarCampanha();
@@ -316,13 +324,17 @@ useEffect(() => {
                 icon={<Calendar />}
                 text={`Sorteio ${campanha.data_sorteio || "em breve"}`}
               />
+
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-black">
+  🍀 {totalPassIds} PASS-IDs já emitidos
+</div>
             </div>
           </div>
         </div>
       </section>
 
 
-      <section className="max-w-7xl mx-auto px-5 md:px-8 py-12 grid lg:grid-cols-3 gap-8">
+      <section className="max-w-7xl mx-auto px-5 md:px-8 py-12 grid lg:grid-cols-[58%_42%] gap-8">
 {campanha.status === "ENCERRADA" && resultado && (
   <div className="lg:col-span-3 rounded-[2rem] bg-[#23C997] text-[#061832] p-6 md:p-8">
     <p className="font-black text-sm">RESULTADO OFICIAL</p>
@@ -349,7 +361,7 @@ useEffect(() => {
   </div>
 )}
 
-        <div className="lg:col-span-2 space-y-8">
+        <div className="space-y-6">
           <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
   <h2 className="text-3xl font-black">Sobre o destino</h2>
   <div className="text-white/70 mt-4 leading-relaxed text-lg whitespace-pre-line">
@@ -420,14 +432,38 @@ useEffect(() => {
               <Step number="4" text="Acompanhe o resultado oficial." />
             </div>
           </div>
+
+          <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
+  <h2 className="text-3xl font-black">
+    💚 Clube Passaporte
+  </h2>
+
+  <p className="text-white/60 mt-3">
+    Assinantes podem trocar milhas por PASS-IDs extras,
+    recompensas e benefícios exclusivos.
+  </p>
+
+  <a
+    href="/clube"
+    className="inline-block mt-5 rounded-2xl bg-[#23C997] text-[#061832] px-6 py-4 font-black"
+  >
+    Conhecer Clube
+  </a>
+</div>
         </div>
 
         <div className="rounded-[2rem] bg-white text-[#061832] p-6 shadow-2xl h-fit lg:sticky lg:top-6">
-          <h3 className="text-2xl font-black">Comprar PASS-IDs</h3>
+          <h3 className="text-2xl font-black">
+  🎟️ Garanta sua participação
+</h3>
 
-          <p className="text-slate-500 mt-2 mb-6">
-            Escolha a quantidade e garanta sua participação nesta campanha.
-          </p>
+          <p className="text-slate-500 mt-2 mb-3">
+  Escolha a quantidade e participe com seus PASS-IDs digitais.
+</p>
+
+<p className="mb-6 rounded-xl bg-[#23C997]/10 border border-[#23C997]/20 p-3 text-sm font-black text-[#0c7a5b]">
+  🎁 Você receberá {quantidade * Number(campanha?.milhas || 0)} milhas nesta compra
+</p>
 
           <div className="space-y-4">
             {user ? (
