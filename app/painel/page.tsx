@@ -216,7 +216,7 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
     </h2>
   </div>
 
-<div className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-6">
+
   <div
   onClick={() => setComprasAbertas(!comprasAbertas)}
   className="rounded-2xl bg-white/10 border border-white/15 text-white p-5 cursor-pointer hover:scale-105 transition"
@@ -234,7 +234,6 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
   </p>
 </div>
  
-</div>
 
    <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
   <p className="text-sm font-black text-white/60">
