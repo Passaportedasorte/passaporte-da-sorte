@@ -1257,36 +1257,6 @@ const comprasFiltradas = compras.filter((compra) => {
   return passouBusca && passouStatus;
 });
 
-{abaAdmin === "financeiro" && (
-  <section className="mt-10">
-    <h2 className="text-3xl font-black mb-6">
-      💵 Financeiro
-    </h2>
-
-    <div className="grid md:grid-cols-4 gap-4">
-      <ResumoCard
-        titulo="Receita PASS-IDs"
-        valor={`R$ ${resumoFinanceiro.receitaPassIds.toFixed(2).replace(".", ",")}`}
-      />
-
-      <ResumoCard
-        titulo="Receita Clube"
-        valor={`R$ ${resumoFinanceiro.receitaClube.toFixed(2).replace(".", ",")}`}
-      />
-
-      <ResumoCard
-        titulo="Receita Total"
-        valor={`R$ ${resumoFinanceiro.receitaTotal.toFixed(2).replace(".", ",")}`}
-      />
-
-      <ResumoCard
-        titulo="Assinantes"
-        valor={resumoFinanceiro.assinantes}
-      />
-    </div>
-  </section>
-)}
-
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-10">
       <div className="max-w-7xl mx-auto">
@@ -1810,6 +1780,35 @@ const comprasFiltradas = compras.filter((compra) => {
   </section>
 )}
 
+{abaAdmin === "financeiro" && (
+  <section className="mt-10">
+    <h2 className="text-3xl font-black mb-6">
+      💵 Financeiro
+    </h2>
+
+    <div className="grid md:grid-cols-4 gap-4">
+      <ResumoCard
+        titulo="Receita PASS-IDs"
+        valor={`R$ ${resumoFinanceiro.receitaPassIds.toFixed(2).replace(".", ",")}`}
+      />
+
+      <ResumoCard
+        titulo="Receita Clube"
+        valor={`R$ ${resumoFinanceiro.receitaClube.toFixed(2).replace(".", ",")}`}
+      />
+
+      <ResumoCard
+        titulo="Receita Total"
+        valor={`R$ ${resumoFinanceiro.receitaTotal.toFixed(2).replace(".", ",")}`}
+      />
+
+      <ResumoCard
+        titulo="Assinantes"
+        valor={resumoFinanceiro.assinantes}
+      />
+    </div>
+  </section>
+)}
 
         {abaAdmin === "compras" && (
   <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
