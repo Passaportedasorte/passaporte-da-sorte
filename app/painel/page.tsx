@@ -228,11 +228,11 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
   <h2 className="text-3xl font-black mt-1">
     {minhasCompras.length} 🛒
   </h2>
-</div>
 
-    <button className="rounded-2xl bg-[#23C997] text-[#061832] px-5 py-3 font-black">
-      {comprasAbertas ? "Fechar" : "Ver compras"}
-    </button>
+  <p className="text-xs text-white/50 mt-3">
+    Clique para ver detalhes
+  </p>
+</div>
  
 </div>
 
