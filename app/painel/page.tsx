@@ -264,11 +264,23 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
             {compra.quantidade} PASS-IDs
           </p>
 
-          <p className="text-[#23C997] font-black mt-1">
-            R$ {Number(compra.valor_final || compra.valor || 0)
-              .toFixed(2)
-              .replace(".", ",")}
-          </p>
+          <div className="flex flex-wrap items-center gap-3 mt-2">
+  <p className="text-[#23C997] font-black">
+    R$ {Number(compra.valor_final || compra.valor || 0)
+      .toFixed(2)
+      .replace(".", ",")}
+  </p>
+
+  <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black">
+    {compra.status === "PAYMENT_RECEIVED" ||
+    compra.status === "PAYMENT_CONFIRMED"
+      ? "✅ Pago"
+      : compra.status === "PENDING" ||
+        compra.status === "AWAITING_PAYMENT"
+      ? "⏳ Pendente"
+      : "❌ Cancelado"}
+  </span>
+</div>
         </div>
       ))}
     </div>
