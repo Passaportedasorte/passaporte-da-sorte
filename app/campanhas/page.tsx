@@ -66,16 +66,16 @@ function SecaoCampanhas({
         <p className="text-white/60 mt-2">{descricao}</p>
       </div>
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-2 gap-8">
         {lista.map((campanha) => (
           <article
-            key={campanha.id}
-            onClick={() => {
-              window.location.href = `/campanha/${campanha.id}`;
-            }}
-           className="group w-full rounded-[2rem] bg-white/10 border border-white/15 overflow-hidden shadow-2xl cursor-pointer hover:-translate-y-1 transition duration-300"
-          >
-            <div className="relative h-96 overflow-hidden">
+  key={campanha.id}
+  onClick={() => {
+    window.location.href = `/campanha/${campanha.id}`;
+  }}
+  className="group w-full rounded-[2rem] bg-white/10 border border-white/15 overflow-hidden shadow-2xl cursor-pointer hover:-translate-y-1 transition duration-300 lg:grid lg:grid-cols-[45%_55%]"
+>
+            <div className="relative h-80 lg:h-full min-h-[320px] overflow-hidden">
               <img
                 src={campanha.imagem || "/logo.png"}
                 alt={campanha.destino || campanha.titulo}
@@ -117,7 +117,7 @@ function SecaoCampanhas({
                   "Uma experiência especial para transformar sorte em memória."}
               </p>
 
-              <div className="grid grid-cols-3 gap-3 mt-5">
+              <div className="grid md:grid-cols-3 gap-3 mt-5">
                 <MiniInfo
   icon={<Ticket />}
   label="A partir de"
