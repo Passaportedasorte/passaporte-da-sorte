@@ -2518,7 +2518,7 @@ const comprasFiltradas = compras.filter((compra) => {
       </button>
     </div>
 
-    <div className="grid md:grid-cols-2 gap-4 mb-8">
+    <div className="grid md:grid-cols-4 gap-4 mb-8">
       <div className="rounded-[2rem] bg-white/10 border border-white/15 p-5">
         <p className="text-white/50 text-sm font-black">
           Assinantes ativos
@@ -2533,6 +2533,23 @@ const comprasFiltradas = compras.filter((compra) => {
         <p className="text-white/50 text-sm font-black">
           Receita Clube
         </p>
+        <ResumoCard
+  titulo="Planos Mensais"
+  valor={
+    assinaturasClube.filter(
+      (item) => item.plano === "mensal"
+    ).length
+  }
+/>
+
+<ResumoCard
+  titulo="Planos Semestrais"
+  valor={
+    assinaturasClube.filter(
+      (item) => item.plano === "semestral"
+    ).length
+  }
+/>
 
         <h3 className="text-4xl font-black mt-2 text-[#23C997]">
           R$ {resumoClube.receita.toFixed(2).replace(".", ",")}
@@ -2615,11 +2632,11 @@ const comprasFiltradas = compras.filter((compra) => {
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-black ${
                         ativo
-                          ? "bg-[#23C997]/20 text-[#23C997]"
+                          ? "bg-yellow-500/20 text-yellow-300"
                           : "bg-yellow-500/20 text-yellow-300"
                       }`}
                     >
-                      {ativo ? "✅ Ativo" : "⏳ Pendente"}
+                      {ativo ? "👑 Ativo" : "⏳ Pendente"}
                     </span>
                   </td>
 
