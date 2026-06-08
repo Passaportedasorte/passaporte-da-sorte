@@ -300,22 +300,16 @@ const ativos = assinaturas.filter(
 }
 
 async function abrirUsuarioPorId(userId: string) {
-  try {
-    setLoadingUsuarioClube(true);
+  const usuario = usuarios.find(
+    (u) => u.user_id === userId
+  );
 
-    const usuario = usuarios.find(
-      (u) => u.user_id === userId
-    );
-
-    if (!usuario) {
-      alert("Usuário não encontrado.");
-      return;
-    }
-
-    await abrirDetalhesUsuario(usuario);
-  } finally {
-    setLoadingUsuarioClube(false);
+  if (!usuario) {
+    alert("Usuário não encontrado.");
+    return;
   }
+
+  await abrirDetalhesUsuario(usuario);
 }
 
 async function buscarUsuarios() {
@@ -2590,21 +2584,21 @@ const comprasFiltradas = compras.filter((compra) => {
                   <td className="py-4">
                     <td className="py-4">
   <button
-  onClick={() =>
-    abrirUsuarioPorId(item.user_id)
-  }
-  className="font-black text-left hover:text-[#23C997]"
->
-  {usuariosClube[item.user_id]?.nome || "Sem nome"}
-</button>
+    onClick={() => abrirUsuarioPorId(item.user_id)}
+    className="text-left"
+  >
+    <p className="font-black hover:text-[#23C997] transition">
+      {usuariosClube[item.user_id]?.nome || "Sem nome"}
+    </p>
 
-  <p className="text-white/50 text-sm">
-    CPF: {usuariosClube[item.user_id]?.cpf || "—"}
-  </p>
+    <p className="text-white/50 text-sm">
+      CPF: {usuariosClube[item.user_id]?.cpf || "—"}
+    </p>
 
-  <p className="text-white/40 text-xs">
-    {usuariosClube[item.user_id]?.celular || "—"}
-  </p>
+    <p className="text-white/40 text-xs">
+      {usuariosClube[item.user_id]?.celular || "—"}
+    </p>
+  </button>
 </td>
 
                     <p className="text-white/50">
