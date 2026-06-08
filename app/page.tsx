@@ -50,6 +50,14 @@ export default function PassaporteDaSorteSite() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [loginAberto, setLoginAberto] = useState(false);
 
+  useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("login") === "1") {
+    setLoginAberto(true);
+  }
+}, []);
+
   const [emailLogin, setEmailLogin] = useState("");
   const [senhaLogin, setSenhaLogin] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
@@ -119,6 +127,8 @@ const [estadoEdicao, setEstadoEdicao] = useState("");
     setCompletarCadastroAberto(true);
   }
 }
+
+
 
 async function buscarCepCadastro(cep: string) {
   const cepLimpo = cep.replace(/\D/g, "");

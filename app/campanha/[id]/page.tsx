@@ -449,11 +449,11 @@ useEffect(() => {
                 </p>
 
                 <a
-                  href="/"
-                  className="mt-4 block text-center rounded-2xl bg-[#23C997] px-6 py-4 font-black text-[#061832]"
-                >
-                  Entrar ou criar conta
-                </a>
+  href="/?login=1"
+  className="mt-4 block text-center rounded-2xl bg-[#23C997] px-6 py-4 font-black text-[#061832]"
+>
+  Entrar ou criar conta
+</a>
               </div>
             )}
 
