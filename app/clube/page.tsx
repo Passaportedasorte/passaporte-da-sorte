@@ -96,9 +96,10 @@ if (dataApi.bankSlipUrl) {
   } catch (error) {
     console.error(error);
     alert("Erro ao processar a assinatura. Tente novamente.");
-  } finally {
+    } finally {
     setLoadingPlano(null);
   }
+}
 
 useEffect(() => {
   if (!pixClube || !paymentIdClube) return;
@@ -499,5 +500,4 @@ function Comparativo({
       </ul>
     </div>
   );
-}
 }
