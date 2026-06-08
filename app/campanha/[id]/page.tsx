@@ -318,16 +318,13 @@ setTotalPassIds(count ?? 0);
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <Badge icon={<Ticket />} text={`R$ ${campanha.preco}`} green />
-              <Badge icon={<Clover />} text={`+${campanha.milhas} milhas`} />
+              <Badge icon={<Ticket />} text={`PASS-ID por R$ ${campanha.preco}`} />
+              <Badge icon={<Clover />} text={`${campanha.milhas} milhas por PASS-ID`} />
               <Badge
-                icon={<Calendar />}
-                text={`Sorteio ${campanha.data_sorteio || "em breve"}`}
-              />
+  icon={<Calendar />}
+  text={`Resultado ${campanha.data_sorteio || "em breve"}`}
+/>
 
-              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-black">
-  🍀 {totalPassIds} PASS-IDs já emitidos
-</div>
             </div>
           </div>
         </div>
