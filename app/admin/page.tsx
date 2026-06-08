@@ -1150,7 +1150,7 @@ const comprasFiltradas = compras.filter((compra) => {
               Gerencie o Passaporte da Sorte.
             </p>
 
-            <div className="flex flex-wrap gap-3 mt-8">
+           <div className="sticky top-0 z-20 flex flex-wrap gap-3 mt-8 mb-6 rounded-2xl bg-[#061832]/95 backdrop-blur-md border border-white/10 p-3">
   <button
     onClick={() => setAbaAdmin("dashboard")}
     className={`rounded-xl px-4 py-3 font-black ${
@@ -1252,11 +1252,10 @@ const comprasFiltradas = compras.filter((compra) => {
     <table className="w-full text-left min-w-[800px]">
       <thead>
         <tr className="text-white/50 text-sm border-b border-white/10">
-          <th className="py-3">Campanha</th>
-          <th className="py-3">Número Federal</th>
-          <th className="py-3">PASS-ID Vencedor</th>
+          <th className="py-3">Plano</th>
+          <th className="py-3">Status</th>
+          <th className="py-3">Payment ID</th>
           <th className="py-3">Data</th>
-          <th className="py-3">Tipo</th>
 
         </tr>
 
