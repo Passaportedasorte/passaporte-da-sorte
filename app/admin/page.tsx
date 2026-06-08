@@ -60,6 +60,7 @@ const [modalResultadoAberto, setModalResultadoAberto] = useState(false);
 const [abaAdmin, setAbaAdmin] = useState("dashboard");
 const [assinaturasClube, setAssinaturasClube] = useState<any[]>([]);
 const [usuariosClube, setUsuariosClube] = useState<any>({});
+const [loadingUsuarioClube, setLoadingUsuarioClube] = useState(false);
 const [resumoClube, setResumoClube] = useState({
   ativos: 0,
   receita: 0,
@@ -296,6 +297,25 @@ const ativos = assinaturas.filter(
     ativos,
     receita,
   });
+}
+
+async function abrirUsuarioPorId(userId: string) {
+  try {
+    setLoadingUsuarioClube(true);
+
+    const usuario = usuarios.find(
+      (u) => u.user_id === userId
+    );
+
+    if (!usuario) {
+      alert("Usuário não encontrado.");
+      return;
+    }
+
+    await abrirDetalhesUsuario(usuario);
+  } finally {
+    setLoadingUsuarioClube(false);
+  }
 }
 
 async function buscarUsuarios() {
@@ -2552,9 +2572,14 @@ const comprasFiltradas = compras.filter((compra) => {
                 >
                   <td className="py-4">
                     <td className="py-4">
-  <p className="font-black">
-    {usuariosClube[item.user_id]?.nome || "Sem nome"}
-  </p>
+  <button
+  onClick={() =>
+    abrirUsuarioPorId(item.user_id)
+  }
+  className="font-black text-left hover:text-[#23C997]"
+>
+  {usuariosClube[item.user_id]?.nome || "Sem nome"}
+</button>
 
   <p className="text-white/50 text-sm">
     CPF: {usuariosClube[item.user_id]?.cpf || "—"}
