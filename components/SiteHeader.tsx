@@ -4,26 +4,26 @@ import { Briefcase, CircleHelp, Home, Trophy, Sparkles, User } from "lucide-reac
 
 export default function SiteHeader() {
   return (
-    <header className="sticky top-4 z-[9999] px-5 md:px-8">
-      <div className="max-w-7xl mx-auto rounded-[2rem] bg-white/10 border border-white/15 px-4 md:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 shadow-2xl backdrop-blur-xl">
+    <header className="relative z-50 px-5 md:px-8">
+      <div className="max-w-7xl mx-auto rounded-[2rem] bg-white/10 border border-white/15 px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6 shadow-2xl backdrop-blur-xl">
         <div
           onClick={() => (window.location.href = "/")}
           className="flex items-center gap-4 cursor-pointer flex-shrink-0"
         >
-          <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden flex-shrink-0">
+          <div className="w-11 h-11 md:w-14 md:h-14 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden flex-shrink-0">
             <img
               src="/logo.png"
               alt="Passaporte da Sorte"
-              className="w-10 h-10 object-contain"
+              className="w-8 h-8 md:w-10 md:h-10 object-contain"
             />
           </div>
 
           <div className="flex flex-col whitespace-nowrap">
-            <h1 className="text-2xl font-black leading-none">
+            <h1 className="text-xl md:text-2xl font-black leading-none">
               Passaporte da Sorte
             </h1>
 
-            <p className="text-white/50 text-sm mt-1">
+            <p className="text-white/50 text-xs md:text-sm mt-1">
               Clube de viagens e experiências
             </p>
           </div>
