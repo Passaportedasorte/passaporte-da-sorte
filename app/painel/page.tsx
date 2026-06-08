@@ -172,11 +172,28 @@ const conquistas = [
     ],
   },
   {
-    categoria: "Clube",
-    itens: [
-      { nome: "Passaporte Premium", emoji: "💚", atual: assinanteClube ? 1 : 0, meta: 1 },
-    ],
-  },
+  categoria: "Clube",
+  itens: [
+    {
+      nome: "Passaporte Premium",
+      emoji: "💚",
+      atual: assinanteClube ? 1 : 0,
+      meta: 1,
+    },
+    {
+      nome: "Cliente Fiel",
+      emoji: "⭐",
+      atual: 0,
+      meta: 6,
+    },
+    {
+      nome: "Embaixador",
+      emoji: "🌟",
+      atual: 0,
+      meta: 12,
+    },
+  ],
+},
   {
     categoria: "Campanhas",
     itens: [
