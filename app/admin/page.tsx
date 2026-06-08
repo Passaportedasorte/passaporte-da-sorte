@@ -1413,10 +1413,11 @@ const comprasFiltradas = compras.filter((compra) => {
 
 
 
-<section className="rounded-[2rem] bg-white/10 border border-white/15 p-6 mt-8">
-  <h2 className="text-3xl font-black text-white">
-    🍀 Recompensas
-  </h2>
+{abaAdmin === "recompensas" && (
+  <section className="rounded-[2rem] bg-white/10 border border-white/15 p-6 mt-8">
+    <h2 className="text-3xl font-black text-white">
+      🍀 Recompensas
+    </h2>
 
   <p className="text-white/60 mt-2">
     Cadastre benefícios que os usuários poderão resgatar com milhas.
@@ -1628,7 +1629,8 @@ const comprasFiltradas = compras.filter((compra) => {
   </div>
 ))}
   </div>
-</section>
+  </section>
+)}
 
        {abaAdmin === "dashboard" && (
   <section className="grid md:grid-cols-4 lg:grid-cols-8 gap-4 mt-10">
