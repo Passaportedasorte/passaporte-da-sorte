@@ -59,6 +59,7 @@ const [videoVencedor, setVideoVencedor] = useState("");
 const [modalResultadoAberto, setModalResultadoAberto] = useState(false);
 const [abaAdmin, setAbaAdmin] = useState("dashboard");
 const [assinaturasClube, setAssinaturasClube] = useState<any[]>([]);
+const [usuariosClube, setUsuariosClube] = useState<any>({});
 const [resumoClube, setResumoClube] = useState({
   ativos: 0,
   receita: 0,
@@ -256,7 +257,26 @@ const { data, error } = await supabase
 
   setAssinaturasClube(assinaturas);
 
-  const ativos = assinaturas.filter(
+const userIds = assinaturas
+  .map((item) => item.user_id)
+  .filter(Boolean);
+
+if (userIds.length > 0) {
+  const { data: perfis } = await supabase
+    .from("user_profiles")
+    .select("*")
+    .in("user_id", userIds);
+
+  const mapaUsuarios: any = {};
+
+  (perfis || []).forEach((perfil) => {
+    mapaUsuarios[perfil.user_id] = perfil;
+  });
+
+  setUsuariosClube(mapaUsuarios);
+}
+
+const ativos = assinaturas.filter(
     (item) =>
       item.status === "PAYMENT_CONFIRMED" ||
       item.status === "PAYMENT_RECEIVED"
@@ -2531,9 +2551,19 @@ const comprasFiltradas = compras.filter((compra) => {
                   className="border-b border-white/5 text-sm"
                 >
                   <td className="py-4">
-                    <p className="font-black">
-                      {item.user_id || "—"}
-                    </p>
+                    <td className="py-4">
+  <p className="font-black">
+    {usuariosClube[item.user_id]?.nome || "Sem nome"}
+  </p>
+
+  <p className="text-white/50 text-sm">
+    CPF: {usuariosClube[item.user_id]?.cpf || "—"}
+  </p>
+
+  <p className="text-white/40 text-xs">
+    {usuariosClube[item.user_id]?.celular || "—"}
+  </p>
+</td>
 
                     <p className="text-white/50">
                       Usuário
