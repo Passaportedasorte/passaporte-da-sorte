@@ -118,7 +118,8 @@ const progressoNivel = proximoNivel
       (proximoNivel.minimo - nivelAtual.minimo)) *
     100
   : 100;
-const [campanhaAberta, setCampanhaAberta] = useState<string | null>(null);    
+const [campanhaAberta, setCampanhaAberta] = useState<string | null>(null);   
+const [comprasAbertas, setComprasAbertas] = useState(false); 
 
 const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
   const destino = item.campaigns?.destino || "Campanha";
@@ -215,14 +216,50 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
     </h2>
   </div>
 
-<div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
-  <p className="text-sm font-black text-white/60">
-    Minhas compras
-  </p>
+<div className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-6">
+  <div
+    onClick={() => setComprasAbertas(!comprasAbertas)}
+    className="cursor-pointer flex items-center justify-between"
+  >
+    <div>
+      <h2 className="text-3xl font-black">
+        🛒 Minhas Compras
+      </h2>
 
-  <h2 className="text-3xl font-black mt-1">
-    {minhasCompras.length} 🛒
-  </h2>
+      <p className="text-white/60 mt-2">
+        {minhasCompras.length} compras realizadas
+      </p>
+    </div>
+
+    <button className="rounded-2xl bg-[#23C997] text-[#061832] px-5 py-3 font-black">
+      {comprasAbertas ? "Fechar" : "Ver compras"}
+    </button>
+  </div>
+
+  {comprasAbertas && (
+    <div className="grid gap-4 mt-6">
+      {minhasCompras.map((compra) => (
+        <div
+          key={compra.id}
+          className="rounded-2xl bg-white/5 border border-white/10 p-4"
+        >
+          <p className="font-black">
+            {compra.campaigns?.titulo || "Compra"}
+          </p>
+
+          <p className="text-white/60">
+            {compra.quantidade} PASS-IDs
+          </p>
+
+          <p className="text-[#23C997] font-black mt-1">
+            R$ {Number(compra.valor_final || compra.valor || 0)
+              .toFixed(2)
+              .replace(".", ",")}
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
 </div>
 
    <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
