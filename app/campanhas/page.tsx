@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Calendar, Clover, Ticket, MapPin } from "lucide-react";
+import { Calendar, Clover, Ticket, MapPin, Sparkles } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
@@ -117,18 +117,24 @@ function SecaoCampanhas({
                   "Uma experiência especial para transformar sorte em memória."}
               </p>
 
-              <div className="flex flex-wrap gap-2 mt-5">
-                <span className="rounded-full bg-[#23C997] text-[#061832] px-4 py-2 text-sm font-black">
-                  R$ {campanha.preco}
-                </span>
+              <div className="grid grid-cols-3 gap-3 mt-5">
+                <MiniInfo
+  icon={<Ticket />}
+  label="A partir de"
+  value={`R$ ${campanha.preco}`}
+/>
 
-                <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black">
-                  🍀 {campanha.milhas} milhas
-                </span>
+<MiniInfo
+  icon={<Clover />}
+  label="Milhas"
+  value={`${campanha.milhas} milhas`}
+/>
 
-                <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black">
-                  📅 {campanha.data_sorteio || "Em breve"}
-                </span>
+<MiniInfo
+  icon={<Calendar />}
+  label="Sorteio"
+  value={campanha.data_sorteio || "Em breve"}
+/>
               </div>
 
               <button
@@ -142,7 +148,7 @@ function SecaoCampanhas({
                   ? "Ver resultado"
                   : campanha.status === "EM_BREVE"
                   ? "Ver detalhes"
-                  : "Participar"}
+                  : "Quero participar"}
               </button>
             </div>
           </article>
@@ -164,18 +170,43 @@ function SecaoCampanhas({
 
           <div className="relative z-10 max-w-3xl">
             <p className="text-[#23C997] font-black">
-              CAMPANHAS DISPONÍVEIS
-            </p>
+  CAMPANHAS DISPONÍVEIS
+</p>
 
-            <h1 className="text-5xl md:text-7xl font-black leading-[0.95] mt-3">
-              Escolha seu próximo destino.
-            </h1>
+<h1 className="text-5xl md:text-7xl font-black leading-[0.95] mt-3">
+  Escolha sua próxima experiência.
+</h1>
 
-            <p className="text-white/60 mt-5 text-lg md:text-xl leading-relaxed">
-              Participe das campanhas, receba seus PASS-IDs digitais,
-              acumule milhas e acompanhe os resultados oficiais pela
-              Loteria Federal.
-            </p>
+<p className="text-white/60 mt-5 text-lg md:text-xl leading-relaxed">
+  Participe das campanhas, receba PASS-IDs digitais, acumule milhas
+  e acompanhe tudo pelo seu painel.
+</p>
+
+<div className="grid md:grid-cols-3 gap-4 mt-8">
+  <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
+    <p className="text-2xl">🎟️</p>
+    <p className="font-black mt-2">PASS-IDs digitais</p>
+    <p className="text-white/50 text-sm mt-1">
+      Cada participação gera números exclusivos.
+    </p>
+  </div>
+
+  <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
+    <p className="text-2xl">🍀</p>
+    <p className="font-black mt-2">Milhas acumuladas</p>
+    <p className="text-white/50 text-sm mt-1">
+      Acumule milhas para evoluir no Passaporte.
+    </p>
+  </div>
+
+  <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
+    <p className="text-2xl">🏆</p>
+    <p className="font-black mt-2">Resultados oficiais</p>
+    <p className="text-white/50 text-sm mt-1">
+      Acompanhe os resultados pela Loteria Federal.
+    </p>
+  </div>
+</div>
           </div>
         </section>
 
@@ -191,9 +222,19 @@ function SecaoCampanhas({
               </p>
             </div>
 
-            <div className="rounded-full bg-white/10 border border-white/15 px-5 py-3 font-black text-white/70">
-              {campanhas.length} campanha{campanhas.length === 1 ? "" : "s"}
-            </div>
+            <div className="flex flex-wrap gap-3">
+  <div className="rounded-full bg-[#23C997]/15 border border-[#23C997]/30 px-5 py-3 font-black text-[#23C997]">
+    🍀 {campanhasAtivas.length} ativa{campanhasAtivas.length === 1 ? "" : "s"}
+  </div>
+
+  <div className="rounded-full bg-yellow-400/15 border border-yellow-400/30 px-5 py-3 font-black text-yellow-300">
+    ⏳ {campanhasEmBreve.length} em breve
+  </div>
+
+  <div className="rounded-full bg-white/10 border border-white/15 px-5 py-3 font-black text-white/70">
+    🏆 {campanhasEncerradas.length} encerrada{campanhasEncerradas.length === 1 ? "" : "s"}
+  </div>
+</div>
           </div>
 
           <div className="space-y-16">
