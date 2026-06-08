@@ -1,8 +1,22 @@
 "use client";
 
 import { Briefcase, CircleHelp, Home, Trophy, Sparkles, User } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+
 
 export default function SiteHeader() {
+
+  async function irParaPainel() {
+  const { data } = await supabase.auth.getUser();
+
+  if (!data.user) {
+    alert("Faça login ou crie sua conta para acessar o painel.");
+    window.location.href = "/";
+    return;
+  }
+
+  window.location.href = "/painel";
+}
   return (
     <header className="relative z-50 px-5 md:px-8">
       <div className="max-w-7xl mx-auto rounded-[2rem] bg-white/10 border border-white/15 px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6 shadow-2xl backdrop-blur-xl">
@@ -71,7 +85,7 @@ export default function SiteHeader() {
 </button>
 
           <button
-  onClick={() => (window.location.href = "/painel")}
+  onClick={irParaPainel}
   className="col-span-2 md:col-span-1 flex items-center justify-center gap-2 rounded-full bg-[#23C997] px-5 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
 >
   <User className="w-5 h-5" />
