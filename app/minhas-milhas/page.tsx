@@ -17,6 +17,7 @@ export default function MinhasMilhasPage() {
   const [assinanteClube, setAssinanteClube] = useState(false);
   const [meusResgates, setMeusResgates] = useState<any[]>([]);
   const [resgatesAbertos, setResgatesAbertos] = useState(false);
+  const [milhasHistorico, setMilhasHistorico] = useState(0);
 
 
 
@@ -30,11 +31,12 @@ export default function MinhasMilhasPage() {
 
       const { data: milhas } = await supabase
         .from("user_miles")
-        .select("total_milhas")
+        .select("total_milhas, milhas_historico")
         .eq("user_id", data.user.id)
         .single();
 
       setSaldoMilhas(milhas?.total_milhas ?? 0);
+      setMilhasHistorico(milhas?.milhas_historico ?? milhas?.total_milhas ?? 0);
 
       const { data: resgates } = await supabase
   .from("reward_redemptions")
@@ -71,7 +73,7 @@ setAssinanteClube(!!assinatura);
   
 
   const nivel =
-    saldoMilhas >= 2500
+  milhasHistorico >= 2500
       ? "Diamante"
       : saldoMilhas >= 1000
       ? "Elite"

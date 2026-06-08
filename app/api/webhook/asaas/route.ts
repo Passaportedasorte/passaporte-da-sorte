@@ -155,9 +155,9 @@ for (let i = 0; i < Number(compra.quantidade || 0); i++) {
     if (compra.user_id && totalMilhasGeradas > 0) {
       const { data: milhasAtuais, error: milhasSelectError } = await supabase
         .from("user_miles")
-        .select("total_milhas")
-        .eq("user_id", compra.user_id)
-        .single();
+.select("total_milhas, milhas_historico")
+.eq("user_id", compra.user_id)
+.single();
 
       if (milhasSelectError && milhasSelectError.code !== "PGRST116") {
         console.error("Erro ao buscar milhas:", milhasSelectError);
@@ -168,7 +168,9 @@ for (let i = 0; i < Number(compra.quantidade || 0); i++) {
           .from("user_miles")
           .update({
             total_milhas:
-              Number(milhasAtuais.total_milhas || 0) + totalMilhasGeradas,
+  Number(milhasAtuais.total_milhas || 0) + totalMilhasGeradas,
+milhas_historico:
+  Number(milhasAtuais.milhas_historico || 0) + totalMilhasGeradas,
           })
           .eq("user_id", compra.user_id);
 
@@ -179,9 +181,10 @@ for (let i = 0; i < Number(compra.quantidade || 0); i++) {
         const { error: milhasInsertError } = await supabase
           .from("user_miles")
           .insert({
-            user_id: compra.user_id,
-            total_milhas: totalMilhasGeradas,
-          });
+  user_id: compra.user_id,
+  total_milhas: totalMilhasGeradas,
+  milhas_historico: totalMilhasGeradas,
+});
 
         if (milhasInsertError) {
           console.error("Erro ao inserir milhas:", milhasInsertError);
