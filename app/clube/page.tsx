@@ -11,6 +11,7 @@ export default function ClubePage() {
     const [pagamentoClubeAberto, setPagamentoClubeAberto] = useState(false);
     const [pixClube, setPixClube] = useState<any>(null);
     const [paymentIdClube, setPaymentIdClube] = useState("");
+    const [pixClubeConfirmado, setPixClubeConfirmado] = useState(false);
 
     async function assinarClube(
   plano: "mensal" | "semestral",
@@ -78,6 +79,7 @@ if (!response.ok) {
 }
 
 if (billingType === "PIX" && dataApi.pixQrCode) {
+  setPixClubeConfirmado(false);
   setPaymentIdClube(dataApi.paymentId);
   setPixClube(dataApi.pixQrCode);
   setPagamentoClubeAberto(false);
@@ -115,12 +117,12 @@ useEffect(() => {
       if (data.status === "RECEIVED" || data.status === "CONFIRMED") {
   clearInterval(interval);
 
-  alert("Pagamento confirmado! Sua assinatura do clube foi ativada.");
+  setPixClubeConfirmado(true);
 
-  setTimeout(() => {
-    setPixClube(null);
-    window.location.href = "/minhas-milhas";
-  }, 2000);
+setTimeout(() => {
+  setPixClube(null);
+  window.location.href = "/minhas-milhas";
+}, 2000);
 }
     } catch (error) {
       console.error(error);
@@ -378,9 +380,29 @@ useEffect(() => {
         Copiar código PIX
       </button>
 
-      <p className="text-center text-white/50 text-sm mt-4">
-        Aguardando confirmação automática...
+      <div className="mt-4 rounded-2xl bg-white/10 border border-white/10 p-4 text-center">
+  {pixClubeConfirmado ? (
+    <>
+      <div className="text-3xl">✅</div>
+      <p className="text-[#23C997] font-black mt-2">
+        Pagamento confirmado!
       </p>
+      <p className="text-white/60 text-sm mt-1">
+        Sua assinatura foi ativada. Redirecionando...
+      </p>
+    </>
+  ) : (
+    <>
+      <div className="mx-auto w-6 h-6 border-2 border-white/20 border-t-[#23C997] rounded-full animate-spin" />
+      <p className="text-white font-black mt-3">
+        Aguardando confirmação do PIX...
+      </p>
+      <p className="text-white/50 text-sm mt-1">
+        Assim que o pagamento for identificado, você será redirecionado automaticamente.
+      </p>
+    </>
+  )}
+</div>
     </div>
   </div>
 )}
