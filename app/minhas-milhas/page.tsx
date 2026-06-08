@@ -152,10 +152,6 @@ setAssinanteClube(!!assinatura);
 
           <div className="grid md:grid-cols-3 gap-4 mt-8">
             <InfoCard label="Saldo atual" value={`${saldoMilhas} 🍀`} />
-            <InfoCard
-  label="Histórico acumulado"
-  value={`${milhasHistorico} ⭐`}
-/>
             <InfoCard label="Nível atual" value={`${nivel} ✈️`} />
             <InfoCard
               label="Próximo marco"
