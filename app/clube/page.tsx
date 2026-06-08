@@ -113,14 +113,15 @@ useEffect(() => {
       const data = await response.json();
 
       if (data.status === "RECEIVED" || data.status === "CONFIRMED") {
-        clearInterval(interval);
+  clearInterval(interval);
 
-        setPixClube(null);
+  alert("Pagamento confirmado! Sua assinatura do clube foi ativada.");
 
-        alert("Pagamento confirmado! Sua assinatura do clube foi ativada.");
-
-        window.location.href = "/minhas-milhas";
-      }
+  setTimeout(() => {
+    setPixClube(null);
+    window.location.href = "/minhas-milhas";
+  }, 2000);
+}
     } catch (error) {
       console.error(error);
     }
