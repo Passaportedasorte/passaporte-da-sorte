@@ -218,25 +218,39 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
 
 <div className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-6">
   <div
-    onClick={() => setComprasAbertas(!comprasAbertas)}
-    className="cursor-pointer flex items-center justify-between"
-  >
-    <div>
-      <h2 className="text-3xl font-black">
-        🛒 Minhas Compras
-      </h2>
+  onClick={() => setComprasAbertas(!comprasAbertas)}
+  className="rounded-2xl bg-white/10 border border-white/15 text-white p-5 cursor-pointer hover:scale-105 transition"
+>
+  <p className="text-sm font-black text-white/60">
+    Minhas compras
+  </p>
 
-      <p className="text-white/60 mt-2">
-        {minhasCompras.length} compras realizadas
-      </p>
-    </div>
+  <h2 className="text-3xl font-black mt-1">
+    {minhasCompras.length} 🛒
+  </h2>
+</div>
 
     <button className="rounded-2xl bg-[#23C997] text-[#061832] px-5 py-3 font-black">
       {comprasAbertas ? "Fechar" : "Ver compras"}
     </button>
-  </div>
+ 
+</div>
 
-  {comprasAbertas && (
+   <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
+  <p className="text-sm font-black text-white/60">
+    Nível Atual
+  </p>
+
+  <h2 className="text-3xl font-black mt-1">
+    {nivelAtual.nome} ✈️
+  </h2>
+</div>
+
+</div>
+  </div>
+)}
+
+{comprasAbertas && (
     <div className="grid gap-4 mt-6">
       {minhasCompras.map((compra) => (
         <div
@@ -260,78 +274,6 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
       ))}
     </div>
   )}
-</div>
-
-   <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
-  <p className="text-sm font-black text-white/60">
-    Nível Atual
-  </p>
-
-  <h2 className="text-3xl font-black mt-1">
-    {nivelAtual.nome} ✈️
-  </h2>
-</div>
-
-</div>
-  </div>
-)}
-
-<div className="mt-10">
-  <h2 className="text-3xl font-black">
-    Minhas Compras
-  </h2>
-
-  <p className="text-white/60 mt-2">
-    Acompanhe suas compras, valores e status de pagamento.
-  </p>
-
-  <div className="grid gap-4 mt-6">
-    {minhasCompras.map((compra) => (
-      <div
-        key={compra.id}
-        className="rounded-[2rem] bg-white/10 border border-white/15 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
-      >
-        <div>
-          <p className="text-[#23C997] font-black text-sm">
-            {compra.campaigns?.titulo || "Compra de PASS-ID"}
-          </p>
-
-          <h3 className="text-2xl font-black mt-1">
-            ✈️ {compra.campaigns?.destino || "Passaporte da Sorte"}
-          </h3>
-
-          <p className="text-white/60 mt-1">
-            {compra.quantidade || 0} PASS-IDs • R$ {Number(compra.valor_final || compra.valor || 0).toFixed(2).replace(".", ",")}
-          </p>
-
-          <p className="text-white/40 text-sm mt-1">
-            {compra.created_at
-              ? new Date(compra.created_at).toLocaleString("pt-BR")
-              : "—"}
-          </p>
-        </div>
-
-        <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-black">
-          {compra.status === "PAYMENT_RECEIVED" ||
-          compra.status === "PAYMENT_CONFIRMED"
-            ? "✅ Pago"
-            : compra.status === "PENDING" ||
-              compra.status === "AWAITING_PAYMENT"
-            ? "⏳ Pendente"
-            : "❌ Cancelado"}
-        </span>
-      </div>
-    ))}
-
-    {minhasCompras.length === 0 && (
-      <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6">
-        <p className="text-white/50">
-          Você ainda não possui compras.
-        </p>
-      </div>
-    )}
-  </div>
-</div>
 
         <div className="mt-10">
   <h2 className="text-3xl font-black">
