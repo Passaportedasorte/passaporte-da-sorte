@@ -146,15 +146,13 @@ useEffect(() => {
         return;
       }
 
-      const { data: assinatura } = await supabase
-  .from("clube_assinaturas")
-  .select("*")
+      const { data: miles } = await supabase
+  .from("user_miles")
+  .select("assinante_clube")
   .eq("user_id", user.id)
-  .eq("status", "ativo")
-  .gt("fim", new Date().toISOString())
-  .maybeSingle();
+  .single();
 
-      setAssinaturaAtiva(assinatura);
+setAssinaturaAtiva(miles?.assinante_clube === true);
     } catch (error) {
       console.error("Erro ao verificar assinatura:", error);
     } finally {
