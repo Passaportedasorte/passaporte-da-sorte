@@ -11,6 +11,9 @@ export default function Painel() {
   const [meusPassaportes, setMeusPassaportes] = useState<any[]>([]);
   const [minhasCompras, setMinhasCompras] = useState<any[]>([]);
   const [saldoMilhas, setSaldoMilhas] = useState(0);
+const [milhasHistorico, setMilhasHistorico] = useState(0);
+const [assinanteClube, setAssinanteClube] = useState(false);
+const [modalConquistasAberto, setModalConquistasAberto] = useState(false);
   const [campanhasAtivas, setCampanhasAtivas] = useState(0);
 
   useEffect(() => {
@@ -57,11 +60,13 @@ setMinhasCompras(compras ?? []);
 
 const { data: milhas } = await supabase
   .from("user_miles")
-  .select("total_milhas")
+  .select("total_milhas, milhas_historico, assinante_clube")
   .eq("user_id", data.user.id)
   .single();
 
 setSaldoMilhas(milhas?.total_milhas ?? 0);
+setMilhasHistorico(milhas?.milhas_historico ?? 0);
+setAssinanteClube(milhas?.assinante_clube === true);
     }
 
     carregar();
@@ -132,6 +137,66 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
 
   return acc;
 }, {});
+
+const totalPassIds = meusPassaportes.length;
+const totalCampanhas = Object.keys(passaportesPorCampanha).length;
+
+const conquistas = [
+  {
+    categoria: "Níveis",
+    itens: [
+      { nome: "Iniciante", emoji: "🌱", atual: milhasHistorico, meta: 0 },
+      { nome: "Aventureiro", emoji: "🍀", atual: milhasHistorico, meta: 100 },
+      { nome: "Viajante", emoji: "✈️", atual: milhasHistorico, meta: 500 },
+      { nome: "Elite", emoji: "👑", atual: milhasHistorico, meta: 1000 },
+      { nome: "Diamante", emoji: "💠", atual: milhasHistorico, meta: 2500 },
+    ],
+  },
+  {
+    categoria: "PASS-IDs",
+    itens: [
+      { nome: "Primeiro Embarque", emoji: "🥉", atual: totalPassIds, meta: 1 },
+      { nome: "Explorador", emoji: "🥈", atual: totalPassIds, meta: 50 },
+      { nome: "Viajante Frequente", emoji: "🥇", atual: totalPassIds, meta: 250 },
+      { nome: "Colecionador", emoji: "💎", atual: totalPassIds, meta: 1000 },
+      { nome: "Lenda do Passaporte", emoji: "👑", atual: totalPassIds, meta: 5000 },
+    ],
+  },
+  {
+    categoria: "Milhas Históricas",
+    itens: [
+      { nome: "Primeiras Milhas", emoji: "🍀", atual: milhasHistorico, meta: 500 },
+      { nome: "Caçador de Destinos", emoji: "🎯", atual: milhasHistorico, meta: 2500 },
+      { nome: "Mestre das Milhas", emoji: "🏆", atual: milhasHistorico, meta: 10000 },
+      { nome: "Lenda das Milhas", emoji: "👑", atual: milhasHistorico, meta: 50000 },
+    ],
+  },
+  {
+    categoria: "Clube",
+    itens: [
+      { nome: "Passaporte Premium", emoji: "💚", atual: assinanteClube ? 1 : 0, meta: 1 },
+    ],
+  },
+  {
+    categoria: "Campanhas",
+    itens: [
+      { nome: "Explorador do Brasil", emoji: "🔥", atual: totalCampanhas, meta: 5 },
+      { nome: "Volta ao Mundo", emoji: "✈️", atual: totalCampanhas, meta: 15 },
+      { nome: "Cidadão do Mundo", emoji: "🌍", atual: totalCampanhas, meta: 30 },
+    ],
+  },
+];
+
+const totalConquistas = conquistas.reduce(
+  (total, grupo) => total + grupo.itens.length,
+  0
+);
+
+const conquistasConcluidas = conquistas.reduce(
+  (total, grupo) =>
+    total + grupo.itens.filter((item) => item.atual >= item.meta).length,
+  0
+);
 
   return (
     <main className="min-h-screen bg-[#061832] text-white px-5 md:px-10 py-10">
@@ -235,14 +300,21 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
 </div>
  
 
-   <div className="rounded-2xl bg-white/10 border border-white/15 text-white p-5">
+   <div
+  onClick={() => setModalConquistasAberto(true)}
+  className="rounded-2xl bg-white/10 border border-white/15 text-white p-5 cursor-pointer hover:scale-105 transition"
+>
   <p className="text-sm font-black text-white/60">
-    Nível Atual
+    Conquistas
   </p>
 
   <h2 className="text-3xl font-black mt-1">
-    {nivelAtual.nome} ✈️
+    {conquistasConcluidas}/{totalConquistas} 🏅
   </h2>
+
+  <p className="text-xs text-white/50 mt-3">
+    Nível atual: {nivelAtual.nome}
+  </p>
 </div>
 
 </div>
@@ -363,6 +435,100 @@ const passaportesPorCampanha = meusPassaportes.reduce((acc: any, item) => {
   </div>
 </div>
 </div>
+
+{modalConquistasAberto && (
+  <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+    <div className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-4xl font-black">
+            🏅 Minhas Conquistas
+          </h2>
+
+          <p className="text-white/60 mt-2">
+            {conquistasConcluidas} de {totalConquistas} conquistas desbloqueadas.
+          </p>
+        </div>
+
+        <button
+          onClick={() => setModalConquistasAberto(false)}
+          className="text-white/60 hover:text-white text-3xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="mt-6 h-3 rounded-full bg-white/10 overflow-hidden">
+        <div
+          className="h-full bg-[#23C997]"
+          style={{
+            width: `${(conquistasConcluidas / totalConquistas) * 100}%`,
+          }}
+        />
+      </div>
+
+      <div className="grid gap-8 mt-8">
+        {conquistas.map((grupo) => (
+          <div key={grupo.categoria}>
+            <h3 className="text-2xl font-black mb-4">
+              {grupo.categoria}
+            </h3>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              {grupo.itens.map((item) => {
+                const concluida = item.atual >= item.meta;
+                const progresso =
+                  item.meta === 0
+                    ? 100
+                    : Math.min((item.atual / item.meta) * 100, 100);
+
+                return (
+                  <div
+                    key={item.nome}
+                    className={`rounded-2xl border p-5 ${
+                      concluida
+                        ? "bg-[#23C997]/10 border-[#23C997]/30"
+                        : "bg-white/5 border-white/10 opacity-70"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-3xl">
+                        {item.emoji}
+                      </div>
+
+                      <span className="text-xs font-black">
+                        {concluida ? "✅ Desbloqueada" : "🔒 Bloqueada"}
+                      </span>
+                    </div>
+
+                    <h4 className="text-xl font-black mt-4">
+                      {item.nome}
+                    </h4>
+
+                    <p className="text-white/50 text-sm mt-2">
+                      {item.meta === 0
+                        ? "Conquista inicial"
+                        : `${item.atual} / ${item.meta}`}
+                    </p>
+
+                    <div className="mt-4 h-2 rounded-full bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-[#23C997]"
+                        style={{
+                          width: `${progresso}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
       <SiteFooter />
     </main>
   );
