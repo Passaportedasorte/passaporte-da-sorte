@@ -11,7 +11,7 @@ function getHeaders() {
 
 export async function POST(req: Request) {
   try {
-    const { plano, userId, nome, email, cpf } = await req.json();
+    const { plano, userId, nome, email, cpf, billingType } = await req.json();
 
     if (!plano || !userId || !nome || !email || !cpf) {
       return NextResponse.json(
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       headers: getHeaders(),
       body: JSON.stringify({
         customer: customerData.id,
-        billingType: "UNDEFINED",
+        billingType: billingType === "CREDIT_CARD" ? "UNDEFINED" : billingType || "UNDEFINED",
         value: valor,
         dueDate: new Date().toISOString().split("T")[0],
         description:
@@ -56,6 +56,24 @@ export async function POST(req: Request) {
     });
 
     const paymentData = await paymentResponse.json();
+
+let pixQrCode = null;
+
+if (billingType === "PIX") {
+  const pixResponse = await fetch(
+    `${ASAAS_URL}/payments/${paymentData.id}/pixQrCode`,
+    {
+      method: "GET",
+      headers: getHeaders(),
+    }
+  );
+
+  const pixData = await pixResponse.json();
+
+  if (pixResponse.ok) {
+    pixQrCode = pixData;
+  }
+}
 
     if (!paymentResponse.ok) {
       return NextResponse.json(paymentData, {
@@ -81,10 +99,12 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
-      invoiceUrl: paymentData.invoiceUrl,
-      bankSlipUrl: paymentData.bankSlipUrl,
-      paymentId: paymentData.id,
-    });
+  invoiceUrl: paymentData.invoiceUrl,
+  bankSlipUrl: paymentData.bankSlipUrl,
+  paymentId: paymentData.id,
+  pixQrCode,
+  billingType,
+});
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message || "Erro ao gerar pagamento." },

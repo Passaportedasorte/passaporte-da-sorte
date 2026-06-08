@@ -24,9 +24,12 @@ export async function GET(req: Request) {
 
   const data = await response.json();
 
+  console.log("STATUS ASAAS:", data.status);
+
   if (!response.ok) {
     return NextResponse.json(data, { status: response.status });
   }
+  
 
   return NextResponse.json({
     id: data.id,

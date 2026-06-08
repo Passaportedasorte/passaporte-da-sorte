@@ -1,14 +1,21 @@
 "use client";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function ClubePage() {
 
     const [loadingPlano, setLoadingPlano] = useState<string | null>(null);
+    const [planoSelecionado, setPlanoSelecionado] = useState<"mensal" | "semestral" | null>(null);
+    const [pagamentoClubeAberto, setPagamentoClubeAberto] = useState(false);
+    const [pixClube, setPixClube] = useState<any>(null);
+    const [paymentIdClube, setPaymentIdClube] = useState("");
 
-    async function assinarClube(plano: "mensal" | "semestral") {
+    async function assinarClube(
+  plano: "mensal" | "semestral",
+  billingType: "PIX" | "CREDIT_CARD" | "BOLETO"
+) {
   try {
     setLoadingPlano(plano);
 
@@ -53,34 +60,73 @@ if (!cpf) {
         nome,
         email,
         cpf,
+        billingType,
       }),
     });
 
     const dataApi = await response.json();
 
-    if (!response.ok) {
-      alert(dataApi?.errors?.[0]?.description || dataApi?.error || "Erro ao gerar pagamento.");
-      return;
-    }
+console.log("RESPOSTA CLUBE:", dataApi);
 
-    if (dataApi.invoiceUrl) {
-      window.location.href = dataApi.invoiceUrl;
-      return;
-    }
+if (!response.ok) {
+  alert(
+    dataApi?.errors?.[0]?.description ||
+    dataApi?.error ||
+    "Erro ao gerar pagamento."
+  );
+  return;
+}
 
-    if (dataApi.bankSlipUrl) {
-      window.location.href = dataApi.bankSlipUrl;
-      return;
-    }
+if (billingType === "PIX" && dataApi.pixQrCode) {
+  setPaymentIdClube(dataApi.paymentId);
+  setPixClube(dataApi.pixQrCode);
+  setPagamentoClubeAberto(false);
+  return;
+}
 
-    alert("Pagamento criado, mas não veio link.");
+if (dataApi.invoiceUrl) {
+  window.location.href = dataApi.invoiceUrl;
+  return;
+}
+
+if (dataApi.bankSlipUrl) {
+  window.location.href = dataApi.bankSlipUrl;
+  return;
+}
   } catch (error) {
     console.error(error);
-    alert("Erro ao assinar clube.");
+    alert("Erro ao processar a assinatura. Tente novamente.");
   } finally {
     setLoadingPlano(null);
   }
-}
+
+useEffect(() => {
+  if (!pixClube || !paymentIdClube) return;
+
+  const interval = setInterval(async () => {
+    try {
+      const response = await fetch(
+        `/api/verificar-pagamento?id=${paymentIdClube}`
+      );
+
+      const data = await response.json();
+
+      if (data.status === "RECEIVED" || data.status === "CONFIRMED") {
+        clearInterval(interval);
+
+        setPixClube(null);
+
+        alert("Pagamento confirmado! Sua assinatura do clube foi ativada.");
+
+        window.location.href = "/minhas-milhas";
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, [pixClube, paymentIdClube]);
 
   return (
   <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-10">
@@ -173,7 +219,10 @@ if (!cpf) {
           ]}
           destaque={false}
           botao={loadingPlano === "mensal" ? "Gerando pagamento..." : "Assinar mensal"}
-          onClick={() => assinarClube("mensal")}
+          onClick={() => {
+  setPlanoSelecionado("mensal");
+  setPagamentoClubeAberto(true);
+}}
         />
 
         <PlanoCard
@@ -189,7 +238,10 @@ if (!cpf) {
           ]}
           destaque
           botao={loadingPlano === "semestral" ? "Gerando pagamento..." : "Assinar semestral"}
-          onClick={() => assinarClube("semestral")}
+          onClick={() => {
+  setPlanoSelecionado("semestral");
+  setPagamentoClubeAberto(true);
+}}
         />
       </section>
 
@@ -215,14 +267,121 @@ if (!cpf) {
           Entre para o Clube Passaporte da Sorte e aproveite mais cada participação.
         </p>
 
-        <button
-          onClick={() => assinarClube("semestral")}
-          className="mt-6 rounded-2xl bg-[#061832] text-white px-8 py-4 font-black"
-        >
-          🍀 Quero entrar para o Clube
-        </button>
+       <button
+  onClick={() => {
+    setPlanoSelecionado("semestral");
+    setPagamentoClubeAberto(true);
+  }}
+  className="mt-6 rounded-2xl bg-[#061832] text-white px-8 py-4 font-black"
+>
+  🍀 Quero entrar para o Clube
+</button>
       </section>
     </div>
+
+    {pagamentoClubeAberto && planoSelecionado && (
+  <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-5">
+    <div className="relative z-[100000] w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl text-white">
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-black">
+          Escolha o pagamento
+        </h3>
+
+        <button
+          onClick={() => setPagamentoClubeAberto(false)}
+          className="text-white/60 hover:text-white text-2xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <p className="text-white/60 mt-2 text-sm">
+        Plano selecionado:{" "}
+        <span className="text-[#23C997] font-black">
+          {planoSelecionado === "mensal" ? "Mensal" : "Semestral"}
+        </span>
+      </p>
+
+      <div className="grid gap-3 mt-6">
+        <button
+          onClick={() => assinarClube(planoSelecionado, "PIX")}
+          className="rounded-2xl bg-[#23C997] text-[#061832] font-black px-5 py-4 text-left"
+        >
+          ⚡ PIX
+          <span className="block text-sm font-bold opacity-80">
+            Pague dentro do site com QR Code
+          </span>
+        </button>
+
+        <button
+          onClick={() => assinarClube(planoSelecionado, "CREDIT_CARD")}
+          className="rounded-2xl bg-white/10 border border-white/10 text-white font-black px-5 py-4 text-left"
+        >
+          💳 Cartão de crédito
+          <span className="block text-sm font-bold text-white/60">
+            Finalize pelo checkout seguro
+          </span>
+        </button>
+
+        <button
+          onClick={() => assinarClube(planoSelecionado, "BOLETO")}
+          className="rounded-2xl bg-white/10 border border-white/10 text-white font-black px-5 py-4 text-left"
+        >
+          🧾 Boleto
+          <span className="block text-sm font-bold text-white/60">
+            Gerar boleto de pagamento
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{pixClube && (
+  <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-5">
+    <div className="relative z-[100000] w-full max-w-md rounded-[2rem] bg-[#061832] border border-white/15 p-6 shadow-2xl text-white">
+
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-black">
+          Pague com PIX
+        </h3>
+
+        <button
+          onClick={() => setPixClube(null)}
+          className="text-white/60 hover:text-white text-2xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <img
+        src={`data:image/png;base64,${pixClube.encodedImage}`}
+        alt="PIX"
+        className="w-64 h-64 mx-auto mt-6 rounded-2xl bg-white p-3"
+      />
+
+      <textarea
+        readOnly
+        value={pixClube.payload}
+        className="w-full mt-5 rounded-2xl bg-white/10 border border-white/10 p-3 text-xs"
+      />
+
+      <button
+        onClick={() => {
+          navigator.clipboard.writeText(pixClube.payload);
+          alert("PIX copiado!");
+        }}
+        className="w-full mt-4 rounded-2xl bg-[#23C997] text-[#061832] py-4 font-black"
+      >
+        Copiar código PIX
+      </button>
+
+      <p className="text-center text-white/50 text-sm mt-4">
+        Aguardando confirmação automática...
+      </p>
+    </div>
+  </div>
+)}
 
     <SiteFooter />
   </main>
@@ -340,4 +499,5 @@ function Comparativo({
       </ul>
     </div>
   );
+}
 }
