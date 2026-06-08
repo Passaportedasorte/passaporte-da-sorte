@@ -284,7 +284,8 @@ setAssinaturaAtiva(miles?.assinante_clube === true);
         </div>
       </section>
 
-      <section className="grid md:grid-cols-2 gap-6 mt-10">
+      {!assinaturaAtiva && (
+  <section className="grid md:grid-cols-2 gap-6 mt-10">
         <PlanoCard
           nome="Mensal"
           preco="R$ 24,90"
@@ -321,7 +322,8 @@ setAssinaturaAtiva(miles?.assinante_clube === true);
   setPagamentoClubeAberto(true);
 }}
         />
-      </section>
+            </section>
+)}
 
       <section className="rounded-[2rem] bg-white/10 border border-white/15 p-8 mt-10">
         <h2 className="text-3xl font-black">
