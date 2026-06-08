@@ -211,17 +211,9 @@ useEffect(() => {
       
   async function carregarAssinaturasClube() {
   const { data, error } = await supabase
-    .from("clube_assinaturas")
-    .select(`
-      *,
-      user_profiles (
-        nome,
-        cpf,
-        email,
-        celular
-      )
-    `)
-    .order("created_at", { ascending: false });
+  .from("clube_assinaturas")
+  .select("*")
+  .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Erro ao buscar assinaturas do clube:", error);
@@ -2536,20 +2528,20 @@ const comprasFiltradas = compras.filter((compra) => {
                 >
                   <td className="py-4">
                     <p className="font-black">
-                      {item.user_profiles?.nome || "—"}
+                      {item.user_id || "—"}
                     </p>
 
                     <p className="text-white/50">
-                      {item.user_profiles?.email || "—"}
+                      Usuário
                     </p>
 
                     <p className="text-white/40">
-                      {item.user_profiles?.celular || "—"}
+                      ID do usuário
                     </p>
                   </td>
 
                   <td className="py-4">
-                    {item.user_profiles?.cpf || "—"}
+                    —
                   </td>
 
                   <td className="py-4 font-black capitalize">
