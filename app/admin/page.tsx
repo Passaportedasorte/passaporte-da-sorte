@@ -59,6 +59,10 @@ const [videoVencedor, setVideoVencedor] = useState("");
 const [modalResultadoAberto, setModalResultadoAberto] = useState(false);
 const [abaAdmin, setAbaAdmin] = useState("dashboard");
 const [assinaturasClube, setAssinaturasClube] = useState<any[]>([]);
+const [resumoClube, setResumoClube] = useState({
+  ativos: 0,
+  receita: 0,
+});
 
 
   const [resumo, setResumo] = useState({
@@ -208,7 +212,15 @@ useEffect(() => {
   async function carregarAssinaturasClube() {
   const { data, error } = await supabase
     .from("clube_assinaturas")
-    .select("*")
+    .select(`
+      *,
+      user_profiles (
+        nome,
+        cpf,
+        email,
+        celular
+      )
+    `)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -216,7 +228,30 @@ useEffect(() => {
     return;
   }
 
-  setAssinaturasClube(data || []);
+  const assinaturas = data || [];
+
+  setAssinaturasClube(assinaturas);
+
+  const ativos = assinaturas.filter(
+    (item) =>
+      item.status === "PAYMENT_CONFIRMED" ||
+      item.status === "PAYMENT_RECEIVED"
+  ).length;
+
+  const receita = assinaturas.reduce(
+    (total, item) =>
+      total +
+      (item.status === "PAYMENT_CONFIRMED" ||
+      item.status === "PAYMENT_RECEIVED"
+        ? Number(item.valor || 0)
+        : 0),
+    0
+  );
+
+  setResumoClube({
+    ativos,
+    receita,
+  });
 }
 
       async function buscarCompras() {
@@ -2427,60 +2462,137 @@ const comprasFiltradas = compras.filter((compra) => {
       </div>
 
 {abaAdmin === "clube" && (
-  <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-6">
-    <div className="flex items-center justify-between mb-6">
-      <h2 className="text-3xl font-black">
-        👑 Assinantes do Clube
-      </h2>
+  <section className="mt-10">
+    <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
+      <div>
+        <h2 className="text-3xl font-black">
+          👑 Clube Passaporte da Sorte
+        </h2>
 
-      <div className="rounded-2xl bg-[#23C997] text-[#061832] px-5 py-3 font-black">
-        {
-          assinaturasClube.filter(
-            (item) =>
-              item.status === "PAYMENT_CONFIRMED" ||
-              item.status === "PAYMENT_RECEIVED"
-          ).length
-        }{" "}
-        ativos
+        <p className="text-white/50 mt-2">
+          Acompanhe assinaturas, planos e receita do clube.
+        </p>
+      </div>
+
+      <button
+        onClick={carregarAssinaturasClube}
+        className="rounded-2xl bg-white/10 border border-white/15 px-5 py-3 font-black"
+      >
+        Atualizar
+      </button>
+    </div>
+
+    <div className="grid md:grid-cols-2 gap-4 mb-8">
+      <div className="rounded-[2rem] bg-white/10 border border-white/15 p-5">
+        <p className="text-white/50 text-sm font-black">
+          Assinantes ativos
+        </p>
+
+        <h3 className="text-4xl font-black mt-2 text-[#23C997]">
+          {resumoClube.ativos}
+        </h3>
+      </div>
+
+      <div className="rounded-[2rem] bg-white/10 border border-white/15 p-5">
+        <p className="text-white/50 text-sm font-black">
+          Receita Clube
+        </p>
+
+        <h3 className="text-4xl font-black mt-2 text-[#23C997]">
+          R$ {resumoClube.receita.toFixed(2).replace(".", ",")}
+        </h3>
       </div>
     </div>
 
-    <div className="overflow-x-auto">
-      <table className="w-full text-left">
-        <thead>
-          <tr className="border-b border-white/10">
-            <th className="py-3">Plano</th>
-            <th className="py-3">Status</th>
-            <th className="py-3">Pagamento</th>
-            <th className="py-3">Data</th>
-          </tr>
-        </thead>
+    <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6">
+      <h3 className="text-2xl font-black mb-5">
+        Assinaturas
+      </h3>
 
-        <tbody>
-          {assinaturasClube.map((item) => (
-            <tr
-              key={item.id}
-              className="border-b border-white/5"
-            >
-              <td className="py-3">
-                {item.plano || "-"}
-              </td>
-
-              <td className="py-3">
-                {item.status}
-              </td>
-
-              <td className="py-3">
-                {item.payment_id}
-              </td>
-
-              <td className="py-3">
-                {new Date(item.created_at).toLocaleDateString("pt-BR")}
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left min-w-[950px]">
+          <thead>
+            <tr className="border-b border-white/10 text-white/50 text-sm">
+              <th className="py-3">Assinante</th>
+              <th className="py-3">CPF</th>
+              <th className="py-3">Plano</th>
+              <th className="py-3">Valor</th>
+              <th className="py-3">Status</th>
+              <th className="py-3">Data</th>
+              <th className="py-3">Payment ID</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {assinaturasClube.map((item) => {
+              const ativo =
+                item.status === "PAYMENT_CONFIRMED" ||
+                item.status === "PAYMENT_RECEIVED";
+
+              return (
+                <tr
+                  key={item.id}
+                  className="border-b border-white/5 text-sm"
+                >
+                  <td className="py-4">
+                    <p className="font-black">
+                      {item.user_profiles?.nome || "—"}
+                    </p>
+
+                    <p className="text-white/50">
+                      {item.user_profiles?.email || "—"}
+                    </p>
+
+                    <p className="text-white/40">
+                      {item.user_profiles?.celular || "—"}
+                    </p>
+                  </td>
+
+                  <td className="py-4">
+                    {item.user_profiles?.cpf || "—"}
+                  </td>
+
+                  <td className="py-4 font-black capitalize">
+                    {item.plano || "—"}
+                  </td>
+
+                  <td className="py-4 font-black">
+                    R$ {Number(item.valor || 0).toFixed(2).replace(".", ",")}
+                  </td>
+
+                  <td className="py-4">
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-black ${
+                        ativo
+                          ? "bg-[#23C997]/20 text-[#23C997]"
+                          : "bg-yellow-500/20 text-yellow-300"
+                      }`}
+                    >
+                      {ativo ? "✅ Ativo" : "⏳ Pendente"}
+                    </span>
+                  </td>
+
+                  <td className="py-4 text-white/50">
+                    {item.created_at
+                      ? new Date(item.created_at).toLocaleString("pt-BR")
+                      : "—"}
+                  </td>
+
+                  <td className="py-4 text-white/40 text-xs break-all">
+                    {item.payment_id || "—"}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        {assinaturasClube.length === 0 && (
+          <p className="text-white/50 py-5">
+            Nenhuma assinatura encontrada.
+          </p>
+        )}
+      </div>
     </div>
   </section>
 )}
