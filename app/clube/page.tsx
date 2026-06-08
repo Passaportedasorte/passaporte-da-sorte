@@ -12,6 +12,8 @@ export default function ClubePage() {
     const [pixClube, setPixClube] = useState<any>(null);
     const [paymentIdClube, setPaymentIdClube] = useState("");
     const [pixClubeConfirmado, setPixClubeConfirmado] = useState(false);
+    const [verificandoAssinatura, setVerificandoAssinatura] = useState(true);
+  const [assinaturaAtiva, setAssinaturaAtiva] = useState<any>(null);
 
     async function assinarClube(
   plano: "mensal" | "semestral",
@@ -132,6 +134,36 @@ setTimeout(() => {
   return () => clearInterval(interval);
 }, [pixClube, paymentIdClube]);
 
+
+useEffect(() => {
+  async function verificarAssinatura() {
+    try {
+      const { data } = await supabase.auth.getUser();
+      const user = data.user;
+
+      if (!user) {
+        setVerificandoAssinatura(false);
+        return;
+      }
+
+      const { data: assinatura } = await supabase
+        .from("assinaturas")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("status", "ativo")
+        .maybeSingle();
+
+      setAssinaturaAtiva(assinatura);
+    } catch (error) {
+      console.error("Erro ao verificar assinatura:", error);
+    } finally {
+      setVerificandoAssinatura(false);
+    }
+  }
+
+  verificarAssinatura();
+}, []);
+
   return (
   <main className="min-h-screen bg-[#061832] text-white px-5 md:px-8 py-10">
     <SiteHeader />
@@ -162,29 +194,72 @@ setTimeout(() => {
         </div>
       </section>
 
-      <section className="grid md:grid-cols-2 gap-6 mt-10">
-        <Comparativo
-          titulo="Sem Clube"
-          itens={[
-            "Acumula milhas",
-            "Não pode resgatar benefícios",
-            "Não troca milhas por PASS-IDs",
-            "Menos vantagens nas campanhas",
-          ]}
-          negativo
-        />
+      {verificandoAssinatura ? (
+  <section className="rounded-[2rem] bg-white/10 border border-white/15 p-8 mt-10 text-center">
+    <div className="mx-auto w-8 h-8 border-2 border-white/20 border-t-[#23C997] rounded-full animate-spin" />
+    <p className="text-white/70 mt-4 font-bold">
+      Verificando sua assinatura...
+    </p>
+  </section>
+) : assinaturaAtiva ? (
+  <section className="rounded-[2rem] bg-[#23C997] text-[#061832] p-8 md:p-10 mt-10 text-center">
+    <p className="font-black">✅ ASSINATURA ATIVA</p>
 
-        <Comparativo
-          titulo="Com Clube"
-          itens={[
-            "Usa milhas para resgates",
-            "Troca por PASS-IDs extras",
-            "Acessa cupons e benefícios",
-            "Aumenta suas chances de ganhar",
-          ]}
-        />
-      </section>
+    <h2 className="text-3xl md:text-5xl font-black mt-2">
+      Você já faz parte do Clube Passaporte da Sorte.
+    </h2>
 
+    <p className="mt-4 text-lg font-medium max-w-3xl mx-auto">
+      Seus benefícios estão liberados. Agora você pode usar suas milhas para resgates, recompensas e PASS-IDs extras.
+    </p>
+
+    <a
+      href="/minhas-milhas"
+      className="inline-block mt-6 rounded-2xl bg-[#061832] text-white px-8 py-4 font-black"
+    >
+      Ver minhas milhas
+    </a>
+  </section>
+) : (
+  <section className="grid md:grid-cols-2 gap-6 mt-10">
+    <PlanoCard
+      nome="Mensal"
+      preco="R$ 24,90"
+      descricao="Ideal para conhecer e começar a usar suas milhas."
+      detalhes={[
+        "Acesso à Central de Recompensas",
+        "Uso das milhas para resgates",
+        "Troca por PASS-IDs extras",
+        "Benefícios e cupons exclusivos",
+      ]}
+      destaque={false}
+      botao={loadingPlano === "mensal" ? "Gerando pagamento..." : "Assinar mensal"}
+      onClick={() => {
+        setPlanoSelecionado("mensal");
+        setPagamentoClubeAberto(true);
+      }}
+    />
+
+    <PlanoCard
+      nome="Semestral"
+      preco="6x R$ 19,90"
+      descricao="Melhor opção para aproveitar mais e economizar."
+      detalhes={[
+        "Tudo do plano mensal",
+        "Uso das milhas para PASS-IDs extras",
+        "Economia em relação ao mensal",
+        "Também disponível no PIX por R$ 119,40",
+        "Mais tempo aproveitando benefícios",
+      ]}
+      destaque
+      botao={loadingPlano === "semestral" ? "Gerando pagamento..." : "Assinar semestral"}
+      onClick={() => {
+        setPlanoSelecionado("semestral");
+        setPagamentoClubeAberto(true);
+      }}
+    />
+  </section>
+)}
       <section className="rounded-[2rem] bg-[#23C997] text-[#061832] p-8 md:p-10 mt-10 text-center">
         <p className="font-black">🎟️ PRINCIPAL BENEFÍCIO</p>
 
@@ -271,15 +346,24 @@ setTimeout(() => {
           Entre para o Clube Passaporte da Sorte e aproveite mais cada participação.
         </p>
 
-       <button
-  onClick={() => {
-    setPlanoSelecionado("semestral");
-    setPagamentoClubeAberto(true);
-  }}
-  className="mt-6 rounded-2xl bg-[#061832] text-white px-8 py-4 font-black"
->
-  🍀 Quero entrar para o Clube
-</button>
+       {assinaturaAtiva ? (
+  <a
+    href="/minhas-milhas"
+    className="inline-block mt-6 rounded-2xl bg-[#061832] text-white px-8 py-4 font-black"
+  >
+    Acessar meus benefícios
+  </a>
+) : (
+  <button
+    onClick={() => {
+      setPlanoSelecionado("semestral");
+      setPagamentoClubeAberto(true);
+    }}
+    className="mt-6 rounded-2xl bg-[#061832] text-white px-8 py-4 font-black"
+  >
+    🍀 Quero entrar para o Clube
+  </button>
+)}
       </section>
     </div>
 
