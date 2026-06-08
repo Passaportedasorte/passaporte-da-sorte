@@ -952,7 +952,7 @@ useEffect(() => {
 
     <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
       <button
-        onClick={() => (window.location.href = "/campanhas")}
+        onClick={() => (window.location.href = "/campanha/1")}
         className="rounded-full bg-[#23C997] px-8 py-4 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
       >
         🍀 Participar da Campanha
