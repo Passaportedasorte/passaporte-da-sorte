@@ -27,7 +27,6 @@ export default function MinhasMilhasPage() {
       setUser(data.user);
 
       if (!data.user) return;
-      
 
       const { data: milhas } = await supabase
         .from("user_miles")
@@ -72,16 +71,16 @@ setAssinanteClube(!!assinatura);
 
   
 
-  const nivel =
+ const nivel =
   milhasHistorico >= 2500
-      ? "Diamante"
-      : saldoMilhas >= 1000
-      ? "Elite"
-      : saldoMilhas >= 500
-      ? "Viajante"
-      : saldoMilhas >= 100
-      ? "Aventureiro"
-      : "Iniciante";
+    ? "Diamante"
+    : milhasHistorico >= 1000
+    ? "Elite"
+    : milhasHistorico >= 500
+    ? "Viajante"
+    : milhasHistorico >= 100
+    ? "Aventureiro"
+    : "Iniciante";
 
       async function resgatarRecompensa(item: any) {
   if (!user?.id) {
@@ -153,19 +152,23 @@ setAssinanteClube(!!assinatura);
 
           <div className="grid md:grid-cols-3 gap-4 mt-8">
             <InfoCard label="Saldo atual" value={`${saldoMilhas} 🍀`} />
+            <InfoCard
+  label="Histórico acumulado"
+  value={`${milhasHistorico} ⭐`}
+/>
             <InfoCard label="Nível atual" value={`${nivel} ✈️`} />
             <InfoCard
               label="Próximo marco"
               value={
-                saldoMilhas >= 2500
+                milhasHistorico >= 2500
                   ? "Nível máximo"
-                  : saldoMilhas >= 1000
-                  ? `${2500 - saldoMilhas} para Diamante`
-                  : saldoMilhas >= 500
-                  ? `${1000 - saldoMilhas} para Elite`
-                  : saldoMilhas >= 100
-                  ? `${500 - saldoMilhas} para Viajante`
-                  : `${100 - saldoMilhas} para Aventureiro`
+                  : milhasHistorico >= 1000
+                  ? `${2500 - milhasHistorico} para Diamante`
+                  : milhasHistorico >= 500
+                  ? `${1000 - milhasHistorico} para Elite`
+                  : milhasHistorico >= 100
+                  ? `${500 - milhasHistorico} para Viajante`
+                  : `${100 - milhasHistorico} para Aventureiro`
               }
             />
           </div>
