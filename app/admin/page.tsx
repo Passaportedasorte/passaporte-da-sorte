@@ -56,6 +56,9 @@ const [cidadeVencedor, setCidadeVencedor] = useState("");
 const [resultadoBuscaPassId, setResultadoBuscaPassId] = useState<any>(null);
 const [fotoVencedor, setFotoVencedor] = useState("");
 const [videoVencedor, setVideoVencedor] = useState("");
+const [modalResultadoAberto, setModalResultadoAberto] = useState(false);
+const [abaAdmin, setAbaAdmin] = useState("dashboard");
+const [assinaturasClube, setAssinaturasClube] = useState<any[]>([]);
 
 
   const [resumo, setResumo] = useState({
@@ -68,6 +71,7 @@ const [videoVencedor, setVideoVencedor] = useState("");
   comprasPagas: 0,
   comprasPendentes: 0,
 });
+
   const [form, setForm] = useState({
   titulo: "",
   destino: "",
@@ -192,15 +196,28 @@ useEffect(() => {
     setUser(data.user);
 
     if (data.user?.email === ADMIN_EMAIL) {
-      buscarCampanhas();
-      buscarResumo();
-      buscarCompras();
-      buscarUsuarios();
-      buscarResultados();
-      buscarRecompensas();
+  buscarCampanhas();
+  buscarResumo();
+  buscarCompras();
+  buscarUsuarios();
+  buscarResultados();
+  buscarRecompensas();
+  carregarAssinaturasClube();
 
       
-      
+  async function carregarAssinaturasClube() {
+  const { data, error } = await supabase
+    .from("clube_assinaturas")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erro ao buscar assinaturas do clube:", error);
+    return;
+  }
+
+  setAssinaturasClube(data || []);
+}
 
       async function buscarCompras() {
   const { data, error } = await supabase
@@ -1069,31 +1086,35 @@ numero_federal: editForm.numero_federal,
           >
             Entrar com Google
           </button>
+
+          
         </div>
       </main>
     );
   }
 
   if (user.email !== ADMIN_EMAIL) {
-    return (
-      <main className="min-h-screen bg-[#061832] text-white flex items-center justify-center px-5">
-        <div className="rounded-[2rem] bg-white/10 border border-white/15 p-8 max-w-md w-full text-center">
-          <h1 className="text-3xl font-black">Acesso negado</h1>
+  return (
+    <main className="min-h-screen bg-[#061832] text-white flex items-center justify-center px-5">
+      <div className="rounded-[2rem] bg-white/10 border border-white/15 p-8 max-w-md w-full text-center">
+        <h1 className="text-3xl font-black">Acesso negado</h1>
 
-          <p className="text-white/60 mt-3">
-            Este painel é restrito ao administrador.
-          </p>
+        <p className="text-white/60 mt-3">
+          Este painel é restrito ao administrador.
+        </p>
 
-          <button
-            onClick={logout}
-            className="mt-6 w-full rounded-2xl bg-white/10 border border-white/15 py-4 font-black"
-          >
-            Sair
-          </button>
-        </div>
-      </main>
-    );
-  }
+        <button
+          onClick={logout}
+          className="mt-6 w-full rounded-2xl bg-white/10 border border-white/15 py-4 font-black"
+        >
+          Sair
+        </button>
+      </div>
+    </main>
+  );
+}
+
+
 const comprasFiltradas = compras.filter((compra) => {
   const busca = buscaCompra.toLowerCase();
 
@@ -1128,6 +1149,85 @@ const comprasFiltradas = compras.filter((compra) => {
             <p className="text-white/60 mt-2">
               Gerencie o Passaporte da Sorte.
             </p>
+
+            <div className="flex flex-wrap gap-3 mt-8">
+  <button
+    onClick={() => setAbaAdmin("dashboard")}
+    className={`rounded-xl px-4 py-3 font-black ${
+      abaAdmin === "dashboard"
+        ? "bg-[#23C997] text-[#061832]"
+        : "bg-white/10 text-white"
+    }`}
+  >
+    📊 Dashboard
+  </button>
+
+  <button
+    onClick={() => setAbaAdmin("compras")}
+    className={`rounded-xl px-4 py-3 font-black ${
+      abaAdmin === "compras"
+        ? "bg-[#23C997] text-[#061832]"
+        : "bg-white/10 text-white"
+    }`}
+  >
+    💰 Compras
+  </button>
+
+  <button
+    onClick={() => setAbaAdmin("usuarios")}
+    className={`rounded-xl px-4 py-3 font-black ${
+      abaAdmin === "usuarios"
+        ? "bg-[#23C997] text-[#061832]"
+        : "bg-white/10 text-white"
+    }`}
+  >
+    👥 Usuários
+  </button>
+
+  <button
+  onClick={() => setAbaAdmin("campanhas")}
+  className={`rounded-xl px-4 py-3 font-black ${
+    abaAdmin === "campanhas"
+      ? "bg-[#23C997] text-[#061832]"
+      : "bg-white/10 text-white"
+  }`}
+>
+  🎟️ Campanhas
+</button>
+
+<button
+  onClick={() => setAbaAdmin("clube")}
+  className={`rounded-xl px-4 py-3 font-black ${
+    abaAdmin === "clube"
+      ? "bg-[#23C997] text-[#061832]"
+      : "bg-white/10 text-white"
+  }`}
+>
+  👑 Clube
+</button>
+
+  <button
+    onClick={() => setAbaAdmin("recompensas")}
+    className={`rounded-xl px-4 py-3 font-black ${
+      abaAdmin === "recompensas"
+        ? "bg-[#23C997] text-[#061832]"
+        : "bg-white/10 text-white"
+    }`}
+  >
+    🍀 Recompensas
+  </button>
+
+  <button
+    onClick={() => setAbaAdmin("resultados")}
+    className={`rounded-xl px-4 py-3 font-black ${
+      abaAdmin === "resultados"
+        ? "bg-[#23C997] text-[#061832]"
+        : "bg-white/10 text-white"
+    }`}
+  >
+    🏆 Resultados
+  </button>
+</div>
           </div>
 
           <button
@@ -1530,37 +1630,25 @@ const comprasFiltradas = compras.filter((compra) => {
   </div>
 </section>
 
-        <section className="grid md:grid-cols-4 lg:grid-cols-8 gap-4 mt-10">
-          <ResumoCard titulo="Campanhas" valor={resumo.campanhas} />
-          <ResumoCard titulo="Compras" valor={resumo.compras} />
-          <ResumoCard titulo="PASS-IDs" valor={resumo.passIds} />
-          <ResumoCard
-            titulo="Arrecadado"
-            valor={`R$ ${resumo.arrecadado.toFixed(2).replace(".", ",")}`}
-          />
-          <ResumoCard
-  titulo="Usuários"
-  valor={resumo.usuarios}
-/>
-
-<ResumoCard
-  titulo="Milhas Distribuídas"
-  valor={resumo.milhas}
-/>
-
-<ResumoCard
-  titulo="Compras Pagas"
-  valor={resumo.comprasPagas}
-/>
-
-<ResumoCard
-  titulo="Pendentes"
-  valor={resumo.comprasPendentes}
-/>
-        </section>
+       {abaAdmin === "dashboard" && (
+  <section className="grid md:grid-cols-4 lg:grid-cols-8 gap-4 mt-10">
+    <ResumoCard titulo="Campanhas" valor={resumo.campanhas} />
+    <ResumoCard titulo="Compras" valor={resumo.compras} />
+    <ResumoCard titulo="PASS-IDs" valor={resumo.passIds} />
+    <ResumoCard
+      titulo="Arrecadado"
+      valor={`R$ ${resumo.arrecadado.toFixed(2).replace(".", ",")}`}
+    />
+    <ResumoCard titulo="Usuários" valor={resumo.usuarios} />
+    <ResumoCard titulo="Milhas Distribuídas" valor={resumo.milhas} />
+    <ResumoCard titulo="Compras Pagas" valor={resumo.comprasPagas} />
+    <ResumoCard titulo="Pendentes" valor={resumo.comprasPendentes} />
+  </section>
+)}
 
 
-        <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
+        {abaAdmin === "compras" && (
+  <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
   <div className="flex items-center justify-between gap-4 mb-5">
 
 <div className="flex flex-col md:flex-row gap-3 mb-5">
@@ -1885,12 +1973,14 @@ const comprasFiltradas = compras.filter((compra) => {
       </p>
     )}
   </div>
-</section>
+  </section>
+)}
 
-<section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
-  <h2 className="text-3xl font-black mb-5">
-    Usuários
-  </h2>
+{abaAdmin === "usuarios" && (
+  <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-5">
+    <h2 className="text-3xl font-black mb-5">
+      Usuários
+    </h2>
 
   <div className="overflow-x-auto">
     <table className="w-full text-left min-w-[1000px]">
@@ -1960,11 +2050,13 @@ const comprasFiltradas = compras.filter((compra) => {
       </p>
     )}
   </div>
-</section>
+  </section>
+)}
 
-        <section className="grid lg:grid-cols-3 gap-8 mt-10">
-          <div className="lg:col-span-1 rounded-[2rem] bg-white text-[#061832] p-6 shadow-2xl h-fit">
-            <h2 className="text-2xl font-black">Nova campanha</h2>
+        {abaAdmin === "campanhas" && (
+  <section className="grid lg:grid-cols-3 gap-8 mt-10">
+    <div className="lg:col-span-1 rounded-[2rem] bg-white text-[#061832] p-6 shadow-2xl h-fit">
+      <h2 className="text-2xl font-black">Nova campanha</h2>
 
             <div className="grid gap-3 mt-5">
               <AdminInput
@@ -2329,8 +2421,68 @@ const comprasFiltradas = compras.filter((compra) => {
               )}
             </div>
           </div>
-        </section>
+          </section>
+)}
       </div>
+
+{abaAdmin === "clube" && (
+  <section className="mt-10 rounded-[2rem] bg-white/10 border border-white/15 p-6">
+    <div className="flex items-center justify-between mb-6">
+      <h2 className="text-3xl font-black">
+        👑 Assinantes do Clube
+      </h2>
+
+      <div className="rounded-2xl bg-[#23C997] text-[#061832] px-5 py-3 font-black">
+        {
+          assinaturasClube.filter(
+            (item) =>
+              item.status === "PAYMENT_CONFIRMED" ||
+              item.status === "PAYMENT_RECEIVED"
+          ).length
+        }{" "}
+        ativos
+      </div>
+    </div>
+
+    <div className="overflow-x-auto">
+      <table className="w-full text-left">
+        <thead>
+          <tr className="border-b border-white/10">
+            <th className="py-3">Plano</th>
+            <th className="py-3">Status</th>
+            <th className="py-3">Pagamento</th>
+            <th className="py-3">Data</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {assinaturasClube.map((item) => (
+            <tr
+              key={item.id}
+              className="border-b border-white/5"
+            >
+              <td className="py-3">
+                {item.plano || "-"}
+              </td>
+
+              <td className="py-3">
+                {item.status}
+              </td>
+
+              <td className="py-3">
+                {item.payment_id}
+              </td>
+
+              <td className="py-3">
+                {new Date(item.created_at).toLocaleDateString("pt-BR")}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+)}
 
       {compraSelecionada && (
   <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
@@ -2516,7 +2668,7 @@ const comprasFiltradas = compras.filter((compra) => {
         <h3 className="text-xl font-black mb-4">PASS IDs do usuário</h3>
 
         <div className="grid md:grid-cols-3 gap-3">
-  {passIdsCompra.map((item) => (
+  {passIdsUsuario.map((item) => (
     <div
       key={item.id}
       className="rounded-xl bg-white/10 border border-white/10 p-3 text-center"
