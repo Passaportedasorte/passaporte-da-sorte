@@ -209,8 +209,40 @@ useEffect(() => {
   carregarAssinaturasClube();
 
       
-  async function carregarAssinaturasClube() {
+  
+
+      async function buscarCompras() {
   const { data, error } = await supabase
+    .from("compras")
+    .select(`
+      *,
+      campaigns (
+        titulo,
+        destino
+      )
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erro ao buscar compras:", error);
+    alert(error.message);
+
+
+    return;
+  }
+
+  setCompras(data ?? []);
+}
+    }
+  }
+
+
+  carregar();
+}, []);
+
+
+async function carregarAssinaturasClube() {
+const { data, error } = await supabase
   .from("clube_assinaturas")
   .select("*")
   .order("created_at", { ascending: false });
@@ -246,34 +278,6 @@ useEffect(() => {
   });
 }
 
-      async function buscarCompras() {
-  const { data, error } = await supabase
-    .from("compras")
-    .select(`
-      *,
-      campaigns (
-        titulo,
-        destino
-      )
-    `)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Erro ao buscar compras:", error);
-    alert(error.message);
-
-
-    return;
-  }
-
-  setCompras(data ?? []);
-}
-    }
-  }
-
-
-  carregar();
-}, []);
 async function buscarUsuarios() {
   const { data: comprasData, error } = await supabase
     .from("compras")
