@@ -147,11 +147,12 @@ useEffect(() => {
       }
 
       const { data: assinatura } = await supabase
-        .from("assinaturas")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("status", "ativo")
-        .maybeSingle();
+  .from("clube_assinaturas")
+  .select("*")
+  .eq("user_id", user.id)
+  .eq("status", "ativo")
+  .gt("fim", new Date().toISOString())
+  .maybeSingle();
 
       setAssinaturaAtiva(assinatura);
     } catch (error) {
