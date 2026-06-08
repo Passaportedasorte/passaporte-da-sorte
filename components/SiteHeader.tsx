@@ -29,54 +29,54 @@ export default function SiteHeader() {
           </div>
         </div>
 
-        <nav className="w-full md:w-auto grid grid-cols-2 md:flex md:items-center gap-3 md:gap-4 md:ml-auto min-w-0">
+        <nav className="w-full md:w-auto grid grid-cols-6 md:flex md:items-center gap-2 md:gap-4 md:ml-auto min-w-0">
           <button
             onClick={() => (window.location.href = "/")}
             className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
           >
             <Home className="w-5 h-5 text-[#23C997]" />
-            Início
+          <span className="hidden md:inline">Início</span>
           </button>
 
           <button
-            onClick={() => (window.location.href = "/campanhas")}
-            className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
-          >
-            <Briefcase className="w-5 h-5 text-[#23C997]" />
-            Campanhas
-          </button>
+  onClick={() => (window.location.href = "/campanhas")}
+  className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+>
+  <Briefcase className="w-5 h-5 text-[#23C997]" />
+  <span className="hidden md:inline">Campanhas</span>
+</button>
 
           <button
-            onClick={() => (window.location.href = "/resultados")}
-            className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
-          >
-            <Trophy className="w-5 h-5 text-[#23C997]" />
-            Resultados
-          </button>
+  onClick={() => (window.location.href = "/resultados")}
+  className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+>
+  <Trophy className="w-5 h-5 text-[#23C997]" />
+  <span className="hidden md:inline">Resultados</span>
+</button>
 
           <button
-            onClick={() => (window.location.href = "/faq")}
-            className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
-          >
-            <CircleHelp className="w-5 h-5 text-[#23C997]" />
-            FAQ
-          </button>
+  onClick={() => (window.location.href = "/faq")}
+  className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
+>
+  <CircleHelp className="w-5 h-5 text-[#23C997]" />
+  <span className="hidden md:inline">FAQ</span>
+</button>
 
           <button
   onClick={() => (window.location.href = "/minhas-milhas")}
   className="flex items-center justify-center gap-2 rounded-full px-3 py-3 text-white/85 hover:text-white hover:bg-white/10 transition font-black"
 >
   <Sparkles className="w-5 h-5 text-[#23C997]" />
-  Benefícios
+  <span className="hidden md:inline">Benefícios</span>
 </button>
 
           <button
-            onClick={() => (window.location.href = "/painel")}
-            className="col-span-2 md:col-span-1 flex items-center justify-center gap-2 rounded-full bg-[#23C997] px-5 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
-          >
-            <User className="w-5 h-5" />
-            Meu Painel
-          </button>
+  onClick={() => (window.location.href = "/painel")}
+  className="col-span-2 md:col-span-1 flex items-center justify-center gap-2 rounded-full bg-[#23C997] px-5 py-3 font-black text-[#061832] hover:scale-105 transition shadow-xl shadow-emerald-500/20"
+>
+  <User className="w-5 h-5" />
+  <span className="hidden md:inline">Meu Painel</span>
+</button>
         </nav>
       </div>
     </header>
