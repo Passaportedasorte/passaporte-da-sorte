@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const ASAAS_URL = "https://api-sandbox.asaas.com/v3";
+const ASAAS_URL = "https://api.asaas.com/v3";
 
 function getHeaders() {
   return {
