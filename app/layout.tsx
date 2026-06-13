@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import JadeChat from "@/components/JadeChat";
+import Script from "next/script";
 
 
 const geistSans = Geist({
@@ -59,6 +60,20 @@ export default function RootLayout({
   {children}
 
   <JadeChat />
+  <Script
+  src="https://www.googletagmanager.com/gtag/js?id=G-G01G81LKFN"
+  strategy="afterInteractive"
+/>
+
+<Script id="google-analytics" strategy="afterInteractive">
+  {`
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-G01G81LKFN');
+  `}
+</Script>
 </body>
     </html>
   );
