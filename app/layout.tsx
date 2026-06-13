@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     title: "Passaporte da Sorte",
     description:
       "Campanhas, viagens, experiências e resultados oficiais.",
-    url: "https://passaportedasorte.com.br",
+    url: "https://passaportedasorte.tur.br",
     siteName: "Passaporte da Sorte",
     locale: "pt_BR",
     type: "website",
