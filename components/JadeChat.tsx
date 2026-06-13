@@ -8,11 +8,21 @@ export default function JadeChat() {
   const [mensagem, setMensagem] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [mensagens, setMensagens] = useState([
-    {
-      role: "jade",
-      text: "Olá! Eu sou a Jade, assistente virtual do Passaporte da Sorte 🍀 Como posso ajudar?",
-    },
-  ]);
+  {
+    role: "jade",
+    text: `🍀 Olá! Eu sou a Jade.
+
+Posso ajudar com:
+
+✈️ Campanhas
+🎟️ PASS-IDs
+🍀 Milhas
+💚 Clube Passaporte
+📋 Compras e painel
+
+Como posso ajudar?`,
+  },
+]);
 
   async function enviarMensagem() {
     if (!mensagem.trim()) return;
