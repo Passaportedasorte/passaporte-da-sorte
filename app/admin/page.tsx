@@ -91,6 +91,7 @@ const [resumoFinanceiro, setResumoFinanceiro] = useState({
   data_sorteio: "",
   imagem: "",
   video_url: "",
+  video_capa: "",
   sobre_destino: "",
   roteiro: "",
   incluso: "",
@@ -108,6 +109,7 @@ const [editForm, setEditForm] = useState({
   data_sorteio: "",
   imagem: "",
   video_url: "",
+  video_capa: "",
   sobre_destino: "",
   roteiro: "",
   incluso: "",
@@ -1049,6 +1051,39 @@ async function uploadVideo(
   alert("Vídeo enviado com sucesso!");
 }
 
+async function uploadVideoCapa(
+  file: File,
+  tipo: "nova" | "editar"
+) {
+  const extensao = file.name.split(".").pop();
+
+  const fileName = `video-capa-${Date.now()}.${extensao}`;
+
+  const { error } = await supabase.storage
+    .from("campanhas")
+    .upload(fileName, file);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  const { data } = supabase.storage
+    .from("campanhas")
+    .getPublicUrl(fileName);
+
+  if (tipo === "nova") {
+    setForm((prev) => ({
+      ...prev,
+      video_capa: data.publicUrl,
+    }));
+  } else {
+    setEditForm((prev) => ({
+      ...prev,
+      video_capa: data.publicUrl,
+    }));
+  }
+}
 
   async function criarCampanha() {
     if (!form.titulo || !form.destino || !form.preco) {
@@ -1065,6 +1100,7 @@ async function uploadVideo(
       data_sorteio: form.data_sorteio,
       imagem: form.imagem,
       video_url: form.video_url,
+      video_capa: form.video_capa,
       sobre_destino: form.sobre_destino,
 roteiro: form.roteiro,
 incluso: form.incluso,
@@ -1086,6 +1122,7 @@ numero_federal: form.numero_federal,
   data_sorteio: "",
   imagem: "",
   video_url: "",
+  video_capa: "",
   sobre_destino: "",
   roteiro: "",
   incluso: "",
@@ -1111,6 +1148,7 @@ numero_federal: "",
       data_sorteio: campanha.data_sorteio || "",
       imagem: campanha.imagem || "",
       video_url: campanha.video_url || "",
+      video_capa: campanha.video_capa || "",
       sobre_destino: campanha.sobre_destino || "",
 roteiro: campanha.roteiro || "",
 incluso: campanha.incluso || "",
@@ -1134,6 +1172,7 @@ numero_federal: campanha.numero_federal || "",
       data_sorteio: "",
       imagem: "",
       video_url: "",
+      video_capa: "",
       sobre_destino: "",
       roteiro: "",
       incluso: "",
@@ -1159,6 +1198,7 @@ numero_federal: "",
   data_sorteio: editForm.data_sorteio,
   imagem: editForm.imagem,
   video_url: editForm.video_url,
+  video_capa: editForm.video_capa,
   imagens_roteiro: editForm.imagens_roteiro || [],
   sobre_destino: editForm.sobre_destino,
   roteiro: editForm.roteiro,
@@ -2292,6 +2332,28 @@ const comprasFiltradas = compras.filter((compra) => {
     className="w-full rounded-2xl"
   />
 )}
+<p className="font-black text-sm mt-4">
+  Capa do vídeo
+</p>
+
+<input
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) uploadVideoCapa(file, "nova");
+  }}
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3"
+/>
+
+{form.video_capa && (
+  <img
+    src={form.video_capa}
+    alt=""
+    className="w-full rounded-2xl mt-3"
+  />
+)}
+
              <textarea
   placeholder="Sobre o destino"
   value={form.sobre_destino || ""}
@@ -2471,6 +2533,28 @@ const comprasFiltradas = compras.filter((compra) => {
     src={editForm.video_url}
     controls
     className="w-full rounded-2xl"
+  />
+)}
+
+<p className="font-black text-sm mt-4">
+  Capa do vídeo
+</p>
+
+<input
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) uploadVideoCapa(file, "editar");
+  }}
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+/>
+
+{editForm.video_capa && (
+  <img
+    src={editForm.video_capa}
+    alt="Capa do vídeo"
+    className="w-full rounded-2xl mt-3"
   />
 )}
 

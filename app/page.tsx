@@ -978,11 +978,15 @@ useEffect(() => {
 
     <div className="w-full max-w-[360px] mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden border border-white/15 bg-black shadow-2xl">
       <video
-        src={campanhaBanner.video_url}
-        controls
-        playsInline
-        className="w-full h-full object-cover"
-      />
+  src={campanhaBanner.video_url}
+  poster={
+    campanhaBanner.video_capa ||
+    campanhaBanner.imagem
+  }
+  controls
+  playsInline
+  className="w-full h-full object-cover"
+/>
     </div>
   </section>
 )}

@@ -407,11 +407,15 @@ setTotalPassIds(count ?? 0);
       ) : (
         <div className="w-full max-w-[360px] mx-auto aspect-[9/16] overflow-hidden rounded-[1.5rem] bg-black border border-white/10">
   <video
-    className="w-full h-full object-cover"
-    src={campanha.video_url}
-    controls
-    playsInline
-  />
+  className="w-full h-full object-cover"
+  src={campanha.video_url}
+  poster={
+    campanha.video_capa ||
+    campanha.imagem
+  }
+  controls
+  playsInline
+/>
 </div>
       )}
     </div>
