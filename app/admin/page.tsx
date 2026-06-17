@@ -90,6 +90,7 @@ const [resumoFinanceiro, setResumoFinanceiro] = useState({
   milhas: "",
   data_sorteio: "",
   imagem: "",
+  video_url: "",
   sobre_destino: "",
   roteiro: "",
   incluso: "",
@@ -106,6 +107,7 @@ const [editForm, setEditForm] = useState({
   milhas: "",
   data_sorteio: "",
   imagem: "",
+  video_url: "",
   sobre_destino: "",
   roteiro: "",
   incluso: "",
@@ -1020,9 +1022,11 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
       milhas: Number(form.milhas || 0),
       data_sorteio: form.data_sorteio,
       imagem: form.imagem,
+      video_url: form.video_url,
       sobre_destino: form.sobre_destino,
 roteiro: form.roteiro,
 incluso: form.incluso,
+imagens_roteiro: form.imagens_roteiro || [],
 pass_id_vencedor: form.pass_id_vencedor,
 numero_federal: form.numero_federal,
     });
@@ -1039,6 +1043,7 @@ numero_federal: form.numero_federal,
   milhas: "",
   data_sorteio: "",
   imagem: "",
+  video_url: "",
   sobre_destino: "",
   roteiro: "",
   incluso: "",
@@ -1063,6 +1068,7 @@ numero_federal: "",
       milhas: String(campanha.milhas || ""),
       data_sorteio: campanha.data_sorteio || "",
       imagem: campanha.imagem || "",
+      video_url: campanha.video_url || "",
       sobre_destino: campanha.sobre_destino || "",
 roteiro: campanha.roteiro || "",
 incluso: campanha.incluso || "",
@@ -1073,24 +1079,6 @@ numero_federal: campanha.numero_federal || "",
     });
   }
 
-  <select
-  value={editForm.status || "ATIVA"}
-  onChange={(e) =>
-    setEditForm({
-      ...editForm,
-      status: e.target.value,
-    })
-    
-  }
-
-  
-  className="w-full rounded-2xl border border-slate-200 px-4 py-3"
->
-  <option value="ATIVA">Ativa</option>
-  <option value="ENCERRADA">Encerrada</option>
-  <option value="EM_BREVE">Em breve</option>
-  <option value="ARQUIVADA">Arquivada</option>
-</select>
 
 
 
@@ -1103,39 +1091,18 @@ numero_federal: campanha.numero_federal || "",
       milhas: "",
       data_sorteio: "",
       imagem: "",
+      video_url: "",
       sobre_destino: "",
       roteiro: "",
       incluso: "",
       imagens_roteiro: [],
       status: "ATIVA",
-      pass_id_vencedor: editForm.pass_id_vencedor,
-numero_federal: editForm.numero_federal,
+      pass_id_vencedor: "",
+numero_federal: "",
     });
   }
 
   async function salvarEdicao(id: number) {
-
-{editForm.status === "ENCERRADA" && (
-  <>
-    <AdminInput
-      placeholder="PASS-ID vencedor"
-      value={editForm.pass_id_vencedor || ""}
-      onChange={(v) =>
-        setEditForm({ ...editForm, pass_id_vencedor: v })
-      }
-    />
-
-    <AdminInput
-      placeholder="Número Federal"
-      value={editForm.numero_federal || ""}
-      onChange={(v) =>
-        setEditForm({ ...editForm, numero_federal: v })
-      }
-
-      
-    />
-  </>
-)}
 
 
 
@@ -1149,6 +1116,7 @@ numero_federal: editForm.numero_federal,
   milhas: Number(editForm.milhas || 0),
   data_sorteio: editForm.data_sorteio,
   imagem: editForm.imagem,
+  video_url: editForm.video_url,
   imagens_roteiro: editForm.imagens_roteiro || [],
   sobre_destino: editForm.sobre_destino,
   roteiro: editForm.roteiro,
@@ -2254,13 +2222,19 @@ const comprasFiltradas = compras.filter((compra) => {
                 
                 
               />
-
-              <textarea
+<AdminInput
+  placeholder="URL do vídeo da campanha"
+  value={form.video_url}
+  onChange={(v) =>
+    setForm({ ...form, video_url: v })
+  }
+/>
+             <textarea
   placeholder="Sobre o destino"
-  value={editForm.sobre_destino || ""}
+  value={form.sobre_destino || ""}
   onChange={(e) =>
-    setEditForm({
-      ...editForm,
+    setForm({
+      ...form,
       sobre_destino: e.target.value,
     })
   }
@@ -2269,10 +2243,10 @@ const comprasFiltradas = compras.filter((compra) => {
 
 <textarea
   placeholder="Roteiro da experiência"
-  value={editForm.roteiro || ""}
+  value={form.roteiro || ""}
   onChange={(e) =>
-    setEditForm({
-      ...editForm,
+    setForm({
+      ...form,
       roteiro: e.target.value,
     })
   }
@@ -2281,10 +2255,10 @@ const comprasFiltradas = compras.filter((compra) => {
 
 <textarea
   placeholder="O que está incluso"
-  value={editForm.incluso || ""}
+  value={form.incluso || ""}
   onChange={(e) =>
-    setEditForm({
-      ...editForm,
+    setForm({
+      ...form,
       incluso: e.target.value,
     })
   }
@@ -2378,7 +2352,44 @@ const comprasFiltradas = compras.filter((compra) => {
   <option value="EM_BREVE">Em breve</option>
   <option value="ARQUIVADA">Arquivada</option>
 </select>
-                      <textarea
+
+{editForm.status === "ENCERRADA" && (
+  <>
+    <AdminInput
+      placeholder="PASS-ID vencedor"
+      value={editForm.pass_id_vencedor || ""}
+      onChange={(v) =>
+        setEditForm({
+          ...editForm,
+          pass_id_vencedor: v,
+        })
+      }
+    />
+
+    <AdminInput
+      placeholder="Número Federal"
+      value={editForm.numero_federal || ""}
+      onChange={(v) =>
+        setEditForm({
+          ...editForm,
+          numero_federal: v,
+        })
+      }
+    />
+  </>
+)}
+
+<AdminInput
+  placeholder="URL do vídeo da campanha"
+  value={editForm.video_url}
+  onChange={(v) =>
+    setEditForm({
+      ...editForm,
+      video_url: v,
+    })
+  }
+/>
+                   <textarea
   placeholder="Sobre o destino"
   value={editForm.sobre_destino || ""}
   onChange={(e) =>
