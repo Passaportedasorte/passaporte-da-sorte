@@ -48,6 +48,7 @@ export default function PassaporteDaSorteSite() {
   const [loadingPix, setLoadingPix] = useState(false);
   const [pixData, setPixData] = useState<any>(null);
   const [menuAberto, setMenuAberto] = useState(false);
+  const [videoTocando, setVideoTocando] = useState(false);
   const [loginAberto, setLoginAberto] = useState(false);
 
   useEffect(() => {
@@ -985,14 +986,18 @@ useEffect(() => {
     }
     controls
     playsInline
+    onPlay={() => setVideoTocando(true)}
+onPause={() => setVideoTocando(false)}
+onEnded={() => setVideoTocando(false)}
     className="w-full h-full object-cover"
   />
 
+ {!videoTocando && (
   <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
     <div className="w-20 h-20 rounded-full bg-white/90 text-[#061832] flex items-center justify-center text-4xl font-black shadow-2xl group-hover:scale-110 transition">
       ▶
     </div>
-  </div>
+  </div>)}
 </div>
   </section>
 )}
