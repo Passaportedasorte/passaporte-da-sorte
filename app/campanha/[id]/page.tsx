@@ -391,7 +391,7 @@ setTotalPassIds(count ?? 0);
       </div>
     </div>
 
-    <div className="aspect-video w-full overflow-hidden rounded-[1.5rem] bg-black border border-white/10">
+    <div className="w-full max-w-[360px] mx-auto overflow-hidden rounded-[1.5rem] bg-black border border-white/10">
       {campanha.video_url.includes("youtube.com") ||
       campanha.video_url.includes("youtu.be") ? (
         <iframe
@@ -402,15 +402,14 @@ setTotalPassIds(count ?? 0);
           allowFullScreen
         />
       ) : (
-        <video
-  className="w-full h-full object-cover"
-  src={campanha.video_url}
-  autoPlay
-  muted
-  loop
-  playsInline
-  controls
-/>
+        <div className="w-full max-w-[360px] mx-auto aspect-[9/16] overflow-hidden rounded-[1.5rem] bg-black border border-white/10">
+  <video
+    className="w-full h-full object-cover"
+    src={campanha.video_url}
+    controls
+    playsInline
+  />
+</div>
       )}
     </div>
   </div>
