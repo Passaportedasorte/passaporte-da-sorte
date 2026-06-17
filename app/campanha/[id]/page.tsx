@@ -378,6 +378,9 @@ setTotalPassIds(count ?? 0);
   </div>
 )}
 
+
+
+        <div className="space-y-6">
 {campanha.video_url && (
   <div className="rounded-[2rem] bg-white/10 border border-white/15 p-4 md:p-5 overflow-hidden">
     <div className="flex items-center justify-between mb-4">
@@ -415,7 +418,6 @@ setTotalPassIds(count ?? 0);
   </div>
 )}
 
-        <div className="space-y-6">
           <div className="rounded-[2rem] bg-white/10 border border-white/15 p-6 md:p-8">
   <h2 className="text-3xl font-black">Sobre o destino</h2>
   <div className="text-white/70 mt-4 leading-relaxed text-lg whitespace-pre-line">
