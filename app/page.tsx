@@ -976,7 +976,7 @@ useEffect(() => {
       </h2>
     </div>
 
-    <div className="relative w-full h-full group">
+    <div className="relative w-full max-w-[280px] mx-auto aspect-[9/16] group overflow-hidden rounded-[2rem] border border-white/15 bg-black shadow-2xl">
   <video
     src={campanhaBanner.video_url}
     poster={
