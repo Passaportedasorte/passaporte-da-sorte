@@ -405,17 +405,23 @@ setTotalPassIds(count ?? 0);
           allowFullScreen
         />
       ) : (
-        <div className="w-full max-w-[360px] mx-auto aspect-[9/16] overflow-hidden rounded-[1.5rem] bg-black border border-white/10">
+       <div className="relative w-full h-full group">
   <video
-  className="w-full h-full object-cover"
-  src={campanha.video_url}
-  poster={
-    campanha.video_capa ||
-    campanha.imagem
-  }
-  controls
-  playsInline
-/>
+    className="w-full h-full object-cover"
+    src={campanha.video_url}
+    poster={
+      campanha.video_capa ||
+      campanha.imagem
+    }
+    controls
+    playsInline
+  />
+
+  <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+    <div className="w-20 h-20 rounded-full bg-white/90 text-[#061832] flex items-center justify-center text-4xl font-black shadow-2xl group-hover:scale-110 transition">
+      ▶
+    </div>
+  </div>
 </div>
       )}
     </div>
