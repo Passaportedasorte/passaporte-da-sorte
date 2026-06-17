@@ -940,16 +940,12 @@ useEffect(() => {
     className="relative z-10 text-center max-w-4xl mx-auto"
   >
     <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
-       Itália + Malta: duas joias do Mediterrâneo em uma única viagem.
-    </h2>
+  Seu próximo carimbo no passaporte pode estar mais perto do que você imagina.
+</h2>
 
     <p className="mt-6 text-lg md:text-2xl text-white/90 max-w-2xl mx-auto text-center leading-relaxed">
-      Participe da campanha e viva uma experiência que ficará para sempre na memória. 🍀✈️🌍
-      <br />
-      <br />
-      Participe da campanha e transforme seu próximo destino em realidade.
-    </p>
-
+  Garanta seus PASS-IDs, acumule milhas e participe da campanha para viver uma experiência internacional inesquecível. 🍀✈️🌍
+</p>
     <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
       <button
         onClick={() => (window.location.href = "/campanha/1")}
@@ -959,16 +955,37 @@ useEffect(() => {
       </button>
 
       <button
-        onClick={() =>
-          window.open("https://pt.wikipedia.org/wiki/Malta", "_blank")
-        }
-        className="rounded-full border border-white/20 bg-white/10 px-6 py-4 font-black hover:bg-white/15 transition"
-      >
-        ✈️ Conhecer Malta
-      </button>
+  onClick={() => (window.location.href = "/campanha/1")}
+  className="rounded-full border border-white/20 bg-white/10 px-6 py-4 font-black hover:bg-white/15 transition"
+>
+  Ver detalhes da campanha
+</button>
     </div>
   </motion.div>
 </section>
+
+{campanhaBanner?.video_url && (
+  <section className="max-w-7xl mx-auto px-5 md:px-8 py-12">
+    <div className="text-center mb-8">
+      <p className="text-[#23C997] font-black">
+        CONHEÇA A EXPERIÊNCIA
+      </p>
+
+      <h2 className="text-4xl md:text-5xl font-black mt-2">
+        Veja o que te espera nessa campanha
+      </h2>
+    </div>
+
+    <div className="w-full max-w-[360px] mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden border border-white/15 bg-black shadow-2xl">
+      <video
+        src={campanhaBanner.video_url}
+        controls
+        playsInline
+        className="w-full h-full object-cover"
+      />
+    </div>
+  </section>
+)}
 <section className="max-w-7xl mx-auto px-5 md:px-8 py-8">
   <div className="grid md:grid-cols-3 gap-4">
 
