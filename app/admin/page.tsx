@@ -1008,6 +1008,48 @@ async function uploadImagemRoteiro(file: File, tipo: "nova" | "editar") {
   alert("Imagem do roteiro enviada e salva!");
 }
 
+async function uploadVideo(
+  file: File,
+  tipo: "nova" | "editar"
+) {
+  const extensao = file.name.split(".").pop();
+
+  const fileName = `video-${Date.now()}-${Math.random()
+    .toString(36)
+    .substring(2)}.${extensao}`;
+
+  const { error } = await supabase.storage
+    .from("campanhas")
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  const { data } = supabase.storage
+    .from("campanhas")
+    .getPublicUrl(fileName);
+
+  if (tipo === "nova") {
+    setForm((prev) => ({
+      ...prev,
+      video_url: data.publicUrl,
+    }));
+  } else {
+    setEditForm((prev) => ({
+      ...prev,
+      video_url: data.publicUrl,
+    }));
+  }
+
+  alert("Vídeo enviado com sucesso!");
+}
+
+
   async function criarCampanha() {
     if (!form.titulo || !form.destino || !form.preco) {
       alert("Preencha título, destino e preço.");
@@ -2229,6 +2271,27 @@ const comprasFiltradas = compras.filter((compra) => {
     setForm({ ...form, video_url: v })
   }
 />
+<p className="font-black text-sm mt-4">
+  Vídeo da campanha
+</p>
+
+<input
+  type="file"
+  accept="video/mp4,video/webm,video/quicktime"
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) uploadVideo(file, "nova");
+  }}
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+/>
+
+{form.video_url && (
+  <video
+    src={form.video_url}
+    controls
+    className="w-full rounded-2xl"
+  />
+)}
              <textarea
   placeholder="Sobre o destino"
   value={form.sobre_destino || ""}
@@ -2389,6 +2452,28 @@ const comprasFiltradas = compras.filter((compra) => {
     })
   }
 />
+<p className="font-black text-sm mt-4">
+  Vídeo da campanha
+</p>
+
+<input
+  type="file"
+  accept="video/mp4,video/webm,video/quicktime"
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) uploadVideo(file, "editar");
+  }}
+  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+/>
+
+{editForm.video_url && (
+  <video
+    src={editForm.video_url}
+    controls
+    className="w-full rounded-2xl"
+  />
+)}
+
                    <textarea
   placeholder="Sobre o destino"
   value={editForm.sobre_destino || ""}
