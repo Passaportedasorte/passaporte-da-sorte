@@ -7,6 +7,26 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
 
+function getVideoEmbedUrl(url: string) {
+  try {
+    const parsedUrl = new URL(url);
+
+    if (parsedUrl.hostname.includes("youtu.be")) {
+      const videoId = parsedUrl.pathname.replace("/", "");
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    if (parsedUrl.hostname.includes("youtube.com")) {
+      const videoId = parsedUrl.searchParams.get("v");
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    return url;
+  } catch {
+    return url;
+  }
+}
+
 export default function CampanhaPage({
   params,
 }: {
@@ -354,6 +374,44 @@ setTotalPassIds(count ?? 0);
           {resultado.numero_sorteado || "---"}
         </p>
       </div>
+    </div>
+  </div>
+)}
+
+{campanha.video_url && (
+  <div className="rounded-[2rem] bg-white/10 border border-white/15 p-4 md:p-5 overflow-hidden">
+    <div className="flex items-center justify-between mb-4">
+      <div>
+        <p className="text-[#23C997] text-sm font-black">
+          VÍDEO DA CAMPANHA
+        </p>
+        <h2 className="text-3xl font-black">
+          Conheça essa experiência
+        </h2>
+      </div>
+    </div>
+
+    <div className="aspect-video w-full overflow-hidden rounded-[1.5rem] bg-black border border-white/10">
+      {campanha.video_url.includes("youtube.com") ||
+      campanha.video_url.includes("youtu.be") ? (
+        <iframe
+          className="w-full h-full"
+          src={getVideoEmbedUrl(campanha.video_url)}
+          title={campanha.titulo || "Vídeo da campanha"}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      ) : (
+        <video
+  className="w-full h-full object-cover"
+  src={campanha.video_url}
+  autoPlay
+  muted
+  loop
+  playsInline
+  controls
+/>
+      )}
     </div>
   </div>
 )}
