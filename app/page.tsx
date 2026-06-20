@@ -234,7 +234,7 @@ async function buscarCep(cepDigitado: string) {
         .from("user_miles")
         .select("total_milhas")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       setSaldoMilhas(data?.total_milhas ?? 0);
     }
