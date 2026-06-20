@@ -329,20 +329,36 @@ function validarCPF(cpf: string) {
 function maiorDe18Anos(data: string) {
   if (!data) return false;
 
-  const nascimento = new Date(data);
+  let ano: number;
+  let mes: number;
+  let dia: number;
+
+  if (data.includes("-")) {
+    // formato yyyy-mm-dd
+    const partes = data.split("-");
+    ano = Number(partes[0]);
+    mes = Number(partes[1]);
+    dia = Number(partes[2]);
+  } else if (data.includes("/")) {
+    // formato dd/mm/yyyy
+    const partes = data.split("/");
+    dia = Number(partes[0]);
+    mes = Number(partes[1]);
+    ano = Number(partes[2]);
+  } else {
+    return false;
+  }
+
   const hoje = new Date();
 
-  let idade = hoje.getFullYear() - nascimento.getFullYear();
+  let idade = hoje.getFullYear() - ano;
 
-  const mesAtual = hoje.getMonth();
+  const mesAtual = hoje.getMonth() + 1;
   const diaAtual = hoje.getDate();
 
-  const mesNascimento = nascimento.getMonth();
-  const diaNascimento = nascimento.getDate();
-
   if (
-    mesAtual < mesNascimento ||
-    (mesAtual === mesNascimento && diaAtual < diaNascimento)
+    mesAtual < mes ||
+    (mesAtual === mes && diaAtual < dia)
   ) {
     idade--;
   }
