@@ -707,9 +707,13 @@ setTotalPassIds(count ?? 0);
       <div className="grid gap-3 mt-6">
         <button
           onClick={() => {
-            setFormaPagamento("PIX");
-            gerarPagamento("PIX");
-          }}
+  if ((window as any).trackMeta) {
+    (window as any).trackMeta("InitiateCheckout");
+  }
+
+  setFormaPagamento("PIX");
+  gerarPagamento("PIX");
+}}
           className="rounded-2xl bg-[#23C997] text-[#061832] font-black px-5 py-4 text-left"
         >
           ⚡ PIX
@@ -720,9 +724,13 @@ setTotalPassIds(count ?? 0);
 
         <button
           onClick={() => {
-            setFormaPagamento("CREDIT_CARD");
-            gerarPagamento("CREDIT_CARD");
-          }}
+  if ((window as any).trackMeta) {
+    (window as any).trackMeta("InitiateCheckout");
+  }
+
+  setFormaPagamento("CREDIT_CARD");
+  gerarPagamento("CREDIT_CARD");
+}}
           className="rounded-2xl bg-white/10 border border-white/10 text-white font-black px-5 py-4 text-left"
         >
           💳 Cartão de crédito
@@ -732,10 +740,14 @@ setTotalPassIds(count ?? 0);
         </button>
 
         <button
-          onClick={() => {
-            setFormaPagamento("BOLETO");
-            gerarPagamento("BOLETO");
-          }}
+         onClick={() => {
+  if ((window as any).trackMeta) {
+    (window as any).trackMeta("InitiateCheckout");
+  }
+
+  setFormaPagamento("BOLETO");
+  gerarPagamento("BOLETO");
+}}
           className="rounded-2xl bg-white/10 border border-white/10 text-white font-black px-5 py-4 text-left"
         >
           🧾 Boleto
