@@ -92,6 +92,15 @@ export default function RootLayout({
     fbq('track', 'PageView');
   `}
 </Script>
+<Script id="meta-pixel-helper" strategy="afterInteractive">
+  {`
+    window.trackMeta = function(eventName, data = {}) {
+      if (typeof fbq !== 'undefined') {
+        fbq('track', eventName, data);
+      }
+    };
+  `}
+</Script>
 <noscript>
   <img
     height="1"

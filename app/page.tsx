@@ -392,37 +392,41 @@ if (cpfExistente) {
 }
 
 
-  const { data, error } = await supabase.auth.signUp({
-    email: emailLogin,
-    password: senhaLogin,
-    options: {
-      data: {
-        full_name: nomeCadastro,
-        cpf: cpfCadastro,
-        celular,
-        data_nascimento: dataNascimento,
-        cep: cepCadastro,
-        rua: ruaCadastro,
-        numero: numeroCadastro,
-        complemento: complementoCadastro,
-        bairro: bairroCadastro,
-        cidade: cidadeCadastro,
-        uf: ufCadastro,
-      },
+ const { data, error } = await supabase.auth.signUp({
+  email: emailLogin,
+  password: senhaLogin,
+  options: {
+    data: {
+      full_name: nomeCadastro,
+      cpf: cpfCadastro,
+      celular,
+      data_nascimento: dataNascimento,
+      cep: cepCadastro,
+      rua: ruaCadastro,
+      numero: numeroCadastro,
+      complemento: complementoCadastro,
+      bairro: bairroCadastro,
+      cidade: cidadeCadastro,
+      uf: ufCadastro,
     },
-  });
+  },
+});
 
-  if (error) {
-    if (error.message.includes("User already registered")) {
-      alert("Este e-mail já possui cadastro. Clique em Entrar.");
-      setModoLogin("entrar");
-      return;
-    }
-
-    alert(error.message);
+if (error) {
+  if (error.message.includes("User already registered")) {
+    alert("Este e-mail já possui cadastro. Clique em Entrar.");
+    setModoLogin("entrar");
     return;
   }
 
+  alert(error.message);
+  return;
+}
+
+// EVENTO META PIXEL
+if ((window as any).trackMeta) {
+  (window as any).trackMeta("Lead");
+}
   if (data.user) {
     const { error: profileError } = await supabase
       .from("user_profiles")
