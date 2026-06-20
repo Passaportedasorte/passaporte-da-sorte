@@ -33,6 +33,12 @@ export default function CampanhaPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+   useEffect(() => {
+    if ((window as any).trackMeta) {
+      (window as any).trackMeta("ViewContent");
+    }
+  }, []);
+
 
   const [campanha, setCampanha] = useState<any>(null);
   const [carregando, setCarregando] = useState(true);
