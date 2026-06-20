@@ -95,8 +95,11 @@ export default function RootLayout({
 <Script id="meta-pixel-helper" strategy="afterInteractive">
   {`
     window.trackMeta = function(eventName, data = {}) {
-      if (typeof fbq !== 'undefined') {
-        fbq('track', eventName, data);
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', eventName, data);
+        console.log('Meta event sent:', eventName, data);
+      } else {
+        console.log('Meta Pixel not ready:', eventName);
       }
     };
   `}
